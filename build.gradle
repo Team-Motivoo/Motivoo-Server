@@ -28,7 +28,7 @@ dependencies {
 
 	// Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.springframework.security:spring-segicurity-test'
 
 	// Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
