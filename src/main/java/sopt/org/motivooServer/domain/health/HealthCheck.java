@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.domain;
+package sopt.org.motivooServer.domain.health;
 
 import static sopt.org.motivooServer.global.common.exception.SuccessType.*;
 
