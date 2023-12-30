@@ -35,7 +35,7 @@ dependencies {
 
 	// Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	testImplementation 'org.springframework.security:spring-segicurity-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 
 	// Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -46,6 +46,13 @@ dependencies {
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// Slack Webhook
+	implementation 'com.slack.api:slack-api-client:1.28.0'
+	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+	implementation 'com.slack.api:slack-app-backend:1.28.0'
+	implementation 'com.slack.api:slack-api-model:1.28.0'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
