@@ -1,14 +1,11 @@
 package sopt.org.motivooServer.global.common.advice;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import lombok.extern.slf4j.Slf4j;
-import sopt.org.motivooServer.global.common.exception.CustomException;
+import sopt.org.motivooServer.global.common.exception.BusinessException;
 import sopt.org.motivooServer.global.common.response.ApiResponse;
 
 @Slf4j
@@ -28,8 +25,8 @@ public class GlobalExceptionHandler {
 	/**
 	 * Custom Error
 	 */
-	@ExceptionHandler(CustomException.class)
-	public ResponseEntity<ApiResponse> handleCustomException(final CustomException e) {
+	@ExceptionHandler(BusinessException.class)
+	public ResponseEntity<ApiResponse> handleCustomException(final BusinessException e) {
 
 		log.error("🚨🚨🚨 CustomException occured: {} 🚨🚨🚨", e.getMessage());
 

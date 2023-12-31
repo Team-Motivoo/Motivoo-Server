@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.common.exception;
+package sopt.org.motivooServer.global.common.response;
 
 import org.springframework.http.HttpStatus;
 
@@ -8,12 +8,12 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public enum ErrorType {
+public enum SuccessType {
 
 	/**
-	 * 500 Internal Server Error
+	 * 200 Ok
 	 */
-	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러가 발생했습니다"),
+	HEALTH_CHECK_SUCCESS(HttpStatus.OK, "헬스체크용 API 호출에 성공했습니다.")
 
 
 

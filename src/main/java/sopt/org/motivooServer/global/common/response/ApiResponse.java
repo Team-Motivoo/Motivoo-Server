@@ -8,8 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import sopt.org.motivooServer.global.common.exception.ErrorType;
-import sopt.org.motivooServer.global.common.exception.SuccessType;
+import sopt.org.motivooServer.global.common.error.ErrorType;
 
 @Getter
 @Builder

@@ -1,6 +1,6 @@
 package sopt.org.motivooServer.domain;
 
-import static sopt.org.motivooServer.global.common.exception.SuccessType.*;
+import static sopt.org.motivooServer.global.common.response.SuccessType.*;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
