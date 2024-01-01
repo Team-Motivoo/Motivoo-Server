@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import lombok.extern.slf4j.Slf4j;
+import sopt.org.motivooServer.global.common.error.ErrorResponse;
 import sopt.org.motivooServer.global.common.exception.BusinessException;
 import sopt.org.motivooServer.global.common.response.ApiResponse;
 
@@ -26,11 +27,11 @@ public class GlobalExceptionHandler {
 	 * Custom Error
 	 */
 	@ExceptionHandler(BusinessException.class)
-	public ResponseEntity<ApiResponse> handleCustomException(final BusinessException e) {
+	public ResponseEntity<ErrorResponse> handleCustomException(final BusinessException e) {
 
 		log.error("🚨🚨🚨 CustomException occured: {} 🚨🚨🚨", e.getMessage());
 
 		return ResponseEntity.status(e.getHttpStatus())
-			.body(ApiResponse.error(e.getErrorType(), e.getMessage()));
+			.body(ErrorResponse.of(e.getErrorType(), e.getMessage()));
 	}
 }
