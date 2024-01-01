@@ -3,13 +3,19 @@ package sopt.org.motivooServer.domain.user.exception;
 import org.springframework.http.HttpStatus;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.global.advice.BusinessExceptionType;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum UserExceptionType implements BusinessExceptionType {
+
+	/**
+	 * 400 Bad Request
+	 */
+	INVALID_USER_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 회원 유형입니다."),
+	INVALID_SOCIAL_PLATFORM(HttpStatus.BAD_REQUEST, "유효하지 않은 소셜 플랫폼입니다."),
 
 	/**
 	 * 404 Not Found
