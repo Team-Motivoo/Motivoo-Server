@@ -1,5 +1,7 @@
 package sopt.org.motivooServer.global.common.response;
 
+import org.springframework.http.ResponseEntity;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -8,13 +10,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import sopt.org.motivooServer.global.common.error.ErrorType;
+import sopt.org.motivooServer.global.common.exception.ErrorType;
 
 @Getter
 @Builder
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@JsonPropertyOrder({"status", "message", "data"})
+@JsonPropertyOrder({"code", "message", "success", "data"})
 public class ApiResponse<T> {
 
 	private final int code;
@@ -25,42 +27,28 @@ public class ApiResponse<T> {
 	private T data;
 
 	// 성공
-	public static ApiResponse success(SuccessType successType) {
+	/*public static ApiResponse success(SuccessType successType) {
 		return ApiResponse.builder()
 			.code(successType.getHttpStatusCode())
 			.message(successType.getMessage())
 			.success(true).build();
+	}*/
+
+	public static ResponseEntity<ApiResponse> success(SuccessType successType) {
+		return ResponseEntity.status(successType.getHttpStatus())
+			.body(ApiResponse.builder()
+				.code(successType.getHttpStatusCode())
+				.message(successType.getMessage())
+				.success(true).build());
 	}
 
-	public static <T> ApiResponse<T> success(SuccessType successType, T data) {
-		return ApiResponse.<T>builder()
-			.code(successType.getHttpStatusCode())
-			.message(successType.getMessage())
-			.success(true)
-			.data(data).build();
-	}
-
-	// 실패
-	public static ApiResponse error(ErrorType errorType) {
-		return ApiResponse.builder()
-			.code(errorType.getHttpStatusCode())
-			.message(errorType.getMessage())
-			.success(false).build();
-	}
-
-	public static ApiResponse error(ErrorType errorType, String message) {
-		return ApiResponse.builder()
-			.code(errorType.getHttpStatusCode())
-			.message(message)
-			.success(false).build();
-	}
-
-	public static ApiResponse<Object> error(ErrorType errorType, Exception e) {
-		return ApiResponse.builder()
-			.code(errorType.getHttpStatusCode())
-			.message(errorType.getMessage())
-			.success(false)
-			.data(e).build();
+	public static <T> ResponseEntity<ApiResponse<T>> success(SuccessType successType, T data) {
+		return ResponseEntity.status(successType.getHttpStatus())
+			.body(ApiResponse.<T>builder()
+				.code(successType.getHttpStatusCode())
+				.message(successType.getMessage())
+				.success(true)
+				.data(data).build());
 	}
 }
 
