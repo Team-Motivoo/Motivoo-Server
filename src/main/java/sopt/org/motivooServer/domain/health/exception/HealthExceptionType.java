@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.domain.user.exception;
+package sopt.org.motivooServer.domain.health.exception;
 
 import org.springframework.http.HttpStatus;
 
@@ -7,18 +7,17 @@ import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.global.advice.BusinessExceptionType;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum UserExceptionType implements BusinessExceptionType {
+public enum HealthExceptionType implements BusinessExceptionType {
 
 	/**
 	 * 400 Bad Request
 	 */
-	INVALID_USER_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 회원 유형입니다."),
-	INVALID_SOCIAL_PLATFORM(HttpStatus.BAD_REQUEST, "유효하지 않은 소셜 플랫폼입니다."),
+	INVALID_HEALTH_NOTE(HttpStatus.BAD_REQUEST, "유효하지 않는 건강 주의사항입니다."),
 
 	/**
 	 * 404 Not Found
 	 */
-	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다.")
+	HEALTH_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 건강정보입니다.")
 
 
 	;
