@@ -24,11 +24,11 @@ public class GlobalExceptionHandler {
 	 * Custom Error
 	 */
 	@ExceptionHandler(BusinessException.class)
-	public ResponseEntity<ErrorResponse> handleCustomException(final BusinessException e) {
+	public ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e) {
 
-		log.error("🚨🚨🚨 CustomException occured: {} 🚨🚨🚨", e.getMessage());
+		log.error("🚨🚨🚨 BusinessException occured: {} 🚨🚨🚨", e.getMessage());
 
 		return ResponseEntity.status(e.getHttpStatus())
-			.body(ErrorResponse.of(e.getErrorType(), e.getMessage()));
+			.body(ErrorResponse.of(e.getExceptionType()));
 	}
 }
