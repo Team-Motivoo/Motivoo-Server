@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import sopt.org.motivooServer.global.common.exception.ErrorType;
 
 @Getter
 @Builder
