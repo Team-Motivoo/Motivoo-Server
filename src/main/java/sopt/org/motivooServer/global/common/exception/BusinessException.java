@@ -1,14 +1,14 @@
 package sopt.org.motivooServer.global.common.exception;
 
 import lombok.Getter;
-import sopt.org.motivooServer.global.common.error.ErrorResponse;
+import sopt.org.motivooServer.global.common.error.ErrorType;
 
 @Getter
 public class BusinessException extends RuntimeException {
 
-	private final ErrorResponse.ErrorType errorType;
+	private final ErrorType errorType;
 
-	public BusinessException(ErrorResponse.ErrorType errorType) {
+	public BusinessException(ErrorType errorType) {
 		super(errorType.getMessage());
 		this.errorType = errorType;
 	}
