@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-clas-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DATABASE_ENDPOINT_URL}:3306/${DATABASE_NAME}?serverTimezone=UTC&characterEncoding=UTF-8
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update

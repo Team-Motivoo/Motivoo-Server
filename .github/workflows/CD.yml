@@ -1,0 +1,68 @@
+name: CD
+
+on:  # 트리거
+  push:
+    branches: [ "develop" ]
+
+jobs:
+
+  deploy-ci:  # job#1
+    runs-on: ubuntu-22.04
+    env:
+      working-directory: ./  # 프로젝트 디렉토리
+
+    steps:  # 작업 단위
+      - name: 체크아웃
+        uses: actions/checkout@v3
+
+      - name: Java 실행 환경 - JDK 17 세팅
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      - name: application.yml 파일 생성
+        run: |
+          # yml을 생성할 디렉터리로 작업 디렉터리 이동
+          cd ./src/main/resources
+          echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
+        working-directory: ${{ env.working-directory }}
+
+      - name: 빌드
+        run: |
+          chmod +x gradlew
+          ./gradlew build --exclude-task test
+        working-directory: ${{ env.working-directory }}
+        shell: bash
+
+
+      - name: Docker 빌드 환경 설정
+        uses: docker/setup-buildx-action@v2.9.1
+
+      - name: Docker Hub에 로그인
+        uses: docker/login-action@v2.2.0
+        with:
+          username: ${{ secrets.DOCKERHUB_LOGIN_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_LOGIN_ACCESSTOKEN }}
+
+      - name: Docker Image 빌드 및 푸시
+        run: |
+          docker build --platform linux/amd64 -t yejunpark1/motivoo-server .
+          docker push yejunpark1/motivoo-server
+      
+
+  deploy-cd:  # job#2
+    needs: deploy-ci
+    runs-on: ubuntu-22.04
+
+    steps:  # EC2 인스턴스 내부에서 이루어지는 작업
+      - name: 도커 컨테이너 실행
+        uses: appleboy/ssh-action@master
+
+        with:
+          host: ${{ secrets.RELEASE_SERVER_IP }}
+          username: ${{ secrets.RELEASE_SERVER_USER }}
+          key: ${{ secrets.RELEASE_SERVER_KEY }}
+          script: | 
+            cd ~
+            ./deploy.sh

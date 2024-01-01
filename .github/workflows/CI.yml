@@ -1,0 +1,38 @@
+name: CI
+
+on:  # 트리거
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:  # job#1
+    runs-on: ubuntu-22.04
+    env:
+      working-directory: ./  # 프로젝트 디렉토리
+
+    steps:  # 작업 단위
+      - name: 체크아웃
+        uses: actions/checkout@v3
+
+      - name: Java 실행 환경 - JDK 17 세팅
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      - name: application.yml 파일 생성
+        run: |
+          # yml을 생성할 디렉터리로 작업 디렉터리 이동
+          cd ./src/main/resources
+          echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
+        working-directory: ${{ env.working-directory }}
+
+      - name: 빌드
+        run: |
+          chmod +x gradlew
+          ./gradlew build --exclude-task test
+        working-directory: ${{ env.working-directory }}
+        shell: bash
+
