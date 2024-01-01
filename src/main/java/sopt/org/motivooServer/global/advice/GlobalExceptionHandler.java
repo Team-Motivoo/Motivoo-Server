@@ -1,12 +1,10 @@
-package sopt.org.motivooServer.global.common.advice;
+package sopt.org.motivooServer.global.advice;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import lombok.extern.slf4j.Slf4j;
-import sopt.org.motivooServer.global.common.error.ErrorResponse;
-import sopt.org.motivooServer.global.common.exception.BusinessException;
 
 @Slf4j
 @RestControllerAdvice

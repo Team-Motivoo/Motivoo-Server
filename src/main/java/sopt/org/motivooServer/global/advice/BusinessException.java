@@ -1,7 +1,6 @@
-package sopt.org.motivooServer.global.common.exception;
+package sopt.org.motivooServer.global.advice;
 
 import lombok.Getter;
-import sopt.org.motivooServer.global.common.error.ErrorType;
 
 @Getter
 public class BusinessException extends RuntimeException {

@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.common.error;
+package sopt.org.motivooServer.global.advice;
 
 import org.springframework.http.HttpStatus;
 

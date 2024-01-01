@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.common.response;
+package sopt.org.motivooServer.global.response;
 
 import org.springframework.http.ResponseEntity;
 
