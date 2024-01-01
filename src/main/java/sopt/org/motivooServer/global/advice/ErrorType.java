@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.common.exception;
+package sopt.org.motivooServer.global.advice;
 
 import org.springframework.http.HttpStatus;
 
@@ -14,8 +14,6 @@ public enum ErrorType {
 	 * 500 Internal Server Error
 	 */
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러가 발생했습니다"),
-
-
 
 	;
 
