@@ -26,16 +26,9 @@ public class ApiResponse<T> {
 	private T data;
 
 	// 성공
-	/*public static ApiResponse success(SuccessType successType) {
-		return ApiResponse.builder()
-			.code(successType.getHttpStatusCode())
-			.message(successType.getMessage())
-			.success(true).build();
-	}*/
-
-	public static ResponseEntity<ApiResponse> success(SuccessType successType) {
+	public static <T> ResponseEntity<ApiResponse<T>> success(SuccessType successType) {
 		return ResponseEntity.status(successType.getHttpStatus())
-			.body(ApiResponse.builder()
+			.body(ApiResponse.<T>builder()
 				.code(successType.getHttpStatusCode())
 				.message(successType.getMessage())
 				.success(true).build());
