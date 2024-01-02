@@ -1,16 +1,15 @@
-package sopt.org.motivooServer.domain.health;
+package sopt.org.motivooServer.global.healthcheck;
 
 import org.springframework.http.ResponseEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "헬스체크", description = "헬스체크용 Api")
-public interface HealthApi {
+public interface HealthCheckApi {
 
 	@ApiResponses(
 		value = {
@@ -19,5 +18,5 @@ public interface HealthApi {
 		}
 	)
 	@Operation(summary = "헬스체크")
-	sopt.org.motivooServer.global.common.response.ApiResponse<String> healthCheck();
+	ResponseEntity<sopt.org.motivooServer.global.response.ApiResponse<String>> healthCheck();
 }

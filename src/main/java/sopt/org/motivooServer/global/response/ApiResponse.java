@@ -40,6 +40,13 @@ public class ApiResponse<T> {
 				.success(true)
 				.data(data).build());
 	}
+
+	public static <T> ApiResponse<T> successV2(SuccessType successType) {
+		return ApiResponse.<T>builder()
+				.code(successType.getHttpStatusCode())
+				.message(successType.getMessage())
+				.success(true).build();
+	}
 }
 
 
