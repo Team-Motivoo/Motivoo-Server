@@ -13,9 +13,9 @@ public class SwaggerConfig {
 	@Bean
 	public OpenAPI publicAPI() {
 		Info info = new Info()
-			.title("Motivoo Server")
+			.title("Motivoo Server API 명세서")
 			.description("Motivoo API Document")
-			.version("1.0.0");
+			.version("v1.0.0");
 
 		//TODO JWT 토큰 인증을 위한 SecurityScheme 설정 추가
 
