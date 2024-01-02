@@ -40,6 +40,7 @@ public class UserMission extends BaseTimeEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
+	//== 연관관계 메서드 ==//
 	public void setUser(User user) {
 		this.user = user;
 
