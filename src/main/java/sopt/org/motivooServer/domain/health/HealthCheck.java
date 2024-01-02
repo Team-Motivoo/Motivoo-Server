@@ -1,19 +1,20 @@
 package sopt.org.motivooServer.domain.health;
 
-import static sopt.org.motivooServer.global.common.exception.SuccessType.*;
+import static sopt.org.motivooServer.global.response.SuccessType.*;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import sopt.org.motivooServer.global.common.response.ApiResponse;
+import sopt.org.motivooServer.global.response.ApiResponse;
 
 @RestController
 @RequestMapping("/health")
 public class HealthCheck implements HealthApi{
 
 	@GetMapping
-	public ApiResponse<String> healthCheck() {
+	public ResponseEntity<ApiResponse<String>> healthCheck() {
 		return ApiResponse.success(HEALTH_CHECK_SUCCESS, "test success!");
 	}
 }

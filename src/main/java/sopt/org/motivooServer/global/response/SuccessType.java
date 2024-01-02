@@ -1,13 +1,13 @@
-package sopt.org.motivooServer.global.common.exception;
+package sopt.org.motivooServer.global.response;
 
 import org.springframework.http.HttpStatus;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum SuccessType {
 
 	/**
