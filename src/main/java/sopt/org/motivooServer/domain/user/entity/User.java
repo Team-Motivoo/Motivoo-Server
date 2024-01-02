@@ -1,5 +1,6 @@
 package sopt.org.motivooServer.domain.user.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class User extends BaseTimeEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private UserType userType;
+	private UserType type;
 
 	@Column(nullable = false)
 	private Boolean deleted = Boolean.FALSE;
@@ -62,6 +63,7 @@ public class User extends BaseTimeEntity {
 	private List<UserMission> userMissions = new ArrayList<>();
 
 
+	//== 연관관계 메서드 ==//
 	public void addUserMission(UserMission userMission) {
 		this.userMissions.add(userMission);
 		if (userMission.getUser() != this) {

@@ -27,6 +27,9 @@ public class Health extends BaseTimeEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
+	@Column(nullable = false)
+	private Boolean isExercise;
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private ExerciseType exerciseType;
