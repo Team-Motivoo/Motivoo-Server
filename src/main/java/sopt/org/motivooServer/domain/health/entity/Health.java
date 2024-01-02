@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.domain.health;
+package sopt.org.motivooServer.domain.health.entity;
 
 import java.util.ArrayList;
 import java.util.List;

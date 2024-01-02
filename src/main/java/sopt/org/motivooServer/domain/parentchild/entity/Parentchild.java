@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.domain.parentchild;
+package sopt.org.motivooServer.domain.parentchild.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

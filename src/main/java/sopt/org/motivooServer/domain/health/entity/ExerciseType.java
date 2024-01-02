@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.domain.health;
+package sopt.org.motivooServer.domain.health.entity;
 
 public enum ExerciseType {
 
