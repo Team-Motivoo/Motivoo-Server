@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 @RestController
-@RequestMapping("/health")
+@RequestMapping("/api/health")
 public class HealthCheck implements HealthCheckApi {
 
 	@GetMapping
@@ -21,7 +21,7 @@ public class HealthCheck implements HealthCheckApi {
 	}
 
 	// @ResponseStatus VS ResponseEntity
-	@GetMapping
+	@GetMapping("/v2")
 	@ResponseStatus(HttpStatus.OK)
 	public ApiResponse<String> healthCheckV2() {
 		return ApiResponse.successV2(HEALTH_CHECK_SUCCESS);
