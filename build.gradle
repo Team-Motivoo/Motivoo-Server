@@ -33,6 +33,9 @@ dependencies {
 	// MySQL
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
+	// H2 (테스트용)
+	testImplementation 'com.h2database:h2'
+
 	// Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.security:spring-security-test'
@@ -46,6 +49,14 @@ dependencies {
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// Spring Validatior
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Spring Scheduler Test
+	testImplementation 'org.awaitility:awaitility:4.2.0'
 
 	// Slack Webhook
 	implementation 'com.slack.api:slack-api-client:1.28.0'
@@ -57,8 +68,8 @@ dependencies {
 	// Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
-	implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 tasks.named('test') {
