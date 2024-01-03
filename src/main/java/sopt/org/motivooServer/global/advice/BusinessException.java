@@ -5,14 +5,14 @@ import lombok.Getter;
 @Getter
 public class BusinessException extends RuntimeException {
 
-	private final ErrorType errorType;
+	private final BusinessExceptionType exceptionType;
 
-	public BusinessException(ErrorType errorType) {
-		super(errorType.getMessage());
-		this.errorType = errorType;
+	public BusinessException(BusinessExceptionType exceptionType) {
+		super(exceptionType.message());
+		this.exceptionType = exceptionType;
 	}
 
 	public int getHttpStatus() {
-		return errorType.getHttpStatusCode();
+		return exceptionType.status().value();
 	}
 }

@@ -14,10 +14,10 @@ public record ErrorResponse(
 		);
 	}
 
-	public static ErrorResponse of(ErrorType errorType, String message) {
+	public static ErrorResponse of(BusinessExceptionType exceptionType) {
 		return new ErrorResponse(
-			errorType.getHttpStatusCode(),
-			message,
+			exceptionType.getHttpStatusCode(),
+			exceptionType.message(),
 			false
 		);
 	}

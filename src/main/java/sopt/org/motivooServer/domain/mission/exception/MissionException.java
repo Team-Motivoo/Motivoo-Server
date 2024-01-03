@@ -1,11 +1,11 @@
 package sopt.org.motivooServer.domain.mission.exception;
 
-import sopt.org.motivooServer.global.advice.ErrorType;
 import sopt.org.motivooServer.global.advice.BusinessException;
+import sopt.org.motivooServer.global.advice.BusinessExceptionType;
 
 public class MissionException extends BusinessException {
 
-	public MissionException(ErrorType errorType) {
-		super(errorType);
+	public MissionException(BusinessExceptionType exceptionType) {
+		super(exceptionType);
 	}
 }
