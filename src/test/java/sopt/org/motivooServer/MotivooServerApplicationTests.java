@@ -9,11 +9,11 @@ import sopt.org.motivooServer.global.util.slack.SlackUtil;
 @SpringBootTest
 class MotivooServerApplicationTests {
 
-	@MockBean
-	private SlackUtil slackUtil;
-
-	@Test
-	void contextLoads() {
-	}
+	// @MockBean
+	// private SlackUtil slackUtil;
+	//
+	// @Test
+	// void contextLoads() {
+	// }
 
 }

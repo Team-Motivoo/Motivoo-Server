@@ -1,13 +1,11 @@
 package sopt.org.motivooServer.global.advice;
 
-import static org.springframework.http.HttpStatus.*;
-import static sopt.org.motivooServer.global.advice.ErrorType.INTERNAL_SERVER_ERROR;
+import static sopt.org.motivooServer.global.advice.ErrorType.*;
 
 import java.io.IOException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -17,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.global.util.slack.SlackUtil;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -35,6 +32,8 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(final Exception e, final HttpServletRequest request) throws IOException {
 		slackUtil.sendAlert(e, request);
+
+		log.error("🔔🚨 Slack에 전송된 Error Log: {}", e);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 			.body(ErrorResponse.of(INTERNAL_SERVER_ERROR));
 	}

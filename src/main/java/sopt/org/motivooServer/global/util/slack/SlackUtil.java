@@ -29,7 +29,6 @@ public class SlackUtil {
 	private final static String NEW_LINE = "\n";
 	private final static String DOUBLE_NEW_LINE = "\n\n";
 
-
 	private StringBuilder sb = new StringBuilder();
 
 	// Slack으로 알림 보내기
