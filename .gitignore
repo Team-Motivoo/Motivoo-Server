@@ -7,6 +7,9 @@ build/
 
 application-local.yml
 
+**.adoc
+**/static/docs/
+
 ### STS ###
 .apt_generated
 .classpath

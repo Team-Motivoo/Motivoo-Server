@@ -13,7 +13,7 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 
 @RestController
 @RequestMapping("/api/health")
-public class HealthCheck implements HealthCheckApi {
+public class HealthCheckController implements HealthCheckApi {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<String>> healthCheck() {
