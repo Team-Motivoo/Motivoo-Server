@@ -3,9 +3,11 @@ package sopt.org.motivooServer.domain.user.entity;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import sopt.org.motivooServer.domain.user.dto.request.UserProfile;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -22,4 +24,6 @@ public enum SocialPlatform {
 			.findFirst()
 			.orElseThrow(() -> new UserException(INVALID_SOCIAL_PLATFORM));
 	}
+
+
 }

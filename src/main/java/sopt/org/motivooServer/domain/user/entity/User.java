@@ -1,9 +1,9 @@
 package sopt.org.motivooServer.domain.user.entity;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 
 import jakarta.persistence.Column;
@@ -17,7 +17,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.Getter;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
@@ -25,14 +24,14 @@ import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 @Getter
 @Entity
 @Table(name = "`user`")
+@Builder
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE user SET user.deleted=true WHERE user_id=?")
 public class User extends BaseTimeEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private Long id;
-
-	private String username;
 
 	private Integer age;
 
@@ -44,9 +43,9 @@ public class User extends BaseTimeEntity {
 	private Boolean deleted = Boolean.FALSE;
 
 	@Column(nullable = false)
-	private Long socialId;
+	private String socialId;
 
-	private String socialNickname;
+	private String nickname;
 
 	private String socialAccessToken;
 
@@ -54,13 +53,16 @@ public class User extends BaseTimeEntity {
 	@Column(nullable = false)
 	private SocialPlatform socialPlatform;
 
-
 	@ManyToOne
 	@JoinColumn(name = "parentchild_id")
 	private Parentchild parentchild;
 
 	@OneToMany(mappedBy = "user")
 	private List<UserMission> userMissions = new ArrayList<>();
+
+	public User() {
+
+	}
 
 
 	//== 연관관계 메서드 ==//
