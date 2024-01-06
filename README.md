@@ -39,11 +39,16 @@
 | 기타 | JPA, Redis, Spring Security, Spring Scheduler |
 | 외부 연동 | Slack |
 
+<br/><br/>
+
+
 ## 🔧 시스템 아키텍처
 <img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/33430097-abaa-461a-9f38-7f86e95b3b0f" />
+<br/><br/>
 
 ## ☁️ ERD
 <img width=600 src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/94639ac5-a0f9-4cc0-9aba-fb3a835c99a7">
+<br/><br/>
 
 ## 📂 Project Structure
 
@@ -129,6 +134,7 @@
 </div>
 </details>
 
+<br/><br/>
 
 ## 📓 Backend Convention
 
@@ -136,11 +142,11 @@
 
 <img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/cd59ef5f-e9df-43db-be41-66ea581925cf">
 
+<details>
+<summary>자세히 보기</summary>
+<div markdown="1">
 
 > **🔗 master, release, develop, feature, hotfix**
-
-
-
 
 `master` : 최최최최최최종본 - stable all the time
 
@@ -161,8 +167,16 @@
 
 `study` : 공부용 브랜치    ex. study/yejun
 
-### 🗣️ 코드리뷰 컨벤션
+</div>
+</details>
 
+### 🗣️ Code Review
+
+<details>
+<summary>자세히 보기</summary>
+<div markdown="1">
+    
+#### Convention
 > P1: 꼭 반영해주세요 (Request changes)<br/>
 > P2: 적극적으로 고려해주세요 (Request changes)<br/>
 > P3: 웬만하면 반영해 주세요 (Comment)<br/>
@@ -170,12 +184,19 @@
 > P5: 그냥 사소한 의견입니다 (Approve)
 >
 
+#### Rule
 - 서로 상대 실수 한 것 없는지 귀찮아도 꼭 읽어보기
 - 긍정적인 코멘트 적극적으로 남겨주기
 - 우선순위 반영한 코드리뷰 진행하기 ex.`[P1] 이건 꼭 반영해주셔야해요!`
 
+</div>
+</details>
+
 ### 🚀 Commit Convention
 
+<details>
+<summary>자세히 보기</summary>
+<div markdown="1">
 
 ```
 # <타입>: <제목> #이슈번호 형식으로 작성하며 제목은 최대 50글자 정도로만 입력
@@ -215,8 +236,15 @@
 
     ex. `git commit -m “[FEAT] 로그인 기능 구현 #2”`
 
+</div>
+</details>
+
+
 ### ✨ Code Convention
 
+<details>
+<summary>자세히 보기</summary>
+<div markdown="1">
 
 1. 기본적으로 네이밍은 **누구나 알 수 있는 쉬운 단어**를 선택한다.
 1. 변수는 CamelCase를 기본으로 한다.
@@ -232,3 +260,6 @@
 1. 함수의 부수효과를 설명한다.
 1. LocalDateTime -> xxxAt, LocalDate -> xxxDt로 네이밍
 1. 객체를 조회하는 함수는 JPA Repository에서 findXxx 형식의 네이밍 쿼리메소드를 사용하므로 개발자가 작성하는 Service단에서는 되도록이면 getXxx를 사용하자.
+
+</div>
+</details>
