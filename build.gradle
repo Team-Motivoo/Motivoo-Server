@@ -47,6 +47,13 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	// AWS sdk
+	implementation("software.amazon.awssdk:bom:2.21.0")
+	implementation("software.amazon.awssdk:s3:2.21.0")
+//	AWSimplementation("software.amazon.awssdk:bom:2.21.0")
+//	implementation("software.amazon.awssdk:s3:2.21.0")
+//	implementation 'org.apache.httpcomponents:httpclient:4.5.9'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
