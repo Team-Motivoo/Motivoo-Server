@@ -7,7 +7,7 @@
 
 |                                      박예준                                      |                                                                이혜연                                                                 |                                                               조찬우                                                               |
 |:-----------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------:|
-| <img src="https://avatars.githubusercontent.com/u/80024278?v=4" width="300"/> | <img src="https://avatars.githubusercontent.com/u/128011308?s=400&u=633d530e6863dea1ad9f409fd2f979b85c018b6f&v=4" width="300"/> | <img src="https://avatars.githubusercontent.com/u/58971262?v=4" width="300"/> |
+| <img src="https://avatars.githubusercontent.com/u/80024278?v=4" width="300"/> | <img src="https://avatars.githubusercontent.com/u/115079024?v=4" width="300"/> | <img src="https://avatars.githubusercontent.com/u/58971262?v=4" width="300"/> |
 |                    [jun02160](https://github.com/jun02160)                    |                                             [hyeyeonnnnn](https://github.com/hyeyeonnnnn)  |                                         [oownahcohc](https://github.com/oownahcohc)                                             |
 
 
