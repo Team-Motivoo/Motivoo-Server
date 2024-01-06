@@ -1,7 +1,32 @@
+buildscript {
+	ext {
+		restdocsApiSpecVersion = '0.18.2'
+	}
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.0.11'
 	id 'io.spring.dependency-management' version '1.1.4'
+
+	id 'com.epages.restdocs-api-spec' version "${restdocsApiSpecVersion}"
+	id 'org.hidetake.swagger.generator' version '2.18.2'
+}
+
+
+swaggerSources {
+	sample {
+		setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
+	}
+}
+
+// openapi3 스펙 생성 시 설정 정보
+openapi3 {
+	server = "http://localhost:8080"
+	title = "모티부 API 명세서"
+	description = "Motivoo REST Docs with SwaggerUI"
+	version = "v0.0.1"
+	format = "yaml"
 }
 
 group = 'sopt.org'
@@ -21,11 +46,14 @@ configurations {
 	}
 }
 
+
 repositories {
 	mavenCentral()
 }
 
 dependencies {
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -33,9 +61,12 @@ dependencies {
 	// MySQL
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
+	// H2 (테스트용)
+	testImplementation 'com.h2database:h2'
+
 	// Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	testImplementation 'org.springframework.security:spring-segicurity-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 
 	// Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -46,6 +77,23 @@ dependencies {
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// Spring Validatior
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Spring Scheduler Test
+	testImplementation 'org.awaitility:awaitility:4.2.0'
+
+	// Slack Webhook
+	implementation 'com.slack.api:slack-api-client:1.30.0'
+	implementation 'com.google.code.gson:gson:2.10.1'
+
+	// Swagger+RestDocs
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+	testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
 	// AWS sdk
 	implementation("software.amazon.awssdk:bom:2.21.0")
@@ -54,9 +102,35 @@ dependencies {
 //	implementation("software.amazon.awssdk:s3:2.21.0")
 //	implementation 'org.apache.httpcomponents:httpclient:4.5.9'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.withType(GenerateSwaggerUI) {
+	dependsOn 'openapi3'
+
+	// local 확인용으로 json 정적파일 복사
+//	delete file('src/main/resources/static/docs')
+	copy {
+		from "build/resources/main/static/docs"
+		into "src/main/resources/static/docs/"
+	}
+}
+
+// openAPI 작성 자동화 => 패키징 전에 openapi3 태스크를 먼저 실행하도록 유발
+bootJar {
+	dependsOn(':openapi3')
+}
+
+openapi3 {
+	server = "http://localhost:8080"
+	title = "모티부 API 명세서"
+	description = "Motivoo REST Docs with SwaggerUI"
+	version = "v0.0.1"
+	format = "json"
+	outputFileNamePrefix = "open-api-3.0.1"
+	outputDirectory = 'build/resources/main/static/docs'
+}
+

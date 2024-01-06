@@ -27,3 +27,8 @@ aws-property:
   secret-key: ${AWS_SECRET_KEY}
   aws-region: ${AWS_REGION}
   s3-bucket-name: ${S3_BUCKET_NAME}
+
+
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
