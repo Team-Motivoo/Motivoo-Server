@@ -5,10 +5,10 @@
 
 ## 🥕 서뿡이들
 
-|                                     박예준                                      |                                                                이혜연                                                                 |                                                               조찬우                                                               |
-|:----------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------:|
-| <img src="https://avatars.githubusercontent.com/u/80024278?v=4" width="400"/> | <img src="https://avatars.githubusercontent.com/u/128011308?s=400&u=633d530e6863dea1ad9f409fd2f979b85c018b6f&v=4" width="300"/> | <img src="https://avatars.githubusercontent.com/u/58971262?v=4" width="300"/> |
-|                   [jun02160](https://github.com/jun02160)                    |                                             [hyeyeonnnnn](https://github.com/hyeyeonnnnn)  |                                         [oownahcohc](https://github.com/oownahcohc)                                             |
+|                                      박예준                                      |                                                                이혜연                                                                 |                                                               조찬우                                                               |
+|:-----------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------:|
+| <img src="https://avatars.githubusercontent.com/u/80024278?v=4" width="300"/> | <img src="https://avatars.githubusercontent.com/u/128011308?s=400&u=633d530e6863dea1ad9f409fd2f979b85c018b6f&v=4" width="300"/> | <img src="https://avatars.githubusercontent.com/u/58971262?v=4" width="300"/> |
+|                    [jun02160](https://github.com/jun02160)                    |                                             [hyeyeonnnnn](https://github.com/hyeyeonnnnn)  |                                         [oownahcohc](https://github.com/oownahcohc)                                             |
 
 
 
@@ -16,11 +16,11 @@
 
 | 담당 역할              |   Role   |
 |:-------------------|:--------:|
-| Nginx 배포, CI/CD 구축  |   박예준    |
-| ERD 및 DB 설계         | 박예준, 이혜연 |
-| API 개발              |   박예준, 이혜연    |
-| 소셜로그인 기능 구현     |   이혜연    |
-| Swagger+Restdocs 세팅 |   박예준    |
+| Nginx 배포, CI/CD 구축 |   박예준    |
+| ERD 및 DB 설계        | 박예준, 이혜연 |
+| API 개발             |   박예준, 이혜연    |
+| 소셜로그인 기능 구현        |   이혜연    |
+| API 문서 자동화 세팅      |   박예준    |
 
 
 ## 🛠️ 개발 환경
@@ -43,7 +43,7 @@
 <img src="https://private-user-images.githubusercontent.com/80024278/294655961-a7e271cc-6048-4d4a-b398-9233f56c7120.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDQ1MjQ0MjQsIm5iZiI6MTcwNDUyNDEyNCwicGF0aCI6Ii84MDAyNDI3OC8yOTQ2NTU5NjEtYTdlMjcxY2MtNjA0OC00ZDRhLWIzOTgtOTIzM2Y1NmM3MTIwLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMDYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTA2VDA2NTUyNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWU1ZTRmMDUxYjE5YzAwMDgxMDcyMzc2NDU5NjVkZTk5NWY4MmJkNjIxNDg2MTNjZTFjZDViNDRlOTgwNTA4Y2EmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.fOk67Gc1vBJNyVvpnBtHjT7JQ4vm91eYNk9BYPzy1UA" width=700 />
 
 ## ☁️ ERD
-<img width=400 src="https://private-user-images.githubusercontent.com/80024278/294656016-8507d843-a3f6-40c6-b814-b0a0f230767b.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDQ1MjQ0MjQsIm5iZiI6MTcwNDUyNDEyNCwicGF0aCI6Ii84MDAyNDI3OC8yOTQ2NTYwMTYtODUwN2Q4NDMtYTNmNi00MGM2LWI4MTQtYjBhMGYyMzA3NjdiLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMDYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTA2VDA2NTUyNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQ0MzIyMTM0NzAxNjEyMWJmMGNhNDAzZmUwM2EyYjg4YmY0MDIyZjU4OWUzYmVlODQxZjBlNjE4NmM3NjgzYWEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.PRJYAPtiJztK03c2WwFOpNbwx3oxb7s9eu6L9FtjgtQ">
+<img width=600 src="https://private-user-images.githubusercontent.com/80024278/294656016-8507d843-a3f6-40c6-b814-b0a0f230767b.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDQ1MjQ0MjQsIm5iZiI6MTcwNDUyNDEyNCwicGF0aCI6Ii84MDAyNDI3OC8yOTQ2NTYwMTYtODUwN2Q4NDMtYTNmNi00MGM2LWI4MTQtYjBhMGYyMzA3NjdiLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMDYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTA2VDA2NTUyNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQ0MzIyMTM0NzAxNjEyMWJmMGNhNDAzZmUwM2EyYjg4YmY0MDIyZjU4OWUzYmVlODQxZjBlNjE4NmM3NjgzYWEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.PRJYAPtiJztK03c2WwFOpNbwx3oxb7s9eu6L9FtjgtQ">
 
 ## 📂 Project Structure
 
@@ -63,8 +63,8 @@
                 🗂 health
                     🗂 controller
                     🗂 dto
-	                  🗂 request
-	                  🗂 response
+                      🗂 request
+                      🗂 response
                     🗂 entity
                     🗂 exception
                     🗂 repository
@@ -72,8 +72,8 @@
                 🗂 mission
                     🗂 controller
                     🗂 dto
-	                  🗂 request
-	                  🗂 response
+                      🗂 request
+                      🗂 response
                     🗂 entity
                     🗂 exception
                     🗂 repository
@@ -81,8 +81,8 @@
                 🗂 parentchild
                     🗂 controller
                     🗂 dto
-	                  🗂 request
-	                  🗂 response
+                      🗂 request
+                      🗂 response
                     🗂 entity
                     🗂 exception
                     🗂 repository
@@ -90,8 +90,8 @@
                 🗂 step
                     🗂 controller
                     🗂 dto
-	                  🗂 request
-	                  🗂 response
+                      🗂 request
+                      🗂 response
                     🗂 entity
                     🗂 exception
                     🗂 repository
@@ -99,8 +99,8 @@
                 🗂 user
                     🗂 controller
                     🗂 dto
-	                  🗂 request
-	                  🗂 response
+                      🗂 request
+                      🗂 response
                     🗂 entity
                     🗂 exception
                     🗂 repository
@@ -113,15 +113,15 @@
                 🗂 healthcheck
                 🗂 response
                 🗂 util
-		    🗂 slack
+                  🗂 slack
         🗂 resources
             application.yaml
             🗂 static
-		🗂 docs
+              🗂 docs
 
     🗂 test 
         🗂 java/sopt/org/motivooServer
-	    🗂 controller
+          🗂 controller
 ```
 
 
@@ -226,7 +226,7 @@
 1. 함수명은 소문자로 시작하고 **동사**로 네이밍한다.
 1. 클래스명은 **명사**로 작성하고 UpperCamelCase를 사용한다.
 1. 객체 이름을 함수 이름에 중복해서 넣지 않는다. (= 상위 이름을 하위 이름에 중복시키지 않는다.)
-1. 컬렉션은 복수형을 사용한다.
+1. 컬렉션은 복수형을 사용한다. ex. userMissions (O) userMissionList (X)
 1. 이중적인 의미를 가지는 단어는 지양한다.
 1. 의도가 드러난다면 되도록 짧은 이름을 선택한다.
 1. 함수의 부수효과를 설명한다.
