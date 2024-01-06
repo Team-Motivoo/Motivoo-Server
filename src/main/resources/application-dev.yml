@@ -15,3 +15,15 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 3MB
+      max-request-size: 5MB
+
+aws-property:
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+  aws-region: ${AWS_REGION}
+  s3-bucket-name: ${S3_BUCKET_NAME}
