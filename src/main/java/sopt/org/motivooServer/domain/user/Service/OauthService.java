@@ -1,5 +1,6 @@
 package sopt.org.motivooServer.domain.user.Service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -8,8 +9,9 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import sopt.org.motivooServer.domain.user.repository.TokenRedisRepository;
 import sopt.org.motivooServer.global.config.oauth.JwtTokenProvider;
-import sopt.org.motivooServer.domain.user.dto.request.OAuth2UserInfo;
+import sopt.org.motivooServer.domain.user.dto.oauth.OAuth2UserInfo;
 import sopt.org.motivooServer.domain.user.dto.request.UserProfile;
 import sopt.org.motivooServer.domain.user.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.user.dto.response.OauthTokenResponse;
@@ -28,7 +30,9 @@ public class OauthService {
     private static final String BEARER_TYPE = "Bearer";
     private final InMemoryClientRegistrationRepository inMemoryRepository;
     private final UserRepository userRepository;
+    private final TokenRedisRepository tokenRedisRepository;
     private final JwtTokenProvider jwtTokenProvider;
+
 
     @Transactional
     public LoginResponse login(String providerName, OauthTokenResponse tokenResponse) {
@@ -38,6 +42,8 @@ public class OauthService {
 
         String accessToken = tokenResponse.getAccessToken();
         String refreshToken = jwtTokenProvider.createRefreshToken();
+
+        reissue(user.getId(), refreshToken); //refresh token 재발급
 
         return LoginResponse.builder()
                 .id(user.getSocialId())
@@ -89,6 +95,23 @@ public class OauthService {
                 .block();
     }
 
+    public String reissue(Long userId, String refreshToken){
+        User user = userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException());
 
+        if(jwtTokenProvider.validateToken(refreshToken)){
+
+        }
+        String reissuedToken = jwtTokenProvider.createRefreshToken();
+        tokenRedisRepository.saveRefreshToken(reissuedToken, String.valueOf(userId));
+        tokenRedisRepository.deleteRefreshToken(refreshToken);
+
+        return reissuedToken;
+    }
+
+    public void logout(String accessToken, String refreshToken){
+        //tokenRedisRepository.saveBlockedToken(accessToken);
+        tokenRedisRepository.deleteRefreshToken(refreshToken);
+
+    }
 
 }

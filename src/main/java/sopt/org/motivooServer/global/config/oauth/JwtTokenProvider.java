@@ -1,5 +1,6 @@
 package sopt.org.motivooServer.global.config.oauth;
 
+import ch.qos.logback.core.subst.Token;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

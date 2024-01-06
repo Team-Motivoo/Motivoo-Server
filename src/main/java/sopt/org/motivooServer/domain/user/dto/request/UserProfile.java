@@ -1,11 +1,12 @@
 package sopt.org.motivooServer.domain.user.dto.request;
 
 import lombok.Getter;
+import sopt.org.motivooServer.domain.user.dto.oauth.OAuth2UserInfo;
 
 import java.util.Map;
 
 @Getter
-public class UserProfile implements OAuth2UserInfo{
+public class UserProfile implements OAuth2UserInfo {
     private Map<String, Object> attributes;
 
     public UserProfile(Map<String, Object> attributes){
