@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.external;
+package sopt.org.motivooServer.global.util.s3;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -6,15 +6,18 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import sopt.org.motivooServer.global.config.AWSConfig;
+import sopt.org.motivooServer.global.config.aws.AWSConfig;
 
+@Slf4j
 @Component
 public class S3Service {
 
@@ -35,6 +38,8 @@ public class S3Service {
 
 		final String key = directoryPath + generateImageFileName();
 		final S3Client s3Client = awsConfig.getS3Client();
+		log.info("S3 세팅 성공!: {}", key);
+		log.info("업로드한 image: {}", image);
 
 		PutObjectRequest request = PutObjectRequest.builder()
 			.bucket(bucketName)
