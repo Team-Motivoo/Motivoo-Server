@@ -140,7 +140,7 @@
 
 ### 🌳 Branch 전략
 
-<img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/cd59ef5f-e9df-43db-be41-66ea581925cf">
+<img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/7219ee3e-d249-4ee2-bebd-853f04f63d8e">
 
 <details>
 <summary>자세히 보기</summary>
