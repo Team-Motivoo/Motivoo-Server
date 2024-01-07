@@ -19,6 +19,7 @@ import sopt.org.motivooServer.domain.user.entity.SocialPlatform;
 import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
+import sopt.org.motivooServer.global.config.oauth.JwtValidationType;
 
 import java.util.Map;
 
@@ -102,7 +103,7 @@ public class OauthService {
     public String reissue(Long userId, String refreshToken){
         User user = userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException());
 
-        if(!jwtTokenProvider.validateToken(refreshToken)){
+        if(jwtTokenProvider.validateToken(refreshToken)!= JwtValidationType.VALID_JWT){
             //예외처리
         }
 
@@ -115,13 +116,12 @@ public class OauthService {
     }
 
     public void logout(String accessToken){
-        String userId = jwtTokenProvider.getPayload(accessToken);
-        String refreshToken = userRepository.findRefreshTokenById(Long.parseLong(userId));
-        System.out.println(accessToken);
-        System.out.println(userId);
-        System.out.println(refreshToken);
-        tokenRedisRepository.saveBlockedToken(accessToken);
-        tokenRedisRepository.deleteRefreshToken(refreshToken);
+//        String userId = jwtTokenProvider.getPayload(accessToken);
+//        String refreshToken = userRepository.findRefreshTokenById(Long.parseLong(userId));
+//
+//        tokenRedisRepository.saveBlockedToken(accessToken);
+//        tokenRedisRepository.deleteRefreshToken(refreshToken);
+        System.out.println("ㅎㅎㅎ");
 
     }
 

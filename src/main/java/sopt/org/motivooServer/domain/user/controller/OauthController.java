@@ -12,6 +12,8 @@ import sopt.org.motivooServer.domain.user.Service.OauthService;
 import sopt.org.motivooServer.domain.user.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.user.dto.response.OauthTokenResponse;
 
+import java.security.Principal;
+
 
 @RequiredArgsConstructor
 @Slf4j
@@ -27,13 +29,12 @@ public class OauthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestHeader("Authorization") String accessToken){
+    public ResponseEntity<?> logout(Principal principal){
+        System.out.println(principal.getName());
 
-        oauthService.logout(accessToken);
-
+        //oauthService.logout(accessToken);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .header("로그아웃","로그아웃 성공")
                 .build();
     }
 
