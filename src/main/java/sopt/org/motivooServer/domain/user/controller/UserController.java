@@ -21,17 +21,17 @@ public class UserController {
 
 	private final UserService userService;
 
-	@GetMapping   // TODO @PathVariable -> Principal
+	@GetMapping("/{userId}")   // TODO @PathVariable -> Principal
 	public ResponseEntity<ApiResponse<MyPageInfoResponse>> getMyPage(@PathVariable final Long userId) {
 		return ApiResponse.success(GET_MYPAGE_INFO_SUCCESS, userService.getMyPage(userId));
 	}
 
-	@GetMapping("/info")   // TODO @PathVariable -> Principal
+	@GetMapping("/info/{userId}")   // TODO @PathVariable -> Principal
 	public ResponseEntity<ApiResponse<MyPageInfoResponse>> getMyInfo(@PathVariable final Long userId) {
 		return ApiResponse.success(GET_MYPAGE_MYINFO_SUCCESS, userService.getMyInfo(userId));
 	}
 
-	@GetMapping("/exercise")  // TODO @PathVariable -> Principal
+	@GetMapping("/exercise/{userId}")  // TODO @PathVariable -> Principal
 	public ResponseEntity<ApiResponse<MyHealthInfoResponse>> getMyExercise(@PathVariable final Long userId) {
 		return ApiResponse.success(GET_MYPAGE_EXERCISE_INFO_SUCCESS, userService.getMyHealthInfo(userId));
 	}
