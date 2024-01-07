@@ -8,7 +8,7 @@ services:
 
   blue:
     container_name: blue
-    image: yejunpark1/motivoo-server-8080
+    image: yejunpark1/motivoo-server
     expose:
       - 8080
     ports:
@@ -21,7 +21,7 @@ services:
 
   green:
     container_name: green
-    image: yejunpark1/motivoo-server-8081
+    image: yejunpark1/motivoo-server
     expose:
       - 8080
     ports:
