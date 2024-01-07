@@ -49,6 +49,8 @@ public class User extends BaseTimeEntity {
 
 	private String socialAccessToken;
 
+	private String socialRefreshToken;
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private SocialPlatform socialPlatform;
@@ -71,5 +73,9 @@ public class User extends BaseTimeEntity {
 		if (userMission.getUser() != this) {
 			userMission.setUser(this);
 		}
+	}
+
+	public void updateRefreshToken(String refreshToken){
+		this.socialRefreshToken = refreshToken;
 	}
 }

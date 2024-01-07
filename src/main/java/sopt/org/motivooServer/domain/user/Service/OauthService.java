@@ -38,10 +38,9 @@ public class OauthService {
     public LoginResponse login(String providerName, OauthTokenResponse tokenResponse) {
         ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
 
-        User user = getUserProfile(providerName, tokenResponse, provider);
-
-        String accessToken = tokenResponse.getAccessToken();
         String refreshToken = jwtTokenProvider.createRefreshToken();
+        User user = getUserProfile(providerName, tokenResponse, provider, refreshToken);
+        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getId()));
 
         reissue(user.getId(), refreshToken); //refresh token 재발급
 
@@ -55,7 +54,8 @@ public class OauthService {
     }
 
 
-    private User getUserProfile(String providerName, OauthTokenResponse tokenResponse, ClientRegistration provider){
+    @Transactional
+    public User getUserProfile(String providerName, OauthTokenResponse tokenResponse, ClientRegistration provider, String refreshToken){
         Map<String, Object> userAttributes = getUserAttributes(provider, tokenResponse);
         OAuth2UserInfo oAuth2UserInfo = null;
         SocialPlatform socialPlatform = null;
@@ -63,7 +63,7 @@ public class OauthService {
             oAuth2UserInfo = new UserProfile(userAttributes);
             socialPlatform = SocialPlatform.KAKAO;
         } else {
-            log.info("허용되지 않은 접근 입니다.");
+            log.info("허용되지 않은 접근 입니다."); //예외처리
         }
 
         String providerId = oAuth2UserInfo.getProviderId();
@@ -77,10 +77,14 @@ public class OauthService {
                     .socialId(providerId)
                     .socialPlatform(socialPlatform)
                     .socialAccessToken(tokenResponse.getAccessToken())
+                    .socialRefreshToken(refreshToken)
                     .type(UserType.NONE)
                     .deleted(Boolean.FALSE)
                     .build();
             userRepository.save(userEntity);
+        }
+        else{
+            userEntity.updateRefreshToken(refreshToken);
         }
         return userEntity;
     }
@@ -98,18 +102,25 @@ public class OauthService {
     public String reissue(Long userId, String refreshToken){
         User user = userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException());
 
-        if(jwtTokenProvider.validateToken(refreshToken)){
-
+        if(!jwtTokenProvider.validateToken(refreshToken)){
+            //예외처리
         }
+
         String reissuedToken = jwtTokenProvider.createRefreshToken();
+
         tokenRedisRepository.saveRefreshToken(reissuedToken, String.valueOf(userId));
         tokenRedisRepository.deleteRefreshToken(refreshToken);
 
         return reissuedToken;
     }
 
-    public void logout(String accessToken, String refreshToken){
-        //tokenRedisRepository.saveBlockedToken(accessToken);
+    public void logout(String accessToken){
+        String userId = jwtTokenProvider.getPayload(accessToken);
+        String refreshToken = userRepository.findRefreshTokenById(Long.parseLong(userId));
+        System.out.println(accessToken);
+        System.out.println(userId);
+        System.out.println(refreshToken);
+        tokenRedisRepository.saveBlockedToken(accessToken);
         tokenRedisRepository.deleteRefreshToken(refreshToken);
 
     }

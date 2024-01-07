@@ -1,11 +1,13 @@
 package sopt.org.motivooServer.domain.user.repository;
 
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -41,12 +43,21 @@ public class TokenRedisRepository {
      * 어세스토큰의 남은 시간동안 저장됩니다.
      *
      * @param accessToken 어세스토큰
-     * @param remainTime  남은 시간
+     * remainTime  남은 시간
      */
-    public void saveBlockedToken(String accessToken, Long remainTime) {
+    public void saveBlockedToken(String accessToken) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         String key = PREFIX_BLOCKED + accessToken;
         valueOperations.set(key, "empty");
+
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(accessToken)
+                .getBody()
+                .getExpiration();
+        Long now = new Date().getTime();
+        Long remainTime = expiration.getTime() - now;
         redisTemplate.expire(key, remainTime, TimeUnit.SECONDS);
     }
 
