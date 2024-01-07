@@ -56,8 +56,8 @@ jobs:
           host: ${{ secrets.RELEASE_SERVER_IP }}
           username: ${{ secrets.RELEASE_SERVER_USER }}
           key: ${{ secrets.RELEASE_SERVER_KEY }}
-          source: "./scripts/deploy.sh"
-          target: "/home/ubuntu/"
+          source: ./scripts/deploy.sh
+          target: /home/ubuntu/
 
       - name: docker-compose.yml EC2 인스턴스로 전송
         uses: appleboy/ssh-action@master
@@ -65,8 +65,8 @@ jobs:
           host: ${{ secrets.RELEASE_SERVER_IP }}
           username: ${{ secrets.RELEASE_SERVER_USER }}
           key: ${{ secrets.RELEASE_SERVER_KEY }}
-          source: "./docker-compose.yml"
-          target: "/home/ubuntu/"
+          source: ./docker-compose.yml
+          target: /home/ubuntu/
 
   deploy-cd:  # job#2
     needs: deploy-ci
