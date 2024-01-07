@@ -49,14 +49,31 @@ jobs:
         run: |
           docker build --platform linux/amd64 -t yejunpark1/motivoo-server .
           docker push yejunpark1/motivoo-server
-      
+
+      - name: deploy.sh EC2 인스턴스로 전송
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.RELEASE_SERVER_IP }}
+          username: ${{ secrets.RELEASE_SERVER_USER }}
+          key: ${{ secrets.RELEASE_SERVER_KEY }}
+          source: "./scripts/deploy.sh"
+          target: "/home/ubuntu/"
+
+      - name: docker-compose.yml EC2 인스턴스로 전송
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.RELEASE_SERVER_IP }}
+          username: ${{ secrets.RELEASE_SERVER_USER }}
+          key: ${{ secrets.RELEASE_SERVER_KEY }}
+          source: "./docker-compose.yml"
+          target: "/home/ubuntu/"
 
   deploy-cd:  # job#2
     needs: deploy-ci
     runs-on: ubuntu-22.04
 
     steps:  # EC2 인스턴스 내부에서 이루어지는 작업
-      - name: 도커 컨테이너 실행
+      - name: 도커 컨테이너 실행 및 이미지 Pull
         uses: appleboy/ssh-action@master
 
         with:
@@ -65,5 +82,8 @@ jobs:
           key: ${{ secrets.RELEASE_SERVER_KEY }}
           script: | 
             cd ~
+            sudo docker pull yejunpark1/motivoo-server
             sudo chmod 777 ./deploy.sh
+            cp ./scripts/deploy.sh ./deploy.sh
             ./deploy.sh
+            docker image prune -f
