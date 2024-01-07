@@ -3,6 +3,7 @@ package sopt.org.motivooServer.domain.user.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Builder;
+import sopt.org.motivooServer.domain.user.entity.User;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -11,14 +12,14 @@ public record MyPageInfoResponse(
 	int age
 ) {
 
-	public static MyPageInfoResponse of(String name, int age) {
+	public static MyPageInfoResponse of(User user) {
 		return MyPageInfoResponse.builder()
-			.name(name)
-			.age(age).build();
+			.name(user.getUsername())
+			.age(user.getAge()).build();
 	}
 
-	public static MyPageInfoResponse of(String name) {
+	public static MyPageInfoResponse ofMain(User user) {
 		return MyPageInfoResponse.builder()
-			.name(name).build();
+			.name(user.getUsername()).build();
 	}
 }
