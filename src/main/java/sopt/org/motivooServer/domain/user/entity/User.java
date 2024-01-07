@@ -44,7 +44,7 @@ public class User extends BaseTimeEntity {
 	private Boolean deleted = Boolean.FALSE;
 
 	@Column(nullable = false)
-	private Long socialId;
+	private String socialId;
 
 	private String socialNickname;
 
