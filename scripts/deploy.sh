@@ -14,7 +14,7 @@ IS_REDIS_ACTIVATE=$(docker ps | grep redis)
 WEB_HEALTH_CHECK_URL=/actuator/health
 
 # Redis Docker Image Pull
-if [ -z $IS_REDIS_ACTIVATE ];then
+if [ -z "$IS_REDIS_ACTIVATE" ];then
   echo "###### REDIS ######"
   echo "[$NOW_TIME] Redis 도커 이미지 pull"
   docker-compose pull redis
@@ -30,7 +30,7 @@ else
 fi
 
 # 현재 실행 중인 포트 외 실행가능한 포트 확인
-for iten in "{$ALL_PORT[@]}"; do
+for iten in "${ALL_PORT[@]}"; do
   if [ "$item" != "$RUNNING_SERVER_PORT" ]; then
     AVAILABLE_PORT+=("$item")
   fi
@@ -57,7 +57,7 @@ if [ $RUNNING_SERVER_PORT -eq 8080 ]; then
     echo "[$NOW_TIME] Green health check ..."
     sleep 3
 
-    RESPONSE=$(curl http://localhost:${RUNNING_SERVER_PORT}${WEB_HEALTH_CHECK_URL})
+    RESPONSE=$(curl -s http://localhost:${RUNNING_SERVER_PORT}${WEB_HEALTH_CHECK_URL})
     UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
     echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
@@ -99,7 +99,7 @@ else
     echo "[$NOW_TIME] Blue health check ..."
     sleep 3
 
-    RESPONSE=$(curl http://localhost:${RUNNING_SERVER_PORT}/actuator/health)
+    RESPONSE=$(curl -s http://localhost:${RUNNING_SERVER_PORT}/actuator/health)
     UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
     echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
@@ -130,7 +130,7 @@ fi
 echo "----------------------------------------------------------------------"
 
 # Nginx를 통해서 서버에 접근 가능한지 확인
-RESPONSE=$(curl http://localhost:${RUNNING_SERVER_PORT}/actuator/health)
+RESPONSE=$(curl -s http://localhost:${RUNNING_SERVER_PORT}/actuator/health)
 UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
 echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
