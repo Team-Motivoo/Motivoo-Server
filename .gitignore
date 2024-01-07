@@ -10,6 +10,8 @@ application-test.yml
 
 **.adoc
 
+**.sql
+
 ### STS ###
 .apt_generated
 .classpath
