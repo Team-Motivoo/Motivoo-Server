@@ -21,7 +21,7 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
   echo "[$NOW_TIME] 스위칭"
   echo "[$NOW_TIME] BLUE -> GREEN ###"
   echo "[$NOW_TIME] Green 도커 이미지 pull"
-  docker-compose pull green
+  # docker-compose pull green
   echo "[$NOW_TIME] Green 컨테이너 Up (빌드 & 실행)"
   docker-compose up -d green
 
@@ -62,7 +62,7 @@ else
   echo "[$NOW_TIME] 스위칭"
   echo "[$NOW_TIME] GREEN -> BLUE ###"
   echo "[$NOW_TIME] Blue 도커 이미지 pull"
-  docker-compose pull blue
+  # docker-compose pull blue
   echo "[$NOW_TIME] Blue 컨테이너 Up (빌드 & 실행)"
   docker-compose up -d blue
 
