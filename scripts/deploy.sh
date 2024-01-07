@@ -35,7 +35,7 @@ fi
 
 # 현재 실행 중인 포트 외 실행가능한 포트 확인
 for item in "${ALL_PORTS[@]}"; do
-  if [ "$item" != "$RUNNING_SERVER_PORT" ]; then
+  if [ "$item" != "${RUNNING_SERVER_PORT}" ]; then
     AVAILABLE_PORT+=("$item")
   fi
 done;
@@ -144,10 +144,10 @@ echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
 if [ $UP_COUNT -ge 1 ]
 then
-    echo "> 서버 변경 성공"
+    echo "[$NOW_TIME] 서버 변경 성공"
 else
-    echo "> 서버 변경 실패"
-    echo "> 서버 응답 결과: ${RESPONSE}"
+    echo "[$NOW_TIME] 서버 변경 실패"
+    echo "[$NOW_TIME] 서버 응답 결과: ${RESPONSE}"
     exit 1
 fi
 
