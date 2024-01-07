@@ -31,7 +31,7 @@ fi
 
 # 현재 실행 중인 포트 외 실행가능한 포트 확인
 for iten in "{$ALL_PORT[@]}"; do
-  if [ "$item" != "$RUNNING_SERVER_PORT"]; then
+  if [ "$item" != "$RUNNING_SERVER_PORT" ]; then
     AVAILABLE_PORT+=("$item")
   fi
 done;
@@ -148,3 +148,4 @@ if [ -n "$RUNNING_SERVER_PORT" ]; then
     echo "> 기존 ${RUNNING_SERVER_PORT}포트 서버 중단"
     sudo docker rm -f ${SERVER_NAME}-${RUNNING_SERVER_PORT}
 fi
+
