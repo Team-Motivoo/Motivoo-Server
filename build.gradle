@@ -1,7 +1,32 @@
+buildscript {
+	ext {
+		restdocsApiSpecVersion = '0.18.2'
+	}
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.0.11'
 	id 'io.spring.dependency-management' version '1.1.4'
+
+	id 'com.epages.restdocs-api-spec' version "${restdocsApiSpecVersion}"
+	id 'org.hidetake.swagger.generator' version '2.18.2'
+}
+
+
+swaggerSources {
+	sample {
+		setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
+	}
+}
+
+// openapi3 스펙 생성 시 설정 정보
+openapi3 {
+	server = "http://localhost:8080"
+	title = "모티부 API 명세서"
+	description = "Motivoo REST Docs with SwaggerUI"
+	version = "v0.0.1"
+	format = "yaml"
 }
 
 group = 'sopt.org'
@@ -41,7 +66,7 @@ dependencies {
 
 	// Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	testImplementation 'org.springframework.security:spring-segicurity-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 
 	// Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -87,6 +112,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 tasks.named('test') {
@@ -118,4 +144,3 @@ openapi3 {
 	outputFileNamePrefix = "open-api-3.0.1"
 	outputDirectory = 'build/resources/main/static/docs'
 }
-
