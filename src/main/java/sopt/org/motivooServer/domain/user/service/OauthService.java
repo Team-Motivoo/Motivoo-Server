@@ -26,8 +26,6 @@ import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.config.oauth.JwtValidationType;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Map;
 
 @Service
@@ -113,7 +111,7 @@ public class OauthService {
     public String reissue(Long userId, String refreshToken){
         User user = userRepository.findById(userId)
                 .orElseThrow(
-                        () -> new UserException(UserExceptionType.USER_NOT_FOUND));
+                        () -> new UserException(UserExceptionType.INVALID_USER_TYPE));
 
         if(jwtTokenProvider.validateToken(refreshToken)!= JwtValidationType.VALID_JWT){
             throw new UserException(UserExceptionType.TOKEN_EXPIRED);
