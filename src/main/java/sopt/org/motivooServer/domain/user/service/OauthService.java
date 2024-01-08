@@ -3,11 +3,14 @@ package sopt.org.motivooServer.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.exception.UserExceptionType;
@@ -23,6 +26,8 @@ import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.config.oauth.JwtValidationType;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 
 @Service
@@ -57,6 +62,7 @@ public class OauthService {
     }
 
 
+
     @Transactional
     public User getUserProfile(String providerName, OauthTokenResponse tokenResponse, ClientRegistration provider, String refreshToken){
         Map<String, Object> userAttributes = getUserAttributes(provider, tokenResponse);
@@ -72,9 +78,8 @@ public class OauthService {
         String providerId = oAuth2UserInfo.getProviderId();
         String nickName = oAuth2UserInfo.getNickName();
 
-        User userEntity = userRepository.findBySocialId(providerId)
-                .orElseThrow(
-                        () -> new UserException(UserExceptionType.USER_NOT_FOUND));
+        User userEntity = userRepository.findBySocialId(providerId);
+
 
         if(userEntity == null){
             userEntity = User.builder()

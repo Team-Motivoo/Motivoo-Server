@@ -1,0 +1,64 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "모티부 API 명세서",
+    "description" : "Motivoo REST Docs with SwaggerUI",
+    "version" : "v0.0.1"
+  },
+  "servers" : [ {
+    "url" : "http://localhost:8080"
+  } ],
+  "tags" : [ ],
+  "paths" : {
+    "/api/health" : {
+      "get" : {
+        "tags" : [ "HealthCheck API" ],
+        "summary" : "헬스체크용 API",
+        "description" : "헬스체크 성공여부 조회",
+        "operationId" : "healthCheck",
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/api-health279159985"
+                },
+                "examples" : {
+                  "healthCheck" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"헬스체크용 API 호출에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : \"test success!\"\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "api-health279159985" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "string",
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      }
+    }
+  }
+}
