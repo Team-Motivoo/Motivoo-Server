@@ -1,5 +1,6 @@
 package sopt.org.motivooServer.global.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,10 +15,11 @@ import sopt.org.motivooServer.global.config.oauth.CustomAccessDeniedHandler;
 import sopt.org.motivooServer.global.config.oauth.CustomJwtAuthenticationEntryPoint;
 import sopt.org.motivooServer.global.config.oauth.JwtAuthenticationFilter;
 
+import static javax.management.Query.and;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -25,7 +27,7 @@ public class SecurityConfig {
 	private final CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private static final String[] AUTH_WHITELIST = {
-		"/login/**"
+		"/oauth/**"
 	};
 
 	@Bean
@@ -44,7 +46,10 @@ public class SecurityConfig {
 				.authorizeHttpRequests()
 				.requestMatchers(AUTH_WHITELIST).permitAll()
 				.anyRequest().authenticated()
-				.and()
+				.and().logout(logout -> logout.permitAll()
+						.logoutSuccessHandler((request, response, authentication) -> {
+							response.setStatus(HttpServletResponse.SC_OK);
+						}))
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}

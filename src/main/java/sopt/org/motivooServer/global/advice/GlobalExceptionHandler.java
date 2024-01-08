@@ -18,6 +18,12 @@ public class GlobalExceptionHandler {
 	/**
 	 * 500 Internal Server Error
 	 */
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Exception> handleException(final Exception e) {
+		log.error("Error 발생:{}", e.getStackTrace());
+		log.error("Error 발생메시지:{}", e.getMessage());
+		return ResponseEntity.internalServerError().body(e);
+	}
 
 
 	/**
@@ -29,6 +35,6 @@ public class GlobalExceptionHandler {
 		log.error("🚨🚨🚨 BusinessException occured: {} 🚨🚨🚨", e.getMessage());
 
 		return ResponseEntity.status(e.getHttpStatus())
-			.body(ErrorResponse.of(e.getExceptionType()));
+				.body(ErrorResponse.of(e.getExceptionType()));
 	}
 }

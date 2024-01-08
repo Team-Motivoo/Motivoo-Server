@@ -1,14 +1,16 @@
-package sopt.org.motivooServer.domain.user.Service;
+package sopt.org.motivooServer.domain.user.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import sopt.org.motivooServer.domain.user.exception.UserException;
+import sopt.org.motivooServer.domain.user.exception.UserExceptionType;
 import sopt.org.motivooServer.domain.user.repository.TokenRedisRepository;
 import sopt.org.motivooServer.global.config.oauth.JwtTokenProvider;
 import sopt.org.motivooServer.domain.user.dto.oauth.OAuth2UserInfo;
@@ -64,13 +66,15 @@ public class OauthService {
             oAuth2UserInfo = new UserProfile(userAttributes);
             socialPlatform = SocialPlatform.KAKAO;
         } else {
-            log.info("허용되지 않은 접근 입니다."); //예외처리
+            throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
         }
 
         String providerId = oAuth2UserInfo.getProviderId();
         String nickName = oAuth2UserInfo.getNickName();
 
-        User userEntity = userRepository.findBySocialId(providerId);
+        User userEntity = userRepository.findBySocialId(providerId)
+                .orElseThrow(
+                        () -> new UserException(UserExceptionType.USER_NOT_FOUND));
 
         if(userEntity == null){
             userEntity = User.builder()
@@ -100,11 +104,14 @@ public class OauthService {
                 .block();
     }
 
+    @Transactional
     public String reissue(Long userId, String refreshToken){
-        User user = userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException());
+        User user = userRepository.findById(userId)
+                .orElseThrow(
+                        () -> new UserException(UserExceptionType.USER_NOT_FOUND));
 
         if(jwtTokenProvider.validateToken(refreshToken)!= JwtValidationType.VALID_JWT){
-            //예외처리
+            throw new UserException(UserExceptionType.TOKEN_EXPIRED);
         }
 
         String reissuedToken = jwtTokenProvider.createRefreshToken();
@@ -115,14 +122,13 @@ public class OauthService {
         return reissuedToken;
     }
 
+    @Transactional
     public void logout(String accessToken){
-//        String userId = jwtTokenProvider.getPayload(accessToken);
-//        String refreshToken = userRepository.findRefreshTokenById(Long.parseLong(userId));
-//
-//        tokenRedisRepository.saveBlockedToken(accessToken);
-//        tokenRedisRepository.deleteRefreshToken(refreshToken);
-        System.out.println("ㅎㅎㅎ");
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String refreshToken = userRepository.findRefreshTokenById(Long.parseLong(userId));
 
+        tokenRedisRepository.saveBlockedToken(accessToken);
+        tokenRedisRepository.deleteRefreshToken(refreshToken);
     }
 
 }

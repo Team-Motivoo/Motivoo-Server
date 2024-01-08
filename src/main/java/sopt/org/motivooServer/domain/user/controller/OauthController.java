@@ -3,16 +3,14 @@ package sopt.org.motivooServer.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sopt.org.motivooServer.domain.user.Service.OauthService;
 import sopt.org.motivooServer.domain.user.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.user.dto.response.OauthTokenResponse;
-
-import java.security.Principal;
+import sopt.org.motivooServer.domain.user.service.OauthService;
+import sopt.org.motivooServer.global.response.ApiResponse;
+import static sopt.org.motivooServer.global.response.SuccessType.LOGIN_SUCCESS;
+import static sopt.org.motivooServer.global.response.SuccessType.LOGOUT_SUCCESS;
 
 
 @RequiredArgsConstructor
@@ -21,21 +19,18 @@ import java.security.Principal;
 public class OauthController {
     private final OauthService oauthService;
 
-    @GetMapping("/login/oauth/{provider}")
-    public ResponseEntity<LoginResponse> login(@PathVariable String provider, @RequestBody OauthTokenResponse tokenResponse){
+    @GetMapping("/oauth/login/{provider}")
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@PathVariable String provider, @RequestBody OauthTokenResponse tokenResponse){
         LoginResponse loginResponse = oauthService.login(provider, tokenResponse);
 
-        return ResponseEntity.ok().body(loginResponse);
+        return ApiResponse.success(LOGIN_SUCCESS, loginResponse);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(Principal principal){
-        System.out.println(principal.getName());
+    @PostMapping("/oauth/logout")
+    public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("Authorization") String accessToken){
+        oauthService.logout(accessToken);
 
-        //oauthService.logout(accessToken);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .build();
+        return ApiResponse.success(LOGOUT_SUCCESS);
     }
 
 }

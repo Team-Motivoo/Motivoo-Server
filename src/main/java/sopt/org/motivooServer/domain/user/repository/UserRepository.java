@@ -14,7 +14,7 @@ public interface UserRepository extends Repository<User, Long> {
     void save(User user);
     Optional<User> findById(Long id);
 
-    User findBySocialId(String socialId);
+    Optional<User> findBySocialId(String socialId);
 
     @Query("select u.socialRefreshToken from User u where u.id=?1")
     String findRefreshTokenById(Long id);

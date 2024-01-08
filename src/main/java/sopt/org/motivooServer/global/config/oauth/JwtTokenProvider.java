@@ -1,14 +1,11 @@
 package sopt.org.motivooServer.global.config.oauth;
 
-import ch.qos.logback.core.subst.Token;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -30,12 +27,13 @@ public class JwtTokenProvider {
     public String createRefreshToken() {
         byte[] array = new byte[7];
         new Random().nextBytes(array);
-        String generatedString = new String(array, StandardCharsets.UTF_8);
+        String generatedString = Base64.getEncoder().encodeToString(array);
         return createToken(generatedString, refreshTokenValidityInMilliseconds);
     }
 
     public String createToken(String payload, long expireLength) {
-        Claims claims = Jwts.claims().setSubject(payload);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("payload", payload);
         Date now = new Date();
         Date validity = new Date(now.getTime() + expireLength);
         return Jwts.builder()
@@ -48,12 +46,16 @@ public class JwtTokenProvider {
 
     public String getPayload(String token){
         try {
-            return Jwts.parserBuilder()
+            Claims claims = Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+                    .getBody();
+
+            Object subject = claims.get("payload");
+
+            return String.valueOf(subject);
+
         } catch (ExpiredJwtException e) {
             return e.getClaims().getSubject();
         } catch (JwtException e){

@@ -23,7 +23,6 @@ public class UserProfile implements OAuth2UserInfo {
         return "kakao";
     }
 
-
     @Override
     public String getNickName() {
         return String.valueOf(attributes.get("nickname"));
