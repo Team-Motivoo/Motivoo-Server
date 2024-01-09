@@ -11,7 +11,6 @@ import sopt.org.motivooServer.domain.auth.service.OauthService;
 import sopt.org.motivooServer.global.response.ApiResponse;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
 
-
 @RequiredArgsConstructor
 @RestController
 public class OauthController {
