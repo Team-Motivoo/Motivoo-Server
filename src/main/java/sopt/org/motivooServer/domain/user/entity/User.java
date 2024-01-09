@@ -24,11 +24,9 @@ import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 @Getter
 @Entity
 @Table(name = "`user`")
-@Builder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE user SET user.deleted=true WHERE user_id=?")
 public class User extends BaseTimeEntity {
-
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private Long id;
@@ -49,7 +47,7 @@ public class User extends BaseTimeEntity {
 
 	private String socialAccessToken;
 
-	private String socialRefreshToken;
+	private String refreshToken;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -62,8 +60,16 @@ public class User extends BaseTimeEntity {
 	@OneToMany(mappedBy = "user")
 	private List<UserMission> userMissions = new ArrayList<>();
 
-	protected User() {
-
+	@Builder
+	private User(String nickname, String socialId, SocialPlatform socialPlatform, String socialAccessToken,
+				 String refreshToken, UserType type, boolean deleted){
+		this.nickname = nickname;
+		this.socialId = socialId;
+		this.socialPlatform = socialPlatform;
+		this.socialAccessToken = socialAccessToken;
+		this.refreshToken = refreshToken;
+		this.type = type;
+		this.deleted = deleted;
 	}
 
 	//== 연관관계 메서드 ==//
@@ -75,6 +81,6 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void updateRefreshToken(String refreshToken){
-		this.socialRefreshToken = refreshToken;
+		this.refreshToken = refreshToken;
 	}
 }

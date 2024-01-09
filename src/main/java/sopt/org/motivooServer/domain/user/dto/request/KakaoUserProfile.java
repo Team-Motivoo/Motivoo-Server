@@ -6,10 +6,10 @@ import sopt.org.motivooServer.domain.auth.service.OAuth2UserInfo;
 import java.util.Map;
 
 @Getter
-public class UserProfile implements OAuth2UserInfo {
+public class KakaoUserProfile implements OAuth2UserInfo {
     private Map<String, Object> attributes;
 
-    public UserProfile(Map<String, Object> attributes){
+    public KakaoUserProfile(Map<String, Object> attributes){
         this.attributes = attributes;
     }
 

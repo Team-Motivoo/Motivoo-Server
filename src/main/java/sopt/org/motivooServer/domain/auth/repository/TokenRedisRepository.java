@@ -2,6 +2,7 @@ package sopt.org.motivooServer.domain.auth.repository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -16,67 +17,73 @@ import java.util.concurrent.TimeUnit;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.TOKEN_EXPIRED;
 
 @Repository
-@RequiredArgsConstructor
 public class TokenRedisRepository {
     private final StringRedisTemplate redisTemplate;
+    private final ValueOperations<String, String> valueOperations;
 
     @Value("${jwt.refresh-token.expire-length}")
     private long refreshTokenValidityInMilliseconds;
+    private static final String BEARER_TYPE = "Bearer";
+
     private static final String PREFIX_REFRESH = "REFRESH:";
     private static final String PREFIX_BLOCKED = "BLOCKED:";
 
     @Value("${jwt.token.secret-key}")
     private String secretKey;
-    
+
+    public TokenRedisRepository(StringRedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+        this.valueOperations = redisTemplate.opsForValue();
+    }
+
+
     public void saveRefreshToken(String refreshToken, String account) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         String key = PREFIX_REFRESH + refreshToken;
         valueOperations.set(key, account);
         redisTemplate.expire(key, refreshTokenValidityInMilliseconds, TimeUnit.SECONDS);
     }
 
     public void saveBlockedToken(String accessToken) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         String key = PREFIX_BLOCKED + accessToken;
         valueOperations.set(key, "empty");
 
-        Date expiration = null;
+        Date expiration = getExpirationFromToken(accessToken);
+        setExpirationInRedis(key, expiration);
+    }
 
+    private Date getExpirationFromToken(String accessToken) {
         try {
             accessToken = accessToken.replaceAll("\\s+", "");
-            accessToken = accessToken.replace("Bearer", "");
+            accessToken = accessToken.replace(BEARER_TYPE, "");
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(accessToken)
                     .getBody();
 
-            expiration = claims
-                    .getExpiration();
-
-        } catch (JwtException e){
+            return claims.getExpiration();
+        } catch (JwtException e) {
             throw new UserException(TOKEN_EXPIRED);
         }
+    }
 
+    private void setExpirationInRedis(String key, Date expiration) {
         Long now = new Date().getTime();
         Long remainTime = expiration.getTime() - now;
         redisTemplate.expire(key, remainTime, TimeUnit.SECONDS);
     }
 
     public Optional<String> findByRefreshToken(String refreshToken) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         String key = PREFIX_REFRESH + refreshToken;
         return Optional.ofNullable(valueOperations.get(key));
     }
 
     public boolean doesTokenBlocked(String accessToken) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         String key = PREFIX_BLOCKED + accessToken;
         return valueOperations.get(key) != null;
     }
 
     public void deleteRefreshToken(String refreshToken) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         String key = PREFIX_REFRESH + refreshToken;
         redisTemplate.delete(key);
     }

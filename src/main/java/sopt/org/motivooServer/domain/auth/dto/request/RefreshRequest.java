@@ -1,11 +1,10 @@
 package sopt.org.motivooServer.domain.auth.dto.request;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class RefreshRequest {
-    private Long userId;
+public record RefreshRequest(
+        @JsonProperty("user_id")
+        Long userId
+) {
+
 }
