@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,6 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import sopt.org.motivooServer.domain.auth.config.CustomJwtAuthenticationEntryPoint;
 import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
+import sopt.org.motivooServer.domain.auth.config.RedisConfig;
+import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -41,6 +44,12 @@ public abstract class BaseControllerTest {
 
 	@Autowired
 	private CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
+
+	@Autowired
+	private RedisConfig redisConfig;
+
+	@Autowired
+	private TokenRedisRepository tokenRedisRepository;
 
 	@BeforeEach
 	void setUp(final RestDocumentationContextProvider restDocumentation) {

@@ -25,6 +25,8 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.auth.config.CustomJwtAuthenticationEntryPoint;
 import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
+import sopt.org.motivooServer.domain.auth.config.RedisConfig;
+import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivooServer.global.healthcheck.HealthCheckController;
 import sopt.org.motivooServer.global.response.ApiResponse;
 import sopt.org.motivooServer.global.util.slack.SlackUtil;
@@ -47,6 +49,12 @@ public class HealthCheckControllerTest extends BaseControllerTest {
 
 	@MockBean
 	private HealthCheckController healthCheckController;
+
+	@MockBean
+	private RedisConfig redisConfig;
+
+	@MockBean
+	private TokenRedisRepository tokenRedisRepository;
 
 	@DisplayName("Health Check Controller 테스트")
 	@Test
