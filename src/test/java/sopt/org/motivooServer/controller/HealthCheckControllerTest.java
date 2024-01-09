@@ -37,7 +37,7 @@ public class HealthCheckControllerTest extends BaseControllerTest {
 	private SlackUtil slackUtil;
 
 	@MockBean
-	HealthCheckController healthCheckController;
+	private HealthCheckController healthCheckController;
 
 	@DisplayName("Health Check Controller 테스트")
 	@Test
