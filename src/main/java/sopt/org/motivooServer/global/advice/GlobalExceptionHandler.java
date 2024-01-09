@@ -50,14 +50,15 @@ public class GlobalExceptionHandler {
 	/**
 	 * 500 Internal Server Error
 	 */
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ErrorResponse> handleException(final Exception e, final HttpServletRequest request) throws IOException {
-		// slackUtil.sendAlert(e, request);
 
-		log.error("🔔🚨 Slack에 전송된 Error Log: {}", e.getMessage());
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-			.body(ErrorResponse.of(INTERNAL_SERVER_ERROR));
-	}
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(final Exception e, final HttpServletRequest request) throws IOException {
+        // slackUtil.sendAlert(e, request);
+
+        log.error("🔔🚨 Slack에 전송된 Error Log: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErrorResponse.of(INTERNAL_SERVER_ERROR));
+    }
 
 	/**
 	 * Custom Error
@@ -68,6 +69,6 @@ public class GlobalExceptionHandler {
 		log.error("🚨🚨🚨 BusinessException occured: {} 🚨🚨🚨", e.getMessage());
 
 		return ResponseEntity.status(e.getHttpStatus())
-			.body(ErrorResponse.of(e.getExceptionType()));
+				.body(ErrorResponse.of(e.getExceptionType()));
 	}
 }

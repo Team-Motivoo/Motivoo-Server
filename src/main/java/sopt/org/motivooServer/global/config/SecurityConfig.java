@@ -1,35 +1,55 @@
 package sopt.org.motivooServer.global.config;
 
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import sopt.org.motivooServer.domain.auth.config.CustomAccessDeniedHandler;
+import sopt.org.motivooServer.domain.auth.config.CustomJwtAuthenticationEntryPoint;
+import sopt.org.motivooServer.domain.auth.config.JwtAuthenticationFilter;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class SecurityConfig {
 
-	// TODO 인증인가 구현 이후 수정 (현재는 모두 허용해둔 상태)
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private static final String[] AUTH_WHITELIST = {
-		"/**",
-		"/"
+		"/oauth/**", "/api/**"
 	};
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
-			.csrf().disable()
-			.formLogin().disable()
-			.httpBasic().disable()   // Security 설정 제외
-
-			.authorizeHttpRequests()
-			.requestMatchers(AUTH_WHITELIST).permitAll()
-			.anyRequest().authenticated()
-
-			.and().build();   // -> 스프링 빈으로 등록, 어플리케이션 실행 시 자동으로 필터에 등록된다!
+				.csrf().disable()
+				.formLogin().disable()
+				.httpBasic().disable()
+				.sessionManagement()
+				.sessionCreationPolicy(STATELESS)
+				.and()
+				.exceptionHandling()
+				.authenticationEntryPoint(customJwtAuthenticationEntryPoint)
+				.accessDeniedHandler(customAccessDeniedHandler)
+				.and()
+				.authorizeHttpRequests()
+				.requestMatchers(AUTH_WHITELIST).permitAll()
+				.anyRequest().authenticated()
+				.and().logout(logout -> logout.permitAll()
+						.logoutSuccessHandler((request, response, authentication) -> {
+							response.setStatus(HttpServletResponse.SC_OK);
+						}))
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+				.build();
 	}
 
 	@Bean

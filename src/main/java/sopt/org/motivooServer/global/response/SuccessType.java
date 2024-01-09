@@ -19,8 +19,10 @@ public enum SuccessType {
 
 	GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS(HttpStatus.OK, "미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다."),
 
-
-
+	//소셜 로그인
+	LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공했습니다."),
+	LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃에 성공했습니다."),
+	REISSUE_SUCCESS(HttpStatus.OK, "토큰 재발급에 성공했습니다.");
 	;
 
 	private final HttpStatus httpStatus;

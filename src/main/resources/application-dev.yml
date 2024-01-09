@@ -16,6 +16,39 @@ spring:
     hibernate:
       ddl-auto: update
 
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${kakao.client.id}
+            redirect-uri: http://localhost:8080/kakao/callback
+            client-authentication-method: POST
+            client-secret: ${kakao.client.secret}
+            authorization-grant-type: authorization_code
+            scope:
+              - sub
+              - nickname
+            client_name: kakao
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v1/oidc/userinfo
+            user-name-attribute: id
+data:
+  redis:
+    host: localhost # 로컬에서 테스트 할 때는 localhost로 사용
+    port: 6379
+
+jwt:
+  token:
+    secret-key: Q4NSl604sgyHJj1qwEkR3ycUeR4uUAt7WJraD7EN3O9DVM4yyYuHxMEbSF4XXyYJkal13eqgB0F7Bq4H
+  access-token:
+    expire-length: 1800000
+  refresh-token:
+    expire-length: 1209600000
+
   servlet:
     multipart:
       enabled: true
