@@ -29,6 +29,10 @@ public class JwtTokenProvider {
 
     private TokenRedisRepository tokenRedisRepository;
 
+    public JwtTokenProvider(TokenRedisRepository tokenRedisRepository){
+        this.tokenRedisRepository = tokenRedisRepository;
+    }
+
     public String createAccessToken(String payload) {
         return createToken(payload, accessTokenValidityInMilliseconds);
     }
@@ -90,6 +94,7 @@ public class JwtTokenProvider {
             throw new UserException(TOKEN_NOT_FOUND);
         }
     }
+
 
     public OauthTokenResponse reissue(Long userId, String refreshToken) {
         validateToken(refreshToken);
