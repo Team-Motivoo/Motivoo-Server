@@ -34,6 +34,74 @@
           }
         }
       }
+    },
+    "/mypage/{userId}" : {
+      "get" : {
+        "tags" : [ "마이페이지" ],
+        "summary" : "헬스체크용 API",
+        "description" : "마이페이지 홈 조회",
+        "operationId" : "마이페이지 조회 API 성공 Example",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/mypage-userId643760186"
+                },
+                "examples" : {
+                  "마이페이지 조회 API 성공 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"마이페이지 정보 조회에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_nickname\" : \"모티뿡뿡이\",\n    \"user_type\" : \"CHILD\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mypage/info/{userId}" : {
+      "get" : {
+        "tags" : [ "마이페이지" ],
+        "summary" : "헬스체크용 API",
+        "description" : "마이페이지 내 정보 조회",
+        "operationId" : "마이페이지 내 정보 조회 API 성공 Example",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/mypage-info-userId1088240176"
+                },
+                "examples" : {
+                  "마이페이지 내 정보 조회 API 성공 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"마이페이지 정보 조회에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_nickname\" : \"모티뿡뿡이\",\n    \"user_age\" : 20,\n    \"user_type\" : \"CHILD\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components" : {
@@ -47,6 +115,72 @@
           },
           "data" : {
             "type" : "string",
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "mypage-userId643760186" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "user_type" : {
+                "type" : "string",
+                "description" : "유저 타입 (부모/자식)"
+              },
+              "user_nickname" : {
+                "type" : "string",
+                "description" : "유저 닉네임"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "mypage-info-userId1088240176" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "user_type" : {
+                "type" : "string",
+                "description" : "유저 타입 (부모/자식)"
+              },
+              "user_nickname" : {
+                "type" : "string",
+                "description" : "유저 닉네임"
+              },
+              "user_age" : {
+                "type" : "number",
+                "description" : "유저 나이"
+              }
+            },
             "description" : "응답 데이터"
           },
           "success" : {
