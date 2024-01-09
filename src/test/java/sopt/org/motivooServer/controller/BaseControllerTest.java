@@ -18,6 +18,9 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import sopt.org.motivooServer.domain.auth.config.CustomJwtAuthenticationEntryPoint;
+import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
+
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @ExtendWith({RestDocumentationExtension.class})
@@ -32,6 +35,12 @@ public abstract class BaseControllerTest {
 
 	@Autowired
 	protected MockMvc mockMvc;
+
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
+
+	@Autowired
+	private CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
 
 	@BeforeEach
 	void setUp(final RestDocumentationContextProvider restDocumentation) {

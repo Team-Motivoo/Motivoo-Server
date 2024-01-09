@@ -7,6 +7,8 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
 
+import java.security.Principal;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -21,12 +23,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 import lombok.extern.slf4j.Slf4j;
+import sopt.org.motivooServer.domain.auth.config.CustomJwtAuthenticationEntryPoint;
+import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
 import sopt.org.motivooServer.global.healthcheck.HealthCheckController;
 import sopt.org.motivooServer.global.response.ApiResponse;
 import sopt.org.motivooServer.global.util.slack.SlackUtil;
 
 @Slf4j
-@WithMockUser(roles = "USER")
 @DisplayName("HealthCheckController 테스트")
 @WebMvcTest(HealthCheckController.class)
 public class HealthCheckControllerTest extends BaseControllerTest {
@@ -37,7 +40,13 @@ public class HealthCheckControllerTest extends BaseControllerTest {
 	private SlackUtil slackUtil;
 
 	@MockBean
-	HealthCheckController healthCheckController;
+	private JwtTokenProvider jwtTokenProvider;
+
+	@MockBean
+	private CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
+
+	@MockBean
+	private HealthCheckController healthCheckController;
 
 	@DisplayName("Health Check Controller 테스트")
 	@Test
