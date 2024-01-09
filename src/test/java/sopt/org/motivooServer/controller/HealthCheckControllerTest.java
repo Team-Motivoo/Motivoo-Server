@@ -43,10 +43,10 @@ public class HealthCheckControllerTest extends BaseControllerTest {
 	private JwtTokenProvider jwtTokenProvider;
 
 	@MockBean
-	HealthCheckController healthCheckController;
+	private CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
 
 	@MockBean
-	CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
+	private HealthCheckController healthCheckController;
 
 	@DisplayName("Health Check Controller 테스트")
 	@Test
