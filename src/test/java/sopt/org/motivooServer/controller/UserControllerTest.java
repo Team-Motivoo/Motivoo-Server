@@ -10,28 +10,23 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.user.controller.UserController;
+import sopt.org.motivooServer.domain.user.dto.response.MyHealthInfoResponse;
 import sopt.org.motivooServer.domain.user.dto.response.MyPageInfoResponse;
-import sopt.org.motivooServer.global.healthcheck.HealthCheckController;
 import sopt.org.motivooServer.global.response.ApiResponse;
-import sopt.org.motivooServer.global.util.slack.SlackUtil;
 
 @Slf4j
 @WithMockUser(roles = "USER")
@@ -41,9 +36,6 @@ public class UserControllerTest extends BaseControllerTest {
 
 	protected static final String DEFAULT_URL = "/mypage";
 	private final String TAG = "마이페이지";
-
-	@MockBean
-	private SlackUtil slackUtil;
 
 	@MockBean
 	UserController userController;
@@ -56,7 +48,7 @@ public class UserControllerTest extends BaseControllerTest {
 		Long userId = 1L;
 		MyPageInfoResponse response = MyPageInfoResponse.builder()
 				.userNickname("모티뿡뿡이")
-				.userAge(20)
+				// .userAge(20)
 				.userType("CHILD").build();
 		ResponseEntity<ApiResponse<MyPageInfoResponse>> result = ApiResponse
 			.success(GET_MYPAGE_INFO_SUCCESS, response);
@@ -65,7 +57,7 @@ public class UserControllerTest extends BaseControllerTest {
 		when(userController.getMyPage(userId)).thenReturn(result);
 
 		// then
-		mockMvc.perform(get(DEFAULT_URL + "/info/{userId}", userId)
+		mockMvc.perform(get(DEFAULT_URL + "/{userId}", userId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 		).andDo(
@@ -75,21 +67,116 @@ public class UserControllerTest extends BaseControllerTest {
 				resource(
 					ResourceSnippetParameters.builder()
 						.tag(TAG)
-						.summary("헬스체크용 API")
 						.description("마이페이지 홈 조회")
 						.requestFields()
 						.pathParameters(
-							parameterWithName("userId")
+							parameterWithName("userId").description("유저 아이디").ignored()
 						)
 						.responseFields(
 							fieldWithPath("code").type(NUMBER).description("상태 코드"),
 							fieldWithPath("message").type(STRING).description("상태 메세지"),
 							fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
 							fieldWithPath("data").type(OBJECT).description("응답 데이터"),
-							fieldWithPath("data.user_nickname").type(STRING).description("응답 데이터"),
-							fieldWithPath("data.user_type").type(STRING).description("응답 데이터"))
+							fieldWithPath("data.user_nickname").type(STRING).description("유저 닉네임"),
+							fieldWithPath("data.user_type").type(STRING).description("유저 타입 (부모/자식)"))
 						// .requestSchema(Schema.schema("FormParameter-HealthCheck"))
 						// .responseSchema(Schema.schema("HealthCheckResponse.health"))
+						.build()
+				)
+			)).andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("마이페이지 내 정보 조회 테스트")
+	void userControllerMyPageInfoTest() throws Exception {
+
+		// given
+		Long userId = 1L;
+		MyPageInfoResponse response = MyPageInfoResponse.builder()
+			.userNickname("모티뿡뿡이")
+			.userAge(20)
+			.userType("CHILD").build();
+		ResponseEntity<ApiResponse<MyPageInfoResponse>> result = ApiResponse
+			.success(GET_MYPAGE_INFO_SUCCESS, response);
+
+		// when
+		when(userController.getMyInfo(userId)).thenReturn(result);
+
+		// then
+		mockMvc.perform(get(DEFAULT_URL + "/info/{userId}", userId)
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+		).andDo(
+			document("마이페이지 내 정보 조회 API 성공 Example",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				resource(
+					ResourceSnippetParameters.builder()
+						.tag(TAG)
+						.description("마이페이지 내 정보 조회")
+						.requestFields()
+						.pathParameters(
+							parameterWithName("userId").description("유저 아이디").ignored()
+						)
+						.responseFields(
+							fieldWithPath("code").type(NUMBER).description("상태 코드"),
+							fieldWithPath("message").type(STRING).description("상태 메세지"),
+							fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
+							fieldWithPath("data").type(OBJECT).description("응답 데이터"),
+							fieldWithPath("data.user_nickname").type(STRING).description("유저 닉네임"),
+							fieldWithPath("data.user_age").type(NUMBER).description("유저 나이"),
+							fieldWithPath("data.user_type").type(STRING).description("유저 타입 (부모/자식)"))
+						// .requestSchema(Schema.schema("FormParameter-HealthCheck"))
+						// .responseSchema(Schema.schema("HealthCheckResponse.health"))
+						.build()
+				)
+			)).andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("마이페이지 운동정보 조회 테스트")
+	void userControllerMyHealthInfoTest() throws Exception {
+
+		// given
+		Long userId = 1L;
+		MyHealthInfoResponse response = MyHealthInfoResponse.builder()
+			.isExercise(true)
+			.exerciseType("고강도")
+			.exerciseFrequency("3일")
+			.exerciseTime("2~3시간")
+			.healthNotes(Arrays.asList("목", "어깨")).build();
+		ResponseEntity<ApiResponse<MyHealthInfoResponse>> result = ApiResponse
+			.success(GET_MYPAGE_HEALTH_INFO_SUCCESS, response);
+
+		// when
+		when(userController.getMyExercise(userId)).thenReturn(result);
+
+		// then
+		mockMvc.perform(get(DEFAULT_URL + "/exercise/{userId}", userId)
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+		).andDo(
+			document("마이페이지 운동정보 조회 API 성공 Example",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				resource(
+					ResourceSnippetParameters.builder()
+						.tag(TAG)
+						.description("마이페이지 운동정보 조회")
+						.requestFields()
+						.pathParameters(
+							parameterWithName("userId").description("유저 아이디").ignored()
+						)
+						.responseFields(
+							fieldWithPath("code").type(NUMBER).description("상태 코드"),
+							fieldWithPath("message").type(STRING).description("상태 메세지"),
+							fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
+							fieldWithPath("data").type(OBJECT).description("응답 데이터"),
+							fieldWithPath("data.is_exercise").type(BOOLEAN).description("운동 여부"),
+							fieldWithPath("data.exercise_type").type(STRING).description("운동 유형"),
+							fieldWithPath("data.exercise_frequency").type(STRING).description("주 평균 운동 횟수"),
+							fieldWithPath("data.exercise_time").type(STRING).description("하루 평균 운동 시간"),
+							fieldWithPath("data.health_notes[]").type(ARRAY).description("건강 주의사항"))
 						.build()
 				)
 			)).andExpect(status().isOk());
