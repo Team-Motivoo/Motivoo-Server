@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.domain.user.dto.oauth;
+package sopt.org.motivooServer.domain.auth.service;
 
 public interface OAuth2UserInfo {
     String getProviderId();

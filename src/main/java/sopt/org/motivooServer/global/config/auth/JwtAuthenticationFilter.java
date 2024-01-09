@@ -1,5 +1,4 @@
-package sopt.org.motivooServer.global.config.oauth;
-
+package sopt.org.motivooServer.global.config.auth;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,19 +26,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
             final String token = getJwtFromRequest(request);
-            if (jwtTokenProvider.validateToken(token) == JwtValidationType.VALID_JWT) {
-                Long memberId = Long.parseLong(jwtTokenProvider.getPayload(token));
-                // authentication 객체 생성 -> principal에 유저정보를 담는다.
-                UserAuthentication authentication = new UserAuthentication(memberId.toString(), null, null);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+            jwtTokenProvider.validateToken(token);
+
+            Long memberId = Long.parseLong(jwtTokenProvider.getPayload(token));
+            // authentication 객체 생성 -> principal에 유저정보를 담는다.
+            UserAuthentication authentication = new UserAuthentication(memberId.toString(), null, null);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
         } catch (Exception exception) {
-            try {
-                exception.printStackTrace();
-            } catch (Exception e) {
-                throw new ServletException("Authentication failed: " + exception.getMessage(), exception);
-            }
+            exception.printStackTrace();
         }
         // 다음 필터로 요청 전달
         filterChain.doFilter(request, response);

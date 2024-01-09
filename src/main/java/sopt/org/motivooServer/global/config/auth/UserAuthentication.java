@@ -1,8 +1,7 @@
-package sopt.org.motivooServer.global.config.oauth;
+package sopt.org.motivooServer.global.config.auth;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-
 import java.util.Collection;
 
 public class UserAuthentication extends UsernamePasswordAuthenticationToken {

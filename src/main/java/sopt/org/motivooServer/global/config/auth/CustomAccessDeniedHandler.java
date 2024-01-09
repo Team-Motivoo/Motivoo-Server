@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.config.oauth;
+package sopt.org.motivooServer.global.config.auth;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

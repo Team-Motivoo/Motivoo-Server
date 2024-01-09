@@ -62,10 +62,9 @@ public class User extends BaseTimeEntity {
 	@OneToMany(mappedBy = "user")
 	private List<UserMission> userMissions = new ArrayList<>();
 
-	public User() {
+	protected User() {
 
 	}
-
 
 	//== 연관관계 메서드 ==//
 	public void addUserMission(UserMission userMission) {

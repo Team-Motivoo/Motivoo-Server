@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.domain.user.dto.response;
+package sopt.org.motivooServer.domain.auth.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -11,12 +11,12 @@ public class OauthTokenResponse {
     @JsonProperty("access_token")
     private String accessToken;
 
-    @JsonProperty("token_type")
-    private String tokenType;
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 
     @Builder
-    public OauthTokenResponse(String accessToken, String tokenType){
+    public OauthTokenResponse(String accessToken, String refreshToken){
         this.accessToken = accessToken;
-        this.tokenType = tokenType;
+        this.refreshToken = refreshToken;
     }
 }

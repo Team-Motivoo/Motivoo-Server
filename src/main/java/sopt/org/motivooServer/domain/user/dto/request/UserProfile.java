@@ -1,7 +1,7 @@
 package sopt.org.motivooServer.domain.user.dto.request;
 
 import lombok.Getter;
-import sopt.org.motivooServer.domain.user.dto.oauth.OAuth2UserInfo;
+import sopt.org.motivooServer.domain.auth.service.OAuth2UserInfo;
 
 import java.util.Map;
 
@@ -21,8 +21,7 @@ public class UserProfile implements OAuth2UserInfo {
     @Override
     public String getProvider() {
         return "kakao";
-    }
-
+    } //TODO
     @Override
     public String getNickName() {
         return String.valueOf(attributes.get("nickname"));

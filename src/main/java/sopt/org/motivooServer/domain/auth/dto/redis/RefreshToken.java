@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.domain.user.dto.redis;
+package sopt.org.motivooServer.domain.auth.dto.redis;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

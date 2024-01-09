@@ -10,7 +10,6 @@ import sopt.org.motivooServer.domain.user.exception.UserException;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum SocialPlatform {
-
 	KAKAO("카카오"),
 	APPLE("애플");
 
@@ -18,10 +17,9 @@ public enum SocialPlatform {
 
 	public static SocialPlatform of(String value) {
 		return Arrays.stream(SocialPlatform.values())
-			.filter(socialPlatform -> value.equals(socialPlatform.value))
-			.findFirst()
-			.orElseThrow(() -> new UserException(INVALID_SOCIAL_PLATFORM));
+				.filter(socialPlatform -> value.equals(socialPlatform.value))
+				.findFirst()
+				.orElseThrow(() -> new UserException(INVALID_SOCIAL_PLATFORM));
 	}
-
 
 }

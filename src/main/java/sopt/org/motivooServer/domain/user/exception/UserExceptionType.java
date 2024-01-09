@@ -20,6 +20,7 @@ public enum UserExceptionType implements BusinessExceptionType {
 	 * 400 Not Found
 	 */
 	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "토큰이 없습니다."),
+	TOKEN_UNSUPPORTED(HttpStatus.NOT_FOUND, "변조된 토큰입니다."),
 
 	/**
 	 * 401 Not Found

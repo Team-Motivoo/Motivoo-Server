@@ -1,11 +1,15 @@
-package sopt.org.motivooServer.global.config.oauth;
+package sopt.org.motivooServer.global.config.auth;
 
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
+import sopt.org.motivooServer.domain.user.exception.UserException;
+
 import java.util.*;
+
+import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 @Component
 @Slf4j
@@ -59,31 +63,26 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException e) {
             return e.getClaims().getSubject();
         } catch (JwtException e){
-            throw new RuntimeException("유효하지 않은 토큰 입니다");
+            throw new RuntimeException(String.valueOf(JwtValidationType.INVALID_JWT_TOKEN));
         }
     }
 
-    public JwtValidationType validateToken(String token) {
+    public void validateToken(String token) {
         try {
-            final Claims claimsJws = Jwts.parserBuilder()
+            token = token.replaceAll("\\s+", "");
+            token = token.replace("Bearer", "");
+            Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            return JwtValidationType.VALID_JWT;
+                    .parseClaimsJws(token);
         } catch (MalformedJwtException ex){
-            return JwtValidationType.INVALID_JWT_TOKEN;
+            throw new UserException(TOKEN_NOT_FOUND);
         } catch (ExpiredJwtException ex) {
-            return JwtValidationType.EXPIRED_JWT_TOKEN;
+            throw new UserException(TOKEN_EXPIRED);
         } catch (UnsupportedJwtException ex) {
-            return JwtValidationType.UNSUPPORTED_JWT_TOKEN;
+            throw new UserException(TOKEN_UNSUPPORTED);
         } catch (IllegalArgumentException ex) {
-            return JwtValidationType.EMPTY_JWT;
+            throw new UserException(TOKEN_NOT_FOUND);
         }
     }
-
-
-
-
-
 }

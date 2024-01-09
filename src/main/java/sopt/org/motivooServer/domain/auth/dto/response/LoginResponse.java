@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.domain.user.dto.response;
+package sopt.org.motivooServer.domain.auth.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

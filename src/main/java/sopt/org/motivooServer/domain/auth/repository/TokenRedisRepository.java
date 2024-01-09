@@ -1,7 +1,6 @@
-package sopt.org.motivooServer.domain.user.repository;
+package sopt.org.motivooServer.domain.auth.repository;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,11 +8,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Repository;
-
-import java.util.Base64;
+import sopt.org.motivooServer.domain.user.exception.UserException;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.TOKEN_EXPIRED;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,8 +22,8 @@ public class TokenRedisRepository {
 
     @Value("${jwt.refresh-token.expire-length}")
     private long refreshTokenValidityInMilliseconds;
-    private final static String PREFIX_REFRESH = "REFRESH:";
-    private final static String PREFIX_BLOCKED = "BLOCKED:";
+    private static final String PREFIX_REFRESH = "REFRESH:";
+    private static final String PREFIX_BLOCKED = "BLOCKED:";
 
     @Value("${jwt.token.secret-key}")
     private String secretKey;
@@ -34,7 +34,6 @@ public class TokenRedisRepository {
         valueOperations.set(key, account);
         redisTemplate.expire(key, refreshTokenValidityInMilliseconds, TimeUnit.SECONDS);
     }
-
 
     public void saveBlockedToken(String accessToken) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
@@ -56,9 +55,8 @@ public class TokenRedisRepository {
                     .getExpiration();
 
         } catch (JwtException e){
-            throw new RuntimeException("유효하지 않은 토큰 입니다");
+            throw new UserException(TOKEN_EXPIRED);
         }
-
 
         Long now = new Date().getTime();
         Long remainTime = expiration.getTime() - now;
@@ -71,13 +69,11 @@ public class TokenRedisRepository {
         return Optional.ofNullable(valueOperations.get(key));
     }
 
-
     public boolean doesTokenBlocked(String accessToken) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         String key = PREFIX_BLOCKED + accessToken;
         return valueOperations.get(key) != null;
     }
-
 
     public void deleteRefreshToken(String refreshToken) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
