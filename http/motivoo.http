@@ -1,0 +1,9 @@
+GET http://localhost:8080/api/health/v2
+
+POST http://localhost:8080/oauth/login
+Content-Type: application/json
+
+{
+    "id": 999,
+    "value": "content"
+}
