@@ -23,7 +23,6 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.global.healthcheck.HealthCheckController;
 import sopt.org.motivooServer.global.response.ApiResponse;
-import sopt.org.motivooServer.global.util.slack.SlackUtil;
 
 @Slf4j
 @WithMockUser(roles = "USER")
@@ -32,9 +31,6 @@ import sopt.org.motivooServer.global.util.slack.SlackUtil;
 public class HealthCheckControllerTest extends BaseControllerTest {
 
 	protected static final String DEFAULT_URL = "/api/health";
-
-	@MockBean
-	private SlackUtil slackUtil;
 
 	@MockBean
 	HealthCheckController healthCheckController;
@@ -67,8 +63,6 @@ public class HealthCheckControllerTest extends BaseControllerTest {
 							fieldWithPath("message").type(STRING).description("상태 메세지"),
 							fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
 							fieldWithPath("data").description("응답 데이터"))
-						// .requestSchema(Schema.schema("FormParameter-HealthCheck"))
-						// .responseSchema(Schema.schema("HealthCheckResponse.health"))
 						.build()
 				)
 				)
