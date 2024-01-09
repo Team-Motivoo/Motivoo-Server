@@ -8,7 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import sopt.org.motivooServer.global.util.slack.SlackUtil;
 
 @SpringBootTest
-@ActiveProfiles({"deploy", "local"})
+@ActiveProfiles({"test"})
 class MotivooServerApplicationTests {
 
 	@MockBean
