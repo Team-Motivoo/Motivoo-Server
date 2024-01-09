@@ -13,7 +13,7 @@ import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.exception.UserExceptionType;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
-import sopt.org.motivooServer.global.config.auth.JwtTokenProvider;
+import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
 import sopt.org.motivooServer.domain.user.dto.request.UserProfile;
 import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;

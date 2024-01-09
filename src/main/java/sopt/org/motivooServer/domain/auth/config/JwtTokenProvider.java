@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.config.auth;
+package sopt.org.motivooServer.domain.auth.config;
 
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.config.auth;
+package sopt.org.motivooServer.domain.auth.config;
 
 public enum JwtValidationType {
     VALID_JWT,              // 유효한 JWT

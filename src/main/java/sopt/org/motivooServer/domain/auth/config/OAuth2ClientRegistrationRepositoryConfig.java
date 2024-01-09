@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.config.auth;
+package sopt.org.motivooServer.domain.auth.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.security.oauth2.client.ClientsConfiguredCondition;

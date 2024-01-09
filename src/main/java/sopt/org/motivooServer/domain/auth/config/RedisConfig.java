@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.config.redis;
+package sopt.org.motivooServer.domain.auth.config;
 
 
 import org.springframework.beans.factory.annotation.Value;
