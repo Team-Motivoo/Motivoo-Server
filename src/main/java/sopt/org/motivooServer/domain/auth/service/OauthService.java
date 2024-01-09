@@ -1,5 +1,6 @@
 package sopt.org.motivooServer.domain.auth.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -9,12 +10,11 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.exception.UserExceptionType;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
-import sopt.org.motivooServer.domain.user.dto.request.UserProfile;
+import sopt.org.motivooServer.domain.user.dto.request.KakaoUserProfile;
 import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
 import sopt.org.motivooServer.domain.user.entity.SocialPlatform;
@@ -24,10 +24,10 @@ import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
 import java.util.Map;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class OauthService {
     private static final String BEARER_TYPE = "Bearer";
     private final InMemoryClientRegistrationRepository inMemoryRepository;
@@ -37,17 +37,17 @@ public class OauthService {
 
     @Transactional
     public LoginResponse login(OauthTokenRequest tokenRequest) {
-        String providerName = tokenRequest.getTokenType();
+        String providerName = tokenRequest.tokenType();
         ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
 
         String refreshToken = jwtTokenProvider.createRefreshToken();
         User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
         String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getId()));
 
-        return buildLoginResponse(user, accessToken, refreshToken);
+        return getLoginResponse(user, accessToken, refreshToken);
     }
 
-    private LoginResponse buildLoginResponse(User user, String accessToken, String refreshToken) {
+    private LoginResponse getLoginResponse(User user, String accessToken, String refreshToken) {
         return LoginResponse.builder()
                 .id(user.getSocialId())
                 .nickname(user.getNickname())
@@ -68,27 +68,26 @@ public class OauthService {
 
         if (userEntity != null) {
             updateRefreshToken(userEntity, refreshToken);
-        } else {
-            userEntity = saveUser(nickName, providerId, socialPlatform, tokenRequest, refreshToken);
+            return userEntity;
         }
 
-        return userEntity;
+        return saveUser(nickName, providerId, socialPlatform, tokenRequest, refreshToken);
+
     }
 
     private OAuth2UserInfo getOAuth2UserInfo(String providerName, Map<String, Object> userAttributes) {
         if (providerName.equals("kakao")) {
-            return new UserProfile(userAttributes);
-        } else {
-            throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
+            return new KakaoUserProfile(userAttributes);
         }
+        throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
     }
 
     private SocialPlatform getSocialPlatform(String providerName) {
         if (providerName.equals("kakao")) {
             return SocialPlatform.KAKAO;
-        } else {
-            throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
         }
+        throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
+
     }
 
     public void updateRefreshToken(User userEntity, String refreshToken) {
@@ -100,8 +99,8 @@ public class OauthService {
                 .nickname(nickName)
                 .socialId(providerId)
                 .socialPlatform(socialPlatform)
-                .socialAccessToken(tokenRequest.getAccessToken())
-                .socialRefreshToken(refreshToken)
+                .socialAccessToken(tokenRequest.accessToken())
+                .refreshToken(refreshToken)
                 .type(UserType.NONE)
                 .deleted(Boolean.FALSE)
                 .build();
@@ -113,26 +112,13 @@ public class OauthService {
         return WebClient.create()
                 .get()
                 .uri(provider.getProviderDetails().getUserInfoEndpoint().getUri())
-                .headers(header -> header.setBearerAuth(tokenRequest.getAccessToken()))
+                .headers(header -> header.setBearerAuth(tokenRequest.accessToken()))
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
                 })
                 .block();
     }
 
-    @Transactional
-    public OauthTokenResponse reissue(Long userId, String refreshToken) {
-        jwtTokenProvider.validateToken(refreshToken);
-
-        String reissuedAccessToken = jwtTokenProvider.createAccessToken(String.valueOf(userId));
-        String reissuedRefreshToken = jwtTokenProvider.createRefreshToken();
-        OauthTokenResponse tokenResponse = new OauthTokenResponse(reissuedAccessToken, reissuedAccessToken);
-
-        tokenRedisRepository.saveRefreshToken(reissuedRefreshToken, String.valueOf(userId));
-        tokenRedisRepository.deleteRefreshToken(refreshToken);
-
-        return tokenResponse;
-    }
 
     @Transactional
     public void logout(String accessToken) {

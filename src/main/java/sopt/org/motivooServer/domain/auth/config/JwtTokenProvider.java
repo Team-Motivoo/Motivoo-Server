@@ -5,15 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
+import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
+import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 
 import java.util.*;
 
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
-@Component
 @Slf4j
+@Component
 public class JwtTokenProvider {
+    private static final String BEARER_TYPE = "Bearer";
 
     @Value("${jwt.access-token.expire-length}")
     private long accessTokenValidityInMilliseconds;
@@ -23,6 +26,8 @@ public class JwtTokenProvider {
 
     @Value("${jwt.token.secret-key}")
     private String secretKey;
+
+    private TokenRedisRepository tokenRedisRepository;
 
     public String createAccessToken(String payload) {
         return createToken(payload, accessTokenValidityInMilliseconds);
@@ -70,7 +75,7 @@ public class JwtTokenProvider {
     public void validateToken(String token) {
         try {
             token = token.replaceAll("\\s+", "");
-            token = token.replace("Bearer", "");
+            token = token.replace(BEARER_TYPE, "");
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
@@ -84,5 +89,18 @@ public class JwtTokenProvider {
         } catch (IllegalArgumentException ex) {
             throw new UserException(TOKEN_NOT_FOUND);
         }
+    }
+
+    public OauthTokenResponse reissue(Long userId, String refreshToken) {
+        validateToken(refreshToken);
+
+        String reissuedAccessToken = createAccessToken(String.valueOf(userId));
+        String reissuedRefreshToken = createRefreshToken();
+        OauthTokenResponse tokenResponse = new OauthTokenResponse(reissuedAccessToken, reissuedAccessToken);
+
+        tokenRedisRepository.saveRefreshToken(reissuedRefreshToken, String.valueOf(userId));
+        tokenRedisRepository.deleteRefreshToken(refreshToken);
+
+        return tokenResponse;
     }
 }

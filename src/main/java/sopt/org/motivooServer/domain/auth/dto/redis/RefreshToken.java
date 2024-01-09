@@ -1,14 +1,12 @@
 package sopt.org.motivooServer.domain.auth.dto.redis;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Getter
-@Builder
-@AllArgsConstructor
-public class RefreshToken {
-    private Long id;
-    private String refreshToken;
+public record RefreshToken (
+    Long id,
+
+    @JsonProperty("refresh_token")
+    String refreshToken
+){
 
 }
