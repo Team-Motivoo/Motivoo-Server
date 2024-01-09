@@ -23,7 +23,7 @@ public class UserMissionController {
 
 	private final UserMissionService userMissionService;
 
-	// TODO 항상 유저의 오늘의 미션에만 인증 사진 등록이 가능하므로, @PathVariable은 생략할 예정
+	//TODO 항상 유저의 오늘의 미션에만 인증 사진 등록이 가능하므로, @PathVariable은 생략할 예정
 	@PatchMapping("/image/{missionId}")
 	public ResponseEntity<ApiResponse<MissionImgUrlResponse>> getMissionImgUrl(@Valid @RequestBody final MissionImgUrlRequest request,
 																			@PathVariable final Long missionId) {
