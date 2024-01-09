@@ -33,6 +33,6 @@ public class UserController {
 
 	@GetMapping("/exercise/{userId}")  // TODO @PathVariable -> Principal
 	public ResponseEntity<ApiResponse<MyHealthInfoResponse>> getMyExercise(@PathVariable final Long userId) {
-		return ApiResponse.success(GET_MYPAGE_EXERCISE_INFO_SUCCESS, userService.getMyHealthInfo(userId));
+		return ApiResponse.success(GET_MYPAGE_HEALTH_INFO_SUCCESS, userService.getMyHealthInfo(userId));
 	}
 }

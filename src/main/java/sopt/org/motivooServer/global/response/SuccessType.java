@@ -19,7 +19,7 @@ public enum SuccessType {
 
 	GET_MYPAGE_INFO_SUCCESS(HttpStatus.OK, "마이페이지 정보 조회에 성공했습니다."),
 	GET_MYPAGE_MYINFO_SUCCESS(HttpStatus.OK, "마이페이지 나의 정보 조회에 성공했습니다."),
-	GET_MYPAGE_EXERCISE_INFO_SUCCESS(HttpStatus.OK, "마이페이지 정보 조회에 성공했습니다."),
+	GET_MYPAGE_HEALTH_INFO_SUCCESS(HttpStatus.OK, "마이페이지 정보 조회에 성공했습니다."),
 
 
 	;
