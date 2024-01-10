@@ -6,8 +6,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
-
-import java.security.Principal;
+import static sopt.org.motivooServer.util.ApiDocumentUtil.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,20 +15,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 import lombok.extern.slf4j.Slf4j;
-import sopt.org.motivooServer.domain.auth.config.CustomJwtAuthenticationEntryPoint;
-import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
-import sopt.org.motivooServer.domain.auth.config.RedisConfig;
-import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivooServer.global.healthcheck.HealthCheckController;
 import sopt.org.motivooServer.global.response.ApiResponse;
-import sopt.org.motivooServer.global.util.slack.SlackUtil;
+import sopt.org.motivooServer.util.ApiDocumentUtil;
 
 @Slf4j
 @DisplayName("HealthCheckController 테스트")
@@ -38,23 +32,12 @@ public class HealthCheckControllerTest extends BaseControllerTest {
 
 	protected static final String DEFAULT_URL = "/api/health";
 
-	@MockBean
-	private SlackUtil slackUtil;
 
-	@MockBean
-	private JwtTokenProvider jwtTokenProvider;
-
-	@MockBean
-	private CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
 
 	@MockBean
 	private HealthCheckController healthCheckController;
 
-	@MockBean
-	private RedisConfig redisConfig;
 
-	@MockBean
-	private TokenRedisRepository tokenRedisRepository;
 
 	@DisplayName("Health Check Controller 테스트")
 	@Test
@@ -66,13 +49,13 @@ public class HealthCheckControllerTest extends BaseControllerTest {
 
 		// then
 		ResultActions resultActions = mockMvc.perform(
-				RestDocumentationRequestBuilders.get(DEFAULT_URL)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON)
-			).andDo(
-				MockMvcRestDocumentation.document("healthCheck",
-				preprocessRequest(prettyPrint()),
-				preprocessResponse(prettyPrint()),
+			RestDocumentationRequestBuilders.get(DEFAULT_URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+		).andDo(
+			MockMvcRestDocumentation.document("healthCheck",
+				getDocumentRequest(),
+				getDocumentResponse(),
 				resource(
 					ResourceSnippetParameters.builder()
 						.tag("HealthCheck API")
@@ -88,9 +71,9 @@ public class HealthCheckControllerTest extends BaseControllerTest {
 						// .responseSchema(Schema.schema("HealthCheckResponse.health"))
 						.build()
 				)
-				)
-			);
+			)
+		);
 
-			resultActions.andExpect(MockMvcResultMatchers.status().isOk());
+		resultActions.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 }
