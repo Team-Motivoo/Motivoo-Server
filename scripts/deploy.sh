@@ -10,7 +10,7 @@ RUNNING_CONTAINER_NAME=$(echo "$DOCKER_PS_OUTPUT" | awk '{print $NF}')
 
 IS_REDIS_ACTIVATE=$(docker ps | grep redis)
 
-WEB_HEALTH_CHECK_URL=/api/health
+WEB_HEALTH_CHECK_URL=/actuator/health
 
 # Redis Docker Image Pull
 if [ -z "$IS_REDIS_ACTIVATE" ];then
@@ -63,8 +63,8 @@ if [ $RUNNING_CONTAINER_NAME == "blue" ]; then
     echo "[$NOW_TIME] Green health check ..."
     sleep 3
 
-    RESPONSE=$(curl -s http://localhost:8081${WEB_HEALTH_CHECK_URL})
-    UP_COUNT=$(echo $RESPONSE | grep 'success' | wc -l)
+    RESPONSE=$(curl -s http://localhost:${CURRENT_SERVER_PORT}${WEB_HEALTH_CHECK_URL})
+    UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
     echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
     if [ $UP_COUNT -ge 1 ]; then  # "UP" 문자열이 1개 이상 존재한다면 헬스체크 통과
@@ -87,6 +87,7 @@ if [ $RUNNING_CONTAINER_NAME == "blue" ]; then
   echo "[$NOW_TIME] Nginx Reload (Port 스위칭 적용)"
   sudo cp /etc/nginx/conf.d/green-url.inc /etc/nginx/conf.d/service-url.inc
   sudo nginx -s reload
+  echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url.inc)"
   echo "[$NOW_TIME] Blue 컨테이너 중단"
   docker-compose stop blue
 
@@ -107,8 +108,8 @@ else
     echo "[$NOW_TIME] Blue health check ..."
     sleep 3
 
-    RESPONSE=$(curl -s http://localhost:8080${RUNNING_SERVER_PORT}/actuator/health)
-    UP_COUNT=$(echo $RESPONSE | grep 'success' | wc -l)
+    RESPONSE=$(curl -s http://localhost:${CURRENT_SERVER_PORT}${WEB_HEALTH_CHECK_URL})
+    UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
     echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
     if [ $UP_COUNT -ge 1 ]; then  # "UP" 문자열이 1개 이상 존재한다면 헬스체크 통과
@@ -131,6 +132,7 @@ else
   echo "[$NOW_TIME] Nginx Reload (Port 스위칭 적용)"
   sudo cp /etc/nginx/conf.d/blue-url.inc /etc/nginx/conf.d/service-url.inc
   sudo nginx -s reload
+  echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url.inc)"
   echo "[$NOW_TIME] Green 컨테이너 중단"
   docker-compose stop green
 fi
@@ -139,7 +141,7 @@ echo "----------------------------------------------------------------------"
 
 # Nginx를 통해서 서버에 접근 가능한지 확인
 RESPONSE=$(curl -s http://localhost:${CURRENT_SERVER_PORT}${WEB_HEALTH_CHECK_URL})
-UP_COUNT=$(echo $RESPONSE | grep 'success' | wc -l)
+UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
 echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
 if [ $UP_COUNT -ge 1 ]
