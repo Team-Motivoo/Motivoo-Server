@@ -17,10 +17,17 @@ public enum UserExceptionType implements BusinessExceptionType {
 	INVALID_SOCIAL_PLATFORM(HttpStatus.BAD_REQUEST, "유효하지 않은 소셜 플랫폼입니다."),
 
 	/**
+	 * 401 Unauthorized
+	 */
+	EMPTY_PRINCIPLE_EXCEPTION(HttpStatus.UNAUTHORIZED, "엑세스 토큰이 비어있거나, 유효하지 않은 엑세스 토큰입니다."),
+
+
+	/**
 	 * 404 Not Found
 	 */
 	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "토큰이 없습니다."),
 	TOKEN_UNSUPPORTED(HttpStatus.NOT_FOUND, "변조된 토큰입니다."),
+	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
 
 	/**
 	 * 401 UNAUTHORIZED

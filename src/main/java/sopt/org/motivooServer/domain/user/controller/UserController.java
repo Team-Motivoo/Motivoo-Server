@@ -1,6 +1,9 @@
 package sopt.org.motivooServer.domain.user.controller;
 
+import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.*;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
+
+import java.security.Principal;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,24 +18,19 @@ import sopt.org.motivooServer.domain.user.service.UserService;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 @RestController
-@RequestMapping("/mypage")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 
 	private final UserService userService;
 
-	@GetMapping("/{userId}")   // TODO @PathVariable -> Principal
-	public ResponseEntity<ApiResponse<MyPageInfoResponse>> getMyPage(@PathVariable final Long userId) {
-		return ApiResponse.success(GET_MYPAGE_INFO_SUCCESS, userService.getMyPage(userId));
+	@GetMapping("/me")
+	public ResponseEntity<ApiResponse<MyPageInfoResponse>> getMyInfo(Principal principal) {
+		return ApiResponse.success(GET_MYPAGE_MYINFO_SUCCESS, userService.getMyInfo(getUserFromPrincipal(principal)));
 	}
 
-	@GetMapping("/info/{userId}")   // TODO @PathVariable -> Principal
-	public ResponseEntity<ApiResponse<MyPageInfoResponse>> getMyInfo(@PathVariable final Long userId) {
-		return ApiResponse.success(GET_MYPAGE_MYINFO_SUCCESS, userService.getMyInfo(userId));
-	}
-
-	@GetMapping("/exercise/{userId}")  // TODO @PathVariable -> Principal
-	public ResponseEntity<ApiResponse<MyHealthInfoResponse>> getMyExercise(@PathVariable final Long userId) {
-		return ApiResponse.success(GET_MYPAGE_HEALTH_INFO_SUCCESS, userService.getMyHealthInfo(userId));
+	@GetMapping("/exercise")
+	public ResponseEntity<ApiResponse<MyHealthInfoResponse>> getMyExercise(Principal principal) {
+		return ApiResponse.success(GET_MYPAGE_HEALTH_INFO_SUCCESS, userService.getMyHealthInfo(getUserFromPrincipal(principal)));
 	}
 }

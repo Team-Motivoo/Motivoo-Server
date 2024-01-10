@@ -24,10 +24,6 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final HealthRepository healthRepository;
 
-	public MyPageInfoResponse getMyPage(final Long userId) {
-		User user = getUserById(userId);
-		return MyPageInfoResponse.ofMain(user);
-	}
 
 	public MyPageInfoResponse getMyInfo(final Long userId) {
 		User user = getUserById(userId);

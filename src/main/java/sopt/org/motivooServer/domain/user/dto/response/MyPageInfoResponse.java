@@ -19,10 +19,4 @@ public record MyPageInfoResponse(
 			.userNickname(user.getNickname())
 			.userAge(user.getAge()).build();
 	}
-
-	public static MyPageInfoResponse ofMain(User user) {
-		return MyPageInfoResponse.builder()
-			.userNickname(user.getNickname())
-			.userType(user.getType().name()).build();
-	}
 }
