@@ -28,13 +28,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
             final String token = getJwtFromRequest(request);
-            jwtTokenProvider.validateToken(token);
 
-            Long memberId = Long.parseLong(jwtTokenProvider.getPayload(token));
-            // authentication 객체 생성 -> principal에 유저정보를 담는다.
-            UserAuthentication authentication = new UserAuthentication(memberId.toString(), null, null);
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (token != null) {
+                jwtTokenProvider.validateToken(token);
+
+                Long memberId = Long.parseLong(jwtTokenProvider.getPayload(token));
+
+                // authentication 객체 생성 -> principal에 유저정보를 담는다.
+                UserAuthentication authentication = new UserAuthentication(memberId.toString(), null, null);
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         } catch (NumberFormatException e) {
             log.error("refresh token은 유저 아이디를 담고있지 않습니다.");
             throw new RuntimeException("refresh token은 유저 아이디를 담고있지 않습니다.");
