@@ -48,9 +48,7 @@ public class UserMissionService {
 	}
 
 	private UserMission getUserMission(Long missionId) {
-		UserMission userMission = userMissionRepository.findById(missionId).orElseThrow(
-			() -> new MissionException(USER_MISSION_NOT_FOUND)
-		);
-		return userMission;
+		return userMissionRepository.findById(missionId).orElseThrow(
+			() -> new MissionException(USER_MISSION_NOT_FOUND));
 	}
 }
