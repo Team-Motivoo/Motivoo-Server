@@ -1,10 +1,12 @@
 package sopt.org.motivooServer.domain.health.entity;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import sopt.org.motivooServer.domain.health.exception.HealthException;
 
 import java.util.Arrays;
+
+import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.INVALID_EXERCISE_TIME;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ExerciseTime {
@@ -20,7 +22,7 @@ public enum ExerciseTime {
         return Arrays.stream(ExerciseTime.values())
                 .filter(exerciseTime -> value.equals(exerciseTime.value))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException());//TO-DO
+                .orElseThrow(() -> new HealthException(INVALID_EXERCISE_TIME));
     }
 
 }

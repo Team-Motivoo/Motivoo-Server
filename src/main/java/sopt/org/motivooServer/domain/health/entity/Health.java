@@ -18,9 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
-import sopt.org.motivooServer.domain.user.entity.SocialPlatform;
 import sopt.org.motivooServer.domain.user.entity.User;
-import sopt.org.motivooServer.domain.user.entity.UserType;
 
 @Getter
 @Entity
@@ -61,13 +59,14 @@ public class Health extends BaseTimeEntity {
 
 	@Builder
 	private Health(User user, boolean isExercise, ExerciseType exerciseType,
-				   ExerciseFrequency exerciseFrequency, ExerciseTime exerciseTime, List<HealthNote> healthNotes){
+				   ExerciseFrequency exerciseFrequency, ExerciseTime exerciseTime, List<HealthNote> healthNotes, ExerciseLevel exerciseLevel){
 		this.user = user;
 		this.isExercise = isExercise;
 		this.exerciseType = exerciseType;
 		this.exerciseFrequency = exerciseFrequency;
 		this.exerciseTime = exerciseTime;
 		this.healthNotes = healthNotes;
+		this.exerciseLevel = exerciseLevel;
 	}
 
 	public void updateExerciseLevel(double score){

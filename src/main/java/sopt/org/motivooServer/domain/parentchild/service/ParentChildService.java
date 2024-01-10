@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
 import sopt.org.motivooServer.domain.health.entity.*;
-import sopt.org.motivooServer.domain.health.exception.HealthException;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.health.service.CalculateScore;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
@@ -46,10 +45,15 @@ public class ParentChildService {
                         .exerciseType(ExerciseType.of(request.exerciseType()))
                         .exerciseFrequency(ExerciseFrequency.of(request.exerciseCount()))
                         .exerciseTime(ExerciseTime.of(request.exerciseTime()))
-                       // .healthNotes(HealthNote.of(request.exerciseNote()))
+                        .healthNotes(HealthNote.of(request.exerciseNote()))
+                        .exerciseLevel(ExerciseLevel.BEGINNER)
                         .build();
 
         healthRepository.save(health);
+
+        double exerciseScore = calculateScore.calculate(request.isExercise(), ExerciseType.of(request.exerciseType()),
+                ExerciseFrequency.of(request.exerciseCount()), ExerciseTime.of(request.exerciseTime()));
+        health.updateExerciseLevel(exerciseScore);
 
         String inviteCode = createInviteCode();
 
@@ -59,12 +63,7 @@ public class ParentChildService {
                                   .build();
         parentChildRepository.save(parentchild);
 
-        double exerciseScore = calculateScore.calculate(request.isExercise(), ExerciseType.of(request.exerciseType()),
-                                              ExerciseFrequency.of(request.exerciseCount()), ExerciseTime.of(request.exerciseTime()));
-
-        health.updateExerciseLevel(exerciseScore);
-
-        return new OnboardingResponse(userId, inviteCode, String.valueOf(health.getExerciseLevel()));
+        return new OnboardingResponse(userId, inviteCode, health.getExerciseLevel().getValue());
     }
 
     private String createInviteCode(){

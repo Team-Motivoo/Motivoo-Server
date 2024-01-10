@@ -13,6 +13,11 @@ public enum HealthExceptionType implements BusinessExceptionType {
 	 * 400 Bad Request
 	 */
 	INVALID_HEALTH_NOTE(HttpStatus.BAD_REQUEST, "유효하지 않는 건강 주의사항입니다."),
+	INVALID_EXERCISE_FREQUENCY(HttpStatus.BAD_REQUEST, "유효하지 않는 운동 횟수입니다."),
+	INVALID_EXERCISE_TIME(HttpStatus.BAD_REQUEST, "유효하지 않는 운동 시간입니다."),
+	INVALID_EXERCISE_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않는 운동 종료입니다."),
+
+	INVALID_EXERCISE_LEVEL(HttpStatus.BAD_REQUEST, "유효하지 않는 유저 분류입니다."),
 
 	/**
 	 * 404 Not Found

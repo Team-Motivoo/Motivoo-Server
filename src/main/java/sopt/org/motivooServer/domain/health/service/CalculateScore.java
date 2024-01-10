@@ -16,16 +16,14 @@ public class CalculateScore {
         return exerciseScore+frequencyScore+timeScore;
     }
     private double getExerciseScore(boolean isExercise, ExerciseType type) {
-        if(isExercise){
+        if(!isExercise){
             switch (type) {
                 case HIGH_LEVEL:
                     return 4.2;
                 case MEDIUM_LEVEL:
                     return 2.1;
-                case LOW_LEVEL:
-                    return 1.05;
                 default:
-                    return 0.0;
+                    return 1.05;
             }
         }
         switch (type) {
@@ -33,10 +31,8 @@ public class CalculateScore {
                 return 6;
             case MEDIUM_LEVEL:
                 return 3;
-            case LOW_LEVEL:
-                return 1.5;
             default:
-                return 0.0;
+                return 1.5;
         }
     }
     private double getFrequencyScore(ExerciseFrequency frequency) {
@@ -47,10 +43,8 @@ public class CalculateScore {
                 return 2.0;
             case THREE_OR_FOUR_TIMES:
                 return 3.0;
-            case FIVE_OR_MORE_TIMES:
-                return 4.0;
             default:
-                return 0.0;
+                return 4.0;
         }
     }
     private double getTimeScore(ExerciseTime time) {
@@ -61,10 +55,8 @@ public class CalculateScore {
                 return 2.0;
             case ONEHOUR_TO_TWOHOURS:
                 return 3.0;
-            case TWOHOURS_OR_MORE:
-                return 4.0;
             default:
-                return 0.0;
+                return 4.0;
         }
     }
 

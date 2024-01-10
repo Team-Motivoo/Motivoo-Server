@@ -1,13 +1,12 @@
 package sopt.org.motivooServer.domain.health.entity;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.health.exception.HealthException;
 
 import java.util.Arrays;
 
-import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.INVALID_HEALTH_NOTE;
+import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.*;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ExerciseType {
@@ -21,6 +20,6 @@ public enum ExerciseType {
         return Arrays.stream(ExerciseType.values())
                 .filter(exerciseType -> value.equals(exerciseType.value))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException());//TO-DO
+                .orElseThrow(() -> new HealthException(INVALID_EXERCISE_TYPE));
     }
 }

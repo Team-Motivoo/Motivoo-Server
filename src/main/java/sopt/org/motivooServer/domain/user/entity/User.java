@@ -89,6 +89,4 @@ public class User extends BaseTimeEntity {
 		this.age = age;
 	}
 
-
-
 }
