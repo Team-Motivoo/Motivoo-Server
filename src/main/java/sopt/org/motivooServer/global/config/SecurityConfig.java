@@ -25,7 +25,7 @@ public class SecurityConfig {
 	private final CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private static final String[] AUTH_WHITELIST = {
-		"/oauth/**", "/api/**"
+		"/", "/**", "/oauth/**", "/api/**", "/actuator/health"
 	};
 
 	@Bean
@@ -39,7 +39,7 @@ public class SecurityConfig {
 				.and()
 				.exceptionHandling()
 				.authenticationEntryPoint(customJwtAuthenticationEntryPoint)
-				.accessDeniedHandler(customAccessDeniedHandler)
+				// .accessDeniedHandler(customAccessDeniedHandler)
 				.and()
 				.authorizeHttpRequests()
 				.requestMatchers(AUTH_WHITELIST).permitAll()
