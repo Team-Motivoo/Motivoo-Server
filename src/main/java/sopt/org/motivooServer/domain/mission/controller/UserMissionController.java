@@ -1,5 +1,6 @@
 package sopt.org.motivooServer.domain.mission.controller;
 
+import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.*;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
 
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,6 @@ public class UserMissionController {
 	public ResponseEntity<ApiResponse<MissionImgUrlResponse>> getMissionImgUrl(@Valid @RequestBody final MissionImgUrlRequest request,
 																			@PathVariable final Long missionId) {
 		return ApiResponse.success(GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS,
-			userMissionService.getMissionImgUrl(request, missionId));
+			userMissionService.getMissionImgUrl(request, missionId, getAuthenticatedUser()));
 	}
 }

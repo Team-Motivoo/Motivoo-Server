@@ -25,8 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.mission.controller.UserMissionController;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
+import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
-import sopt.org.motivooServer.global.util.slack.SlackUtil;
 
 @Slf4j
 @WithMockUser(roles = "USER")
@@ -41,7 +41,8 @@ public class UserMissionControllerTest extends BaseControllerTest{
 	private UserMissionController userMissionController;
 
 	@MockBean
-	private SlackUtil slackUtil;
+	private UserRepository userRepository;
+
 
 	@Test
 	@DisplayName("미션 인증 사진 등록 API 테스트")
