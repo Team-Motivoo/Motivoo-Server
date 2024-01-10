@@ -7,6 +7,7 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import java.util.Optional;
 
 public interface HealthRepository extends JpaRepository<Health, Long> {
-
     Optional<Health> findByUser(User user);
+	Optional<Health> findByUserId(Long userId);
+
 }
