@@ -11,6 +11,7 @@ import sopt.org.motivooServer.global.advice.BusinessException;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum S3BucketDirectory {
 
+	MISSION_PREFIX("mission/"),
 	TEST_PREFIX("test/");
 
 	private final String name;

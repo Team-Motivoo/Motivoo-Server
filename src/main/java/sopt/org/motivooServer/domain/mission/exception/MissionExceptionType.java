@@ -12,7 +12,8 @@ public enum MissionExceptionType implements BusinessExceptionType {
 	/**
 	 * 404 Not Found
 	 */
-	MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션입니다.")
+	MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션입니다."),
+	USER_MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 유저 미션입니다.")
 
 
 	;

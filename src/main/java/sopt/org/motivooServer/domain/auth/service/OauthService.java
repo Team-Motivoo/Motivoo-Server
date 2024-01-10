@@ -1,10 +1,11 @@
 package sopt.org.motivooServer.domain.auth.service;
 
+import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.*;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.stereotype.Service;
@@ -119,11 +120,9 @@ public class OauthService {
                 .block();
     }
 
-
     @Transactional
     public void logout(String accessToken) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        String refreshToken = userRepository.findRefreshTokenById(Long.parseLong(userId));
+        String refreshToken = userRepository.findRefreshTokenById(getAuthenticatedUser());
 
         tokenRedisRepository.saveBlockedToken(accessToken);
         tokenRedisRepository.deleteRefreshToken(refreshToken);

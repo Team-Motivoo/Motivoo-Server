@@ -27,7 +27,8 @@ import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE user SET user.deleted=true WHERE user_id=?")
 public class User extends BaseTimeEntity {
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private Long id;
 
@@ -62,7 +63,7 @@ public class User extends BaseTimeEntity {
 
 	@Builder
 	private User(String nickname, String socialId, SocialPlatform socialPlatform, String socialAccessToken,
-				 String refreshToken, UserType type, boolean deleted){
+				 String refreshToken, UserType type, boolean deleted) {
 		this.nickname = nickname;
 		this.socialId = socialId;
 		this.socialPlatform = socialPlatform;
@@ -72,6 +73,7 @@ public class User extends BaseTimeEntity {
 		this.deleted = deleted;
 	}
 
+
 	//== 연관관계 메서드 ==//
 	public void addUserMission(UserMission userMission) {
 		this.userMissions.add(userMission);
@@ -80,11 +82,11 @@ public class User extends BaseTimeEntity {
 		}
 	}
 
-	public void updateRefreshToken(String refreshToken){
+	public void updateRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}
 
-	public void updateOnboardingInfo(UserType type, Integer age){
+	public void updateOnboardingInfo(UserType type, Integer age) {
 		this.type = type;
 		this.age = age;
 	}

@@ -48,4 +48,8 @@ public class UserMission extends BaseTimeEntity {
 			user.getUserMissions().add(this);
 		}
 	}
+
+	public void updateImgUrl(final String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
 }

@@ -16,8 +16,6 @@ import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 @ActiveProfiles({"local", "deploy"})
 //TODO EC2로 application-test.yml도 보내줘야 함!
 class MotivooServerApplicationTests {
-
-
 	@MockBean
 	private JwtTokenProvider jwtTokenProvider;
 
@@ -31,9 +29,7 @@ class MotivooServerApplicationTests {
 	private RedisConfig redisConfig;
 
 	@Autowired
-	private RedisTemplate<String ,String> redisTemplate;
-
-
+	private RedisTemplate<String, String> redisTemplate;
 
 	@Test
 	void contextLoads() {

@@ -3,6 +3,7 @@ package sopt.org.motivooServer.domain.auth.config;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
 import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
@@ -108,5 +109,10 @@ public class JwtTokenProvider {
         tokenRedisRepository.deleteRefreshToken(refreshToken);
 
         return tokenResponse;
+    }
+
+    public static Long getAuthenticatedUser() {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        return Long.valueOf(userId);
     }
 }
