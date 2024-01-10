@@ -33,11 +33,7 @@ public class HealthCheckControllerTest extends BaseControllerTest {
 	protected static final String DEFAULT_URL = "/api/health";
 
 	@MockBean
-	HealthCheckController healthCheckController;
-	@MockBean
 	private HealthCheckController healthCheckController;
-
-
 
 	@DisplayName("Health Check Controller 테스트")
 	@Test
