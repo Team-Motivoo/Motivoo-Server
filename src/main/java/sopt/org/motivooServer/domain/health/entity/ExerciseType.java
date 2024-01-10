@@ -1,6 +1,25 @@
 package sopt.org.motivooServer.domain.health.entity;
 
-public enum ExerciseType {
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import sopt.org.motivooServer.domain.health.exception.HealthException;
 
-	// 고강도 | 중강도 | 저강도
+import java.util.Arrays;
+
+import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.*;
+
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public enum ExerciseType {
+    HIGH_LEVEL("고강도"),
+    MEDIUM_LEVEL("중강도"),
+    LOW_LEVEL("저강도")
+    ;
+    private final String value;
+
+    public static ExerciseType of(String value) {
+        return Arrays.stream(ExerciseType.values())
+                .filter(exerciseType -> value.equals(exerciseType.value))
+                .findFirst()
+                .orElseThrow(() -> new HealthException(INVALID_EXERCISE_TYPE));
+    }
 }

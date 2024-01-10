@@ -1,12 +1,11 @@
 package sopt.org.motivooServer.domain.health.entity;
 
-import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.*;
-
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import sopt.org.motivooServer.domain.health.exception.HealthException;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum HealthNote {
@@ -20,10 +19,9 @@ public enum HealthNote {
 
 	private final String value;
 
-	public static HealthNote of(String value) {
+	public static List<HealthNote> of(List<String> values) {
 		return Arrays.stream(HealthNote.values())
-			.filter(healthNote -> value.equals(healthNote.value))
-			.findFirst()
-			.orElseThrow(() -> new HealthException(INVALID_HEALTH_NOTE));
+				.filter(healthNote -> values.contains(healthNote.value))
+				.collect(Collectors.toList());
 	}
 }

@@ -4,6 +4,8 @@ import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import java.util.Arrays;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.user.exception.UserException;
@@ -17,6 +19,7 @@ public enum UserType {
 
 	private final String value;
 
+	@JsonCreator
 	public static UserType of(String value) {
 		return Arrays.stream(UserType.values())
 			.filter(userType -> value.equals(userType.value))

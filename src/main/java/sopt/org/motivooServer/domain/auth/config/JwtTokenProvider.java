@@ -81,6 +81,7 @@ public class JwtTokenProvider {
 
     public void validateToken(String token) {
         try {
+            log.info("토큰 값="+token);
             token = token.replaceAll("\\s+", "");
             token = token.replace(BEARER_TYPE, "");
             Jwts.parserBuilder()
@@ -122,4 +123,6 @@ public class JwtTokenProvider {
         }
         return Long.valueOf(principal.getName());
     }
+
+
 }

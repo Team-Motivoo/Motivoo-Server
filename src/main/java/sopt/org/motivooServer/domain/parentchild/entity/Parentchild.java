@@ -5,9 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
 
 @Entity
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class Parentchild extends BaseTimeEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +23,11 @@ public class Parentchild extends BaseTimeEntity {
 
 	@Column(nullable = false)
 	private String inviteCode;
+
+	@Builder
+	private Parentchild(Boolean isMatched, String inviteCode){
+		this.isMatched = isMatched;
+		this.inviteCode = inviteCode;
+	}
+
 }
