@@ -10,7 +10,7 @@ RUNNING_CONTAINER_NAME=$(echo "$DOCKER_PS_OUTPUT" | awk '{print $NF}')
 
 IS_REDIS_ACTIVATE=$(docker ps | grep redis)
 
-WEB_HEALTH_CHECK_URL=/actuator/health
+WEB_HEALTH_CHECK_URL=/api/health
 
 # Redis Docker Image Pull
 if [ -z "$IS_REDIS_ACTIVATE" ];then
@@ -64,7 +64,7 @@ if [ $RUNNING_CONTAINER_NAME == "blue" ]; then
     sleep 3
 
     RESPONSE=$(curl -s http://localhost:8081${WEB_HEALTH_CHECK_URL})
-    UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
+    UP_COUNT=$(echo $RESPONSE | grep 'success' | wc -l)
     echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
     if [ $UP_COUNT -ge 1 ]; then  # "UP" 문자열이 1개 이상 존재한다면 헬스체크 통과
@@ -108,7 +108,7 @@ else
     sleep 3
 
     RESPONSE=$(curl -s http://localhost:8080${RUNNING_SERVER_PORT}/actuator/health)
-    UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
+    UP_COUNT=$(echo $RESPONSE | grep 'success' | wc -l)
     echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
     if [ $UP_COUNT -ge 1 ]; then  # "UP" 문자열이 1개 이상 존재한다면 헬스체크 통과
@@ -139,7 +139,7 @@ echo "----------------------------------------------------------------------"
 
 # Nginx를 통해서 서버에 접근 가능한지 확인
 RESPONSE=$(curl -s http://localhost:${CURRENT_SERVER_PORT}${WEB_HEALTH_CHECK_URL})
-UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
+UP_COUNT=$(echo $RESPONSE | grep 'success' | wc -l)
 echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
 if [ $UP_COUNT -ge 1 ]
