@@ -35,7 +35,7 @@ fi
 
 # 현재 실행 중인 포트 외 실행가능한 포트 확인
 for item in "${ALL_PORTS[@]}"; do
-  if [ "$item" != "$RUNNING_SERVER_PORT" ]; then
+  if [ "$item" != "${RUNNING_SERVER_PORT}" ]; then
     AVAILABLE_PORT+=("$item")
   fi
 done;
@@ -63,7 +63,7 @@ if [ $RUNNING_CONTAINER_NAME == "blue" ]; then
     echo "[$NOW_TIME] Green health check ..."
     sleep 3
 
-    RESPONSE=$(curl -s http://localhost:8081${WEB_HEALTH_CHECK_URL})
+    RESPONSE=$(curl -s http://localhost:${CURRENT_SERVER_PORT}${WEB_HEALTH_CHECK_URL})
     UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
     echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
@@ -87,6 +87,7 @@ if [ $RUNNING_CONTAINER_NAME == "blue" ]; then
   echo "[$NOW_TIME] Nginx Reload (Port 스위칭 적용)"
   sudo cp /etc/nginx/conf.d/green-url.inc /etc/nginx/conf.d/service-url.inc
   sudo nginx -s reload
+  echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url.inc)"
   echo "[$NOW_TIME] Blue 컨테이너 중단"
   docker-compose stop blue
 
@@ -107,7 +108,7 @@ else
     echo "[$NOW_TIME] Blue health check ..."
     sleep 3
 
-    RESPONSE=$(curl -s http://localhost:8080${RUNNING_SERVER_PORT}/actuator/health)
+    RESPONSE=$(curl -s http://localhost:${CURRENT_SERVER_PORT}${WEB_HEALTH_CHECK_URL})
     UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
     echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
@@ -131,6 +132,7 @@ else
   echo "[$NOW_TIME] Nginx Reload (Port 스위칭 적용)"
   sudo cp /etc/nginx/conf.d/blue-url.inc /etc/nginx/conf.d/service-url.inc
   sudo nginx -s reload
+  echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url.inc)"
   echo "[$NOW_TIME] Green 컨테이너 중단"
   docker-compose stop green
 fi
@@ -144,10 +146,10 @@ echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
 if [ $UP_COUNT -ge 1 ]
 then
-    echo "> 서버 변경 성공"
+    echo "[$NOW_TIME] 서버 변경 성공"
 else
-    echo "> 서버 변경 실패"
-    echo "> 서버 응답 결과: ${RESPONSE}"
+    echo "[$NOW_TIME] 서버 변경 실패"
+    echo "[$NOW_TIME] 서버 응답 결과: ${RESPONSE}"
     exit 1
 fi
 

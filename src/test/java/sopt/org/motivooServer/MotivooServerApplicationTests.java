@@ -1,15 +1,12 @@
 package sopt.org.motivooServer;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
-@ActiveProfiles({"test"})
+//TODO EC2로 application-test.yml도 보내줘야 함!
 class MotivooServerApplicationTests {
+
 
 	@Test
 	void contextLoads() {
 	}
-
 }

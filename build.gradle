@@ -62,6 +62,7 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	// H2 (테스트용)
+	runtimeOnly 'com.h2database:h2'
 	testImplementation 'com.h2database:h2'
 
 	// Security
@@ -99,6 +100,20 @@ dependencies {
 	implementation("software.amazon.awssdk:bom:2.21.0")
 	implementation("software.amazon.awssdk:s3:2.21.0")
 
+	//OAuth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	//jwt
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 tasks.named('test') {
@@ -130,4 +145,3 @@ openapi3 {
 	outputFileNamePrefix = "open-api-3.0.1"
 	outputDirectory = 'build/resources/main/static/docs'
 }
-

@@ -21,7 +21,10 @@ public enum SuccessType {
 	GET_MYPAGE_MYINFO_SUCCESS(HttpStatus.OK, "마이페이지 나의 정보 조회에 성공했습니다."),
 	GET_MYPAGE_HEALTH_INFO_SUCCESS(HttpStatus.OK, "마이페이지 정보 조회에 성공했습니다."),
 
-
+	//소셜 로그인
+	LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공했습니다."),
+	LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃에 성공했습니다."),
+	REISSUE_SUCCESS(HttpStatus.OK, "토큰 재발급에 성공했습니다.");
 	;
 
 	private final HttpStatus httpStatus;

@@ -10,7 +10,6 @@ import sopt.org.motivooServer.domain.user.exception.UserException;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum UserType {
-
 	PARENT("부모"),
 	CHILD("자녀"),
 	NONE("없음")
