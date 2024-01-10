@@ -9,6 +9,8 @@ import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
 import sopt.org.motivooServer.domain.health.entity.*;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.health.service.CalculateScore;
+import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
+import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentChildRepository;
 import sopt.org.motivooServer.domain.user.entity.User;
@@ -62,9 +64,19 @@ public class ParentChildService {
                                   .isMatched(false)
                                   .build();
         parentChildRepository.save(parentchild);
+        user.addParentChild(parentchild);
 
         return new OnboardingResponse(userId, inviteCode, health.getExerciseLevel().getValue());
     }
+
+//    @Transactional
+//    public InviteResponse validateInviteCode(Long userId, InviteRequest request){
+//        User user = userRepository.findById(userId).orElseThrow(
+//                () -> new UserException(INVALID_USER_TYPE)
+//        );
+//
+//        Long parentChildId = user.getParentchild();
+//    }
 
     private String createInviteCode(){
         Random random = new Random();
