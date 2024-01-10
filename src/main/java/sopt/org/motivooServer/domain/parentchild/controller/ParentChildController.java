@@ -15,6 +15,8 @@ import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
 import sopt.org.motivooServer.domain.parentchild.service.ParentChildService;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
+import java.security.Principal;
+
 import static sopt.org.motivooServer.global.response.SuccessType.ONBOARDING_SUCCESS;
 
 @Slf4j
@@ -23,7 +25,7 @@ import static sopt.org.motivooServer.global.response.SuccessType.ONBOARDING_SUCC
 public class ParentChildController {
     private final ParentChildService parentChildService;
     @PostMapping("/user/exercise")
-    public ResponseEntity<ApiResponse<OnboardingResponse>> onboardInput(@RequestHeader("Authorization") String accessToken,
+    public ResponseEntity<ApiResponse<OnboardingResponse>> onboardInput(Principal principal,
                                                                         @Valid @RequestBody final OnboardingRequest request){
 
         Long userId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());

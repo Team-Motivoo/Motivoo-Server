@@ -10,6 +10,7 @@ import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 
+import java.security.Principal;
 import java.util.*;
 
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
@@ -79,7 +80,7 @@ public class JwtTokenProvider {
 
     public void validateToken(String token) {
         try {
-            System.out.println(token);
+            log.info("토큰 값="+token);
             token = token.replaceAll("\\s+", "");
             token = token.replace(BEARER_TYPE, "");
             Jwts.parserBuilder()
@@ -115,4 +116,6 @@ public class JwtTokenProvider {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         return Long.valueOf(userId);
     }
+
+
 }
