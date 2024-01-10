@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
+import sopt.org.motivooServer.domain.mission.dto.request.MissionStepStatusRequest;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
+import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.mission.exception.MissionException;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionRepository;
@@ -41,6 +43,14 @@ public class UserMissionService {
 		return MissionImgUrlResponse.of(preSignedUrl.url(), preSignedUrl.fileName());
 	}
 
+	@Transactional
+	public MissionStepStatusResponse getMissionCompleted(final MissionStepStatusRequest request, final Long userId) {
+		User user = getUserById(userId);
+
+		return MissionStepStatusResponse.of(user, )
+
+	}
+
 	private User getUserById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(
 			() -> new UserException(USER_NOT_FOUND)
@@ -48,9 +58,8 @@ public class UserMissionService {
 	}
 
 	private UserMission getUserMission(Long missionId) {
-		UserMission userMission = userMissionRepository.findById(missionId).orElseThrow(
+		return userMissionRepository.findById(missionId).orElseThrow(
 			() -> new MissionException(USER_MISSION_NOT_FOUND)
 		);
-		return userMission;
 	}
 }

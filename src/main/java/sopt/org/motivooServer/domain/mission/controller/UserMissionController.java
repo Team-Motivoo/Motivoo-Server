@@ -18,8 +18,8 @@ import sopt.org.motivooServer.domain.mission.service.UserMissionService;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/mission")
+@RequiredArgsConstructor
 public class UserMissionController {
 
 	private final UserMissionService userMissionService;
