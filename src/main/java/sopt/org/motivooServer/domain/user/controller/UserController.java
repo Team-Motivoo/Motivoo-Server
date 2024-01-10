@@ -26,7 +26,7 @@ public class UserController {
 
 	@GetMapping("/me")
 	public ResponseEntity<ApiResponse<MyPageInfoResponse>> getMyInfo(Principal principal) {
-		return ApiResponse.success(GET_MYPAGE_MYINFO_SUCCESS, userService.getMyInfo(getUserFromPrincipal(principal)));
+		return ApiResponse.success(GET_MYINFO_SUCCESS, userService.getMyInfo(getUserFromPrincipal(principal)));
 	}
 
 	@GetMapping("/exercise")

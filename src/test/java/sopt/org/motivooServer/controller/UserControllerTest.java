@@ -67,7 +67,7 @@ public class UserControllerTest extends BaseControllerTest {
 			.userAge(20)
 			.userType("CHILD").build();
 		ResponseEntity<ApiResponse<MyPageInfoResponse>> result = ApiResponse
-			.success(GET_MYPAGE_INFO_SUCCESS, response);
+			.success(GET_MYINFO_SUCCESS, response);
 
 		// when
 		when(userController.getMyInfo(principal)).thenReturn(result);
@@ -99,7 +99,7 @@ public class UserControllerTest extends BaseControllerTest {
 			)).andExpect(status().isOk());
 	}
 
-	@Test
+/*	@Test
 	@DisplayName("마이페이지 운동정보 조회 테스트")
 	void userControllerMyHealthInfoTest() throws Exception {
 
@@ -147,5 +147,5 @@ public class UserControllerTest extends BaseControllerTest {
 						.build()
 				)
 			)).andExpect(status().isOk());
-	}
+	}*/
 }

@@ -32,7 +32,7 @@ public class UserService {
 
 	public MyHealthInfoResponse getMyHealthInfo(final Long userId) {
 		Health health = healthRepository.findByUserId(userId).orElseThrow(
-			() -> new HealthException(NOT_EXIST_USER_HEALTH)  // TODO UserException과 HealthException을 굳이 분리해야 할까?
+			() -> new HealthException(NOT_EXIST_USER_HEALTH)
 		);
 		return MyHealthInfoResponse.of(health);
 	}
