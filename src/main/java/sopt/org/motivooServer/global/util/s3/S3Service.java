@@ -39,6 +39,32 @@ public class S3Service {
 		this.awsConfig = awsConfig;
 	}
 
+	// PreSigned Url을 통한 이미지 업로드
+	public PreSignedUrlResponse getUploadPreSignedUrl(final S3BucketDirectory prefix) {
+		final String fileName = generateImageFileName();   // UUID 문자열
+		final String key = prefix.value() + fileName;
+
+		log.info("S3 세팅 성공!: {}", key);
+		log.info("업로드할 image 경로: {}", prefix);
+
+		try {
+			final S3Presigner preSigner = awsConfig.getS3PreSigner();
+
+			PutObjectRequest request = PutObjectRequest.builder()
+				.bucket(bucketName)
+				.key(key).build();
+
+			PutObjectPresignRequest preSignedUrlRequest = PutObjectPresignRequest.builder()
+				.signatureDuration(Duration.ofMinutes(PRE_SIGNED_URL_EXPIRE_MINUTE))
+				.putObjectRequest(request).build();
+
+			String url = preSigner.presignPutObject(preSignedUrlRequest).url().toString();
+			return PreSignedUrlResponse.of(fileName, url);
+		} catch (RuntimeException e) {
+			throw new BusinessException(FAIL_TO_UPLOAD_IMAGE);
+		}
+	}
+
 	// Multipart 요청을 통한 이미지 업로드
 	public String uploadImage(final S3BucketDirectory directoryPath, MultipartFile image) throws IOException {
 		validateExtension(image);
@@ -65,34 +91,8 @@ public class S3Service {
 	}
 
 
-	// PreSigned Url을 통한 이미지 업로드
-	public PreSignedUrlResponse getUploadPreSignedUrl(final S3BucketDirectory prefix) throws IOException {
-		final String fileName = generateImageFileName();   // UUID 문자열
-		final String key = prefix.value() + fileName;
-
-		log.info("S3 세팅 성공!: {}", key);
-		log.info("업로드할 image 경로: {}", prefix);
-
-		try {
-			final S3Presigner preSigner = awsConfig.getS3PreSigner();
-
-			PutObjectRequest request = PutObjectRequest.builder()
-				.bucket(bucketName)
-				.key(key).build();
-
-			PutObjectPresignRequest preSignedUrlRequest = PutObjectPresignRequest.builder()
-				.signatureDuration(Duration.ofMinutes(PRE_SIGNED_URL_EXPIRE_MINUTE))
-				.putObjectRequest(request).build();
-
-			String url = preSigner.presignPutObject(preSignedUrlRequest).url().toString();
-			return PreSignedUrlResponse.of(fileName, url);
-		} catch (RuntimeException e) {
-			throw new BusinessException(FAIL_TO_UPLOAD_IMAGE);
-		}
-	}
-
 	// S3 버킷에 업로드된 이미지 삭제
-	public void deleteImage(String key) throws IOException {
+	public void deleteImage(String key) {
 		try {
 			final S3Client s3Client = awsConfig.getS3Client();
 

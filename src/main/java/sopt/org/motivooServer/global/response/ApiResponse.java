@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import sopt.org.motivooServer.global.advice.BusinessExceptionType;
 
 @Getter
 @Builder
@@ -46,6 +47,16 @@ public class ApiResponse<T> {
 				.code(successType.getHttpStatusCode())
 				.message(successType.getMessage())
 				.success(true).build();
+	}
+
+	// 실패
+	public static <T> ResponseEntity<ApiResponse<T>> fail(BusinessExceptionType exceptionType, T data) {
+		return ResponseEntity.status(exceptionType.status())
+			.body(ApiResponse.<T>builder()
+				.code(exceptionType.getHttpStatusCode())
+				.message(exceptionType.message())
+				.success(false)
+				.data(data).build());
 	}
 }
 

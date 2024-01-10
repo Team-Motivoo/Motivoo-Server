@@ -7,8 +7,11 @@ build/
 
 application-local.yml
 application.yml
+application-test.yml
 
 **.adoc
+
+**.sql
 
 ### STS ###
 .apt_generated
