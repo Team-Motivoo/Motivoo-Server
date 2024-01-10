@@ -23,11 +23,14 @@ import sopt.org.motivooServer.domain.auth.config.CustomJwtAuthenticationEntryPoi
 import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
 import sopt.org.motivooServer.domain.auth.config.RedisConfig;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
+import sopt.org.motivooServer.global.config.aws.AWSConfig;
+import sopt.org.motivooServer.global.util.s3.S3Service;
+import sopt.org.motivooServer.global.util.slack.SlackUtil;
 
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @ExtendWith({RestDocumentationExtension.class})
-@WebMvcTest(properties = "spring.config.location=classpath:/application-local.yml")
+@WebMvcTest(properties = "spring.config.location=classpath:/application.yml")
 public abstract class BaseControllerTest {
 
 	@Autowired
@@ -38,18 +41,27 @@ public abstract class BaseControllerTest {
 
 	@Autowired
 	protected MockMvc mockMvc;
-
-	@Autowired
-	private JwtTokenProvider jwtTokenProvider;
-
-	@Autowired
-	private CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
-
-	@Autowired
+	@MockBean
 	private RedisConfig redisConfig;
 
-	@Autowired
+	@MockBean
 	private TokenRedisRepository tokenRedisRepository;
+
+
+	@MockBean
+	private JwtTokenProvider jwtTokenProvider;
+
+	@MockBean
+	private CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
+
+	@MockBean
+	private SlackUtil slackUtil;
+
+	@MockBean
+	private AWSConfig awsConfig;
+
+	@MockBean
+	private S3Service s3Service;
 
 	@BeforeEach
 	void setUp(final RestDocumentationContextProvider restDocumentation) {
