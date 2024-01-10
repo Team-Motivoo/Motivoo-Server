@@ -13,8 +13,8 @@ public enum UserExceptionType implements BusinessExceptionType {
 	 * 400 Bad Request
 	 */
 	INVALID_USER_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 회원 유형입니다."),
-
 	INVALID_SOCIAL_PLATFORM(HttpStatus.BAD_REQUEST, "유효하지 않은 소셜 플랫폼입니다."),
+
 
 	/**
 	 * 401 Unauthorized

@@ -1,5 +1,7 @@
 package sopt.org.motivooServer.domain.auth.service;
 
+import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.*;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -122,8 +124,7 @@ public class OauthService {
 
     @Transactional
     public void logout(String accessToken) {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        String refreshToken = userRepository.findRefreshTokenById(Long.parseLong(userId));
+        String refreshToken = userRepository.findRefreshTokenById(getAuthenticatedUser());
 
         tokenRedisRepository.saveBlockedToken(accessToken);
         tokenRedisRepository.deleteRefreshToken(refreshToken);
