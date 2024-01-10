@@ -5,9 +5,11 @@ import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 import java.util.Arrays;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 
+@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum UserType {
 	PARENT("부모"),
