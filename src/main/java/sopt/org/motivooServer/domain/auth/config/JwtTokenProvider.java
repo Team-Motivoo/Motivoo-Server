@@ -10,8 +10,10 @@ import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 
+import java.security.Principal;
 import java.util.*;
 
+import static java.util.Objects.*;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 @Slf4j
@@ -111,7 +113,13 @@ public class JwtTokenProvider {
     }
 
     public static Long getAuthenticatedUser() {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        return Long.valueOf(userId);
+        return Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    public static Long getUserFromPrincipal(Principal principal) {
+        if (isNull(principal)) {
+            throw new UserException(EMPTY_PRINCIPLE_EXCEPTION);
+        }
+        return Long.valueOf(principal.getName());
     }
 }
