@@ -83,4 +83,12 @@ public class User extends BaseTimeEntity {
 	public void updateRefreshToken(String refreshToken){
 		this.refreshToken = refreshToken;
 	}
+
+	public void updateOnboardingInfo(UserType type, Integer age){
+		this.type = type;
+		this.age = age;
+	}
+
+
+
 }

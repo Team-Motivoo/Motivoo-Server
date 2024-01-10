@@ -21,7 +21,11 @@ public enum SuccessType {
 	//소셜 로그인
 	LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공했습니다."),
 	LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃에 성공했습니다."),
-	REISSUE_SUCCESS(HttpStatus.OK, "토큰 재발급에 성공했습니다.");
+	REISSUE_SUCCESS(HttpStatus.OK, "토큰 재발급에 성공했습니다."),
+
+
+	//온보딩
+	ONBOARDING_SUCCESS(HttpStatus.OK, "온보딩 질문 입력에 성공했습니다.")
 	;
 
 	private final HttpStatus httpStatus;

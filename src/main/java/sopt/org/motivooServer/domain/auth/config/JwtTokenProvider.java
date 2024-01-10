@@ -78,6 +78,7 @@ public class JwtTokenProvider {
 
     public void validateToken(String token) {
         try {
+            System.out.println(token);
             token = token.replaceAll("\\s+", "");
             token = token.replace(BEARER_TYPE, "");
             Jwts.parserBuilder()
