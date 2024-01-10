@@ -1,18 +1,26 @@
 package sopt.org.motivooServer.domain.mission.service;
 
-import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.*;
+import static java.util.Objects.*;
 import static sopt.org.motivooServer.domain.mission.exception.MissionExceptionType.*;
+import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
+import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.mission.exception.MissionException;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionRepository;
+import sopt.org.motivooServer.domain.parentchild.exception.ParentchildException;
 import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
@@ -20,6 +28,7 @@ import sopt.org.motivooServer.global.util.s3.PreSignedUrlResponse;
 import sopt.org.motivooServer.global.util.s3.S3BucketDirectory;
 import sopt.org.motivooServer.global.util.s3.S3Service;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -37,8 +46,30 @@ public class UserMissionService {
 
 		PreSignedUrlResponse preSignedUrl = s3Service.getUploadPreSignedUrl(
 			S3BucketDirectory.of(request.imgPrefix()));
-		userMission.updateImgUrl(preSignedUrl.fileName());
+		userMission.updateImgUrl(s3Service.getImgByFileName(request.imgPrefix(), preSignedUrl.fileName()));
 		return MissionImgUrlResponse.of(preSignedUrl.url(), preSignedUrl.fileName());
+	}
+
+	public MissionHistoryResponse getUserMissionHistory(final Long userId) {
+		User myUser = getUserById(userId);
+		User opponentUser = userRepository.findByIdAndParentchild(userId, myUser.getParentchild()).orElseThrow(
+			() -> new ParentchildException(NOT_EXIST_PARENTCHILD_USER));
+
+		UserMission todayMission = userMissionRepository.findFirstByUserOrderByCreatedAt(myUser).orElseThrow(
+			() -> new MissionException(EMPTY_USER_MISSIONS));
+
+		validateTodayDateMission(todayMission);
+
+		return MissionHistoryResponse.of(myUser, todayMission,
+			userMissionRepository.findUserMissionsByUserOrderByCreatedAt(myUser),
+			userMissionRepository.findUserMissionsByUserOrderByCreatedAt(opponentUser));
+	}
+
+	private static void validateTodayDateMission(UserMission todayMission) {
+		if (!todayMission.getCreatedAt().equals(LocalDate.now())) {
+			log.info("오늘 날짜와 동일하지 않은 최근 미션!");
+			throw new MissionException(NOT_CHOICE_TODAY_MISSION);
+		}
 	}
 
 	private User getUserById(Long userId) {
