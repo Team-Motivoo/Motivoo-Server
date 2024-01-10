@@ -26,9 +26,6 @@ public class UserMission extends BaseTimeEntity {
 	@Column(name = "user_mission_id")
 	private Long id;
 
-	@Column(nullable = false)
-	private Double completedRate;
-
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private CompletedStatus completedStatus;

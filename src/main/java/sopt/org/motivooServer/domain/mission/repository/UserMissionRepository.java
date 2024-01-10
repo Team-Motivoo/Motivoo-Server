@@ -13,6 +13,4 @@ public interface UserMissionRepository extends JpaRepository<UserMission, Long> 
 	List<UserMission> findUserMissionsByUserOrderByCreatedAt(User user);
 
 	Optional<UserMission> findFirstByUserOrderByCreatedAt(User user);
-
-
 }

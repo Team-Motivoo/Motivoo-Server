@@ -1,14 +1,11 @@
 package sopt.org.motivooServer.domain.mission.service;
 
-import static java.util.Objects.*;
 import static sopt.org.motivooServer.domain.mission.entity.CompletedStatus.*;
 import static sopt.org.motivooServer.domain.mission.exception.MissionExceptionType.*;
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -62,9 +59,7 @@ public class UserMissionService {
 		User opponentUser = userRepository.findByIdAndParentchild(userId, myUser.getParentchild()).orElseThrow(
 			() -> new ParentchildException(NOT_EXIST_PARENTCHILD_USER));
 
-		UserMission todayMission = userMissionRepository.findFirstByUserOrderByCreatedAt(myUser).orElseThrow(
-			() -> new MissionException(EMPTY_USER_MISSIONS));
-
+		UserMission todayMission = getCurrentMission(myUser);
 		validateTodayDateMission(todayMission);
 
 		return MissionHistoryResponse.of(myUser, todayMission,
@@ -72,13 +67,26 @@ public class UserMissionService {
 			userMissionRepository.findUserMissionsByUserOrderByCreatedAt(opponentUser));
 	}
 
+	private UserMission getCurrentMission(User user) {
+		return userMissionRepository.findFirstByUserOrderByCreatedAt(user).orElseThrow(
+			() -> new MissionException(EMPTY_USER_MISSIONS));
+	}
+
 	public TodayMissionResponse getTodayMission(final Long userId) {
 		User user = getUserById(userId);
-		List<UserMission> todayMission = filterTodayUserMission(user);
 
+		UserMission todayMission = getCurrentMission(user);
+		validateTodayDateMission(todayMission);
+
+		List<UserMission> todayMissionChoices = filterTodayUserMission(user);
+
+		return TodayMissionResponse.of(todayMissionChoices, todayMission);
 	}
 
 	private List<UserMission> filterTodayUserMission(User user) {
+		// 부모 미션 or 자식 미션 리스트
+		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType().getValue());
+
 	}
 
 	@Transactional
@@ -94,17 +102,17 @@ public class UserMissionService {
 		return userMission.getId();
 	}
 
-	private static void validateTodayDateMission(UserMission todayMission) {
+	private boolean validateTodayDateMission(UserMission todayMission) {
 		if (!todayMission.getCreatedAt().equals(LocalDate.now())) {
 			log.info("오늘 날짜와 동일하지 않은 최근 미션!");
 			throw new MissionException(NOT_CHOICE_TODAY_MISSION);
 		}
+		return true;
 	}
 
 	private User getUserById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(
-			() -> new UserException(USER_NOT_FOUND)
-		);
+			() -> new UserException(USER_NOT_FOUND));
 	}
 
 	private Mission getMissionById(Long missionId) {
@@ -113,9 +121,7 @@ public class UserMissionService {
 	}
 
 	private UserMission getUserMission(Long userMissionId) {
-		UserMission userMission = userMissionRepository.findById(userMissionId).orElseThrow(
-			() -> new MissionException(USER_MISSION_NOT_FOUND)
-		);
-		return userMission;
+		return userMissionRepository.findById(userMissionId).orElseThrow(
+			() -> new MissionException(USER_MISSION_NOT_FOUND));
 	}
 }
