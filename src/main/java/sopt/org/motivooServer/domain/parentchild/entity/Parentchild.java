@@ -7,9 +7,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
 
+@Getter
 @Entity
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class Parentchild extends BaseTimeEntity {
@@ -28,6 +30,10 @@ public class Parentchild extends BaseTimeEntity {
 	private Parentchild(Boolean isMatched, String inviteCode){
 		this.isMatched = isMatched;
 		this.inviteCode = inviteCode;
+	}
+
+	public void matchingSuccess() {
+		this.isMatched = true;
 	}
 
 }

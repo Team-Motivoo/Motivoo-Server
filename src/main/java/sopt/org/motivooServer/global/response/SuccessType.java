@@ -28,7 +28,8 @@ public enum SuccessType {
 
 
 	//온보딩
-	ONBOARDING_SUCCESS(HttpStatus.OK, "온보딩 질문 입력에 성공했습니다.")
+	ONBOARDING_SUCCESS(HttpStatus.OK, "온보딩 질문 입력에 성공했습니다."),
+	INPUT_INVITE_CODE_SUCCESS(HttpStatus.OK, "초대코드 입력에 성공했습니다.")
 	;
 
 	private final HttpStatus httpStatus;

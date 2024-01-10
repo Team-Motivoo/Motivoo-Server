@@ -12,6 +12,7 @@ import sopt.org.motivooServer.domain.health.service.CalculateScore;
 import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
 import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
+import sopt.org.motivooServer.domain.parentchild.exception.ParentchildException;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentChildRepository;
 import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
@@ -20,6 +21,7 @@ import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
 import java.util.Random;
 
+import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.MATCH_ALREADY_COMPLETED;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INVALID_USER_TYPE;
 
 @Slf4j
@@ -69,15 +71,27 @@ public class ParentChildService {
         return new OnboardingResponse(userId, inviteCode, health.getExerciseLevel().getValue());
     }
 
-//    @Transactional
-//    public InviteResponse validateInviteCode(Long userId, InviteRequest request){
-//        User user = userRepository.findById(userId).orElseThrow(
-//                () -> new UserException(INVALID_USER_TYPE)
-//        );
-//
-//        Long parentChildId = user.getParentchild();
-//    }
+    @Transactional
+    public InviteResponse validateInviteCode(Long userId, InviteRequest request){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserException(INVALID_USER_TYPE)
+        );
 
+        Parentchild parentchild = parentChildRepository.findByInviteCode(request.inviteCode());
+        if(parentchild!=null){
+            checkForOneToOneMatch(parentchild); //이미 매칭이 완료된 경우 예외처리
+            parentchild.matchingSuccess();
+            user.addParentChild(parentchild);
+            return new InviteResponse(userId, true);
+        }
+        return new InviteResponse(userId, false);
+    }
+
+    public void checkForOneToOneMatch(Parentchild parentchild){
+        if(parentchild.getIsMatched()){
+            throw new ParentchildException(MATCH_ALREADY_COMPLETED);
+        }
+    }
     private String createInviteCode(){
         Random random = new Random();
         StringBuilder randomBuf = new StringBuilder();

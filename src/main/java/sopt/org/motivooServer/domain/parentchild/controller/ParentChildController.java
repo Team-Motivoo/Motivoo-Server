@@ -5,17 +5,21 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
+import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
+import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.service.ParentChildService;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 import java.security.Principal;
 
 import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.getUserFromPrincipal;
+import static sopt.org.motivooServer.global.response.SuccessType.INPUT_INVITE_CODE_SUCCESS;
 import static sopt.org.motivooServer.global.response.SuccessType.ONBOARDING_SUCCESS;
 
 @Slf4j
@@ -29,4 +33,12 @@ public class ParentChildController {
         Long userId = getUserFromPrincipal(principal);
         return ApiResponse.success(ONBOARDING_SUCCESS, parentChildService.onboardInput(userId, request));
     }
+
+    @PatchMapping("/parentchild/match")
+    public ResponseEntity<ApiResponse<InviteResponse>> validateInviteCode(Principal principal,
+                                                                          @Valid @RequestBody final InviteRequest request){
+        Long userId = getUserFromPrincipal(principal);
+        return ApiResponse.success(INPUT_INVITE_CODE_SUCCESS, parentChildService.validateInviteCode(userId, request));
+    }
+
 }
