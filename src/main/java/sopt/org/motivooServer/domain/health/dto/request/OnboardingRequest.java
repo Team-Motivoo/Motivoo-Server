@@ -10,18 +10,18 @@ import sopt.org.motivooServer.domain.user.entity.UserType;
 import java.util.List;
 
 public record OnboardingRequest (
-        UserType type,
+        String type,
         int age,
         @JsonProperty("is_exercise")
         boolean isExercise,
         @JsonProperty("exercise_type")
-        ExerciseType exerciseType,
+        String exerciseType,
         @JsonProperty("exercise_count")
-        ExerciseFrequency exerciseCount,
+        String exerciseCount,
         @JsonProperty("exercise_time")
-        ExerciseTime exerciseTime,
+        String exerciseTime,
         @JsonProperty("exercise_note")
-        List<HealthNote> exerciseNote
+        List<String> exerciseNote
 ){
 
 }

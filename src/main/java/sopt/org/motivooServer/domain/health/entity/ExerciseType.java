@@ -1,5 +1,6 @@
 package sopt.org.motivooServer.domain.health.entity;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.health.exception.HealthException;
@@ -16,10 +17,10 @@ public enum ExerciseType {
     ;
     private final String value;
 
-//    public static ExerciseType of(String value) {
-//        return Arrays.stream(ExerciseType.values())
-//                .filter(exerciseType -> value.equals(exerciseType.value))
-//                .findFirst()
-//                .orElseThrow(() -> new ExerciseTypeException(INVALID_EXERCISE_Type));
-//    }
+    public static ExerciseType of(String value) {
+        return Arrays.stream(ExerciseType.values())
+                .filter(exerciseType -> value.equals(exerciseType.value))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException());//TO-DO
+    }
 }

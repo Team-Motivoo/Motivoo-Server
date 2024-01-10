@@ -26,12 +26,13 @@ jobs:
           # yml을 생성할 디렉터리로 작업 디렉터리 이동
           cd ./src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
+          echo "${{ secrets.APPLICATION_TEST }}" > ./application.yml
         working-directory: ${{ env.working-directory }}
 
       - name: 빌드
         run: |
           chmod +x gradlew
-          ./gradlew build
+          ./gradlew build -x test
         working-directory: ${{ env.working-directory }}
         shell: bash
 

@@ -1,7 +1,10 @@
 package sopt.org.motivooServer.domain.health.entity;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ExerciseFrequency {
@@ -14,5 +17,10 @@ public enum ExerciseFrequency {
 
     private final String value;
 
-
+    public static ExerciseFrequency of(String value) {
+        return Arrays.stream(ExerciseFrequency.values())
+                .filter(exerciseFrequency -> value.equals(exerciseFrequency.value))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException());//TO-DO
+    }
 }

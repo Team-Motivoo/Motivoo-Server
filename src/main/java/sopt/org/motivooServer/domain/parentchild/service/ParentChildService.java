@@ -6,13 +6,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
-import sopt.org.motivooServer.domain.health.entity.Health;
+import sopt.org.motivooServer.domain.health.entity.*;
 import sopt.org.motivooServer.domain.health.exception.HealthException;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.health.service.CalculateScore;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentChildRepository;
 import sopt.org.motivooServer.domain.user.entity.User;
+import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
@@ -37,15 +38,15 @@ public class ParentChildService {
             () -> new UserException(INVALID_USER_TYPE)
         );
 
-        user.updateOnboardingInfo(request.type(), request.age());
+        user.updateOnboardingInfo(UserType.of(request.type()), request.age());
 
         Health health = Health.builder()
                         .user(user)
                         .isExercise(request.isExercise())
-                        .exerciseType(request.exerciseType())
-                        .exerciseFrequency(request.exerciseCount())
-                        .exerciseTime(request.exerciseTime())
-                        .healthNotes(request.exerciseNote())
+                        .exerciseType(ExerciseType.of(request.exerciseType()))
+                        .exerciseFrequency(ExerciseFrequency.of(request.exerciseCount()))
+                        .exerciseTime(ExerciseTime.of(request.exerciseTime()))
+                       // .healthNotes(HealthNote.of(request.exerciseNote()))
                         .build();
 
         healthRepository.save(health);
@@ -58,12 +59,12 @@ public class ParentChildService {
                                   .build();
         parentChildRepository.save(parentchild);
 
-        double exerciseScore = calculateScore.calculate(request.isExercise(), request.exerciseType(),
-                                              request.exerciseCount(), request.exerciseTime());
+        double exerciseScore = calculateScore.calculate(request.isExercise(), ExerciseType.of(request.exerciseType()),
+                                              ExerciseFrequency.of(request.exerciseCount()), ExerciseTime.of(request.exerciseTime()));
 
         health.updateExerciseLevel(exerciseScore);
 
-        return new OnboardingResponse(userId, inviteCode, health.getExerciseLevel());
+        return new OnboardingResponse(userId, inviteCode, String.valueOf(health.getExerciseLevel()));
     }
 
     private String createInviteCode(){

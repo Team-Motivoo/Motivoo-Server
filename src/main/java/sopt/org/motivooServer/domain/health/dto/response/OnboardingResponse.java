@@ -9,7 +9,7 @@ public record OnboardingResponse (
         @JsonProperty("invite_code")
         String inviteCode,
         @JsonProperty("exercise_level")
-        ExerciseLevel exerciseLevel
+        String exerciseLevel
 ){
 
 }

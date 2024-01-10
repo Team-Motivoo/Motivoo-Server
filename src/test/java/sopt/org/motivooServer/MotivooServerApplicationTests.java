@@ -11,14 +11,12 @@ import sopt.org.motivooServer.domain.auth.config.CustomJwtAuthenticationEntryPoi
 import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
 import sopt.org.motivooServer.domain.auth.config.RedisConfig;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
-import sopt.org.motivooServer.global.util.slack.SlackUtil;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"local", "deploy"})
+//TODO EC2로 application-test.yml도 보내줘야 함!
 class MotivooServerApplicationTests {
 
-	@MockBean
-	private SlackUtil slackUtil;
 
 	@MockBean
 	private JwtTokenProvider jwtTokenProvider;
@@ -40,5 +38,4 @@ class MotivooServerApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
