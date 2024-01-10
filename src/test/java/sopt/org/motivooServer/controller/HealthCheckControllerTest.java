@@ -63,8 +63,6 @@ public class HealthCheckControllerTest extends BaseControllerTest {
 							fieldWithPath("message").type(STRING).description("상태 메세지"),
 							fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
 							fieldWithPath("data").description("응답 데이터"))
-						// .requestSchema(Schema.schema("FormParameter-HealthCheck"))
-						// .responseSchema(Schema.schema("HealthCheckResponse.health"))
 						.build()
 				)
 			)

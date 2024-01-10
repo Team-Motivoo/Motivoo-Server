@@ -11,7 +11,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import sopt.org.motivooServer.domain.auth.config.CustomAccessDeniedHandler;
 import sopt.org.motivooServer.domain.auth.config.CustomJwtAuthenticationEntryPoint;
 import sopt.org.motivooServer.domain.auth.config.JwtAuthenticationFilter;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -23,9 +22,8 @@ public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
-	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private static final String[] AUTH_WHITELIST = {
-		"/", "/**", "/oauth/**", "/api/**", "/actuator/health"
+		"/", "/**", "/oauth/**", "/api/**", "/actuator/health",
 	};
 
 	@Bean
@@ -58,9 +56,9 @@ public class SecurityConfig {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-					.allowedOrigins("*")
-					.allowedOriginPatterns("*")
-					.allowedMethods("*");
+						.allowedOrigins("*")
+						.allowedOriginPatterns("*")
+						.allowedMethods("*");
 			}
 		};
 	}

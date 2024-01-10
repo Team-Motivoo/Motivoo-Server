@@ -10,6 +10,7 @@ application.yml
 application-test.yml
 
 **.adoc
+**.http
 
 **.sql
 

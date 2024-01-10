@@ -19,11 +19,17 @@ public enum SuccessType {
 
 	GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS(HttpStatus.OK, "미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다."),
 	GET_MISSION_HISTORY_SUCCESS(HttpStatus.OK, "이전 운동 미션 히스토리를 조회하는 데 성공했습니다."),
+	GET_MYINFO_SUCCESS(HttpStatus.OK, "마이페이지 나의 정보 조회에 성공했습니다."),
+	GET_MYPAGE_HEALTH_INFO_SUCCESS(HttpStatus.OK, "마이페이지 건강 정보 조회에 성공했습니다."),
 
 	//소셜 로그인
 	LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공했습니다."),
 	LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃에 성공했습니다."),
-	REISSUE_SUCCESS(HttpStatus.OK, "토큰 재발급에 성공했습니다.");
+	REISSUE_SUCCESS(HttpStatus.OK, "토큰 재발급에 성공했습니다."),
+
+
+	//온보딩
+	ONBOARDING_SUCCESS(HttpStatus.OK, "온보딩 질문 입력에 성공했습니다.")
 	;
 
 	private final HttpStatus httpStatus;
