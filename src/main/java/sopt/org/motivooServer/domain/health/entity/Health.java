@@ -45,5 +45,5 @@ public class Health extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	@ElementCollection
-	private List<HealthNote> healthNotes = new ArrayList<>();
+	private final List<HealthNote> healthNotes = new ArrayList<>();
 }

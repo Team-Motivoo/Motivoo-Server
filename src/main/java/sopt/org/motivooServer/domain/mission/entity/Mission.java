@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
+import sopt.org.motivooServer.domain.user.entity.UserType;
 
 @Entity
 public class Mission extends BaseTimeEntity {
@@ -23,7 +24,17 @@ public class Mission extends BaseTimeEntity {
 	@Column(nullable = false)
 	private MissionType type;
 
+	@Column(nullable = false)
+	private String healthNotes;
+
+	@Column(nullable = false)
+	private int stepCount;
+
 	@Column(columnDefinition = "TEXT")
 	private String descriptionUrl;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private UserType target;
 
 }
