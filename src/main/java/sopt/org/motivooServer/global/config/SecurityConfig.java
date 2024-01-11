@@ -23,7 +23,7 @@ public class SecurityConfig {
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
 	private static final String[] AUTH_WHITELIST = {
-		"/", "/**", "/oauth/**", "/api/**", "/actuator/health",
+		"/", "/**", "/oauth/**", "/api/**", "/actuator/health","/withdraw"
 	};
 
 	@Bean

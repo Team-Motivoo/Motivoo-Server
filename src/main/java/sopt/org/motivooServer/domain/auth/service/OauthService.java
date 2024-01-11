@@ -104,6 +104,7 @@ public class OauthService {
                 .refreshToken(refreshToken)
                 .type(UserType.NONE)
                 .deleted(Boolean.FALSE)
+                .deleteExpired(Boolean.FALSE)
                 .build();
         userRepository.save(newUser);
         return newUser;

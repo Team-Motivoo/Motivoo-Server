@@ -6,6 +6,7 @@ import static sopt.org.motivooServer.global.response.SuccessType.*;
 import java.security.Principal;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,4 +33,5 @@ public class UserController {
 	public ResponseEntity<ApiResponse<MyHealthInfoResponse>> getMyExercise(Principal principal) {
 		return ApiResponse.success(GET_MYPAGE_HEALTH_INFO_SUCCESS, userService.getMyHealthInfo(getUserFromPrincipal(principal)));
 	}
+
 }
