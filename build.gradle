@@ -22,7 +22,10 @@ swaggerSources {
 
 // openapi3 스펙 생성 시 설정 정보
 openapi3 {
-	server = "http://localhost:8080"
+	servers = [
+			{ url = "http://15.165.248.213" },
+			{ url = "http://localhost:8080" }
+	]
 	title = "모티부 API 명세서"
 	description = "Motivoo REST Docs with SwaggerUI"
 	version = "v0.0.1"
@@ -137,7 +140,10 @@ bootJar {
 }
 
 openapi3 {
-	server = "http://localhost:8080"
+	servers = [
+			{ url = "http://15.165.248.213" },
+			{ url = "http://localhost:8080" }
+	]
 	title = "모티부 API 명세서"
 	description = "Motivoo REST Docs with SwaggerUI"
 	version = "v0.0.1"
