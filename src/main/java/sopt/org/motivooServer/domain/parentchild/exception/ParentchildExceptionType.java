@@ -12,9 +12,12 @@ public enum ParentchildExceptionType implements BusinessExceptionType {
 	/**
 	 * 404 Not Found
 	 */
-	PARENTCHILD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 부모-자녀 관계입니다.")
+	PARENTCHILD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 부모-자녀 관계입니다."),
 
-
+	/**
+	 * 409 Conflict
+	 */
+	MATCH_ALREADY_COMPLETED(HttpStatus.CONFLICT, "이미 매칭이 완료되었습니다.");
 	;
 
 	private final HttpStatus status;
