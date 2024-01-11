@@ -20,11 +20,10 @@ public record MyHealthInfoResponse(
 	public static MyHealthInfoResponse of(Health health) {
 		return MyHealthInfoResponse.builder()
 			.isExercise(health.getIsExercise())
-			//TODO 실제 Enum 값으로 변경
-			.exerciseType(health.getExerciseType().name())
-			.exerciseFrequency(health.getExerciseFrequency().name())
-			.exerciseTime(health.getExerciseTime().name())
+			.exerciseType(health.getExerciseType().getValue())
+			.exerciseFrequency(health.getExerciseFrequency().getValue())
+			.exerciseTime(health.getExerciseTime().getValue())
 			.healthNotes(health.getHealthNotes().stream()
-				.map(HealthNote::name).toList()).build();
+				.map(HealthNote::getValue).toList()).build();
 	}
 }

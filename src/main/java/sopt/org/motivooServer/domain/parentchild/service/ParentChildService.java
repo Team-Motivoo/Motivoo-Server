@@ -1,5 +1,6 @@
 package sopt.org.motivooServer.domain.parentchild.service;
 
+import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import java.util.Random;
@@ -24,16 +25,11 @@ import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 import sopt.org.motivooServer.domain.parentchild.exception.ParentchildException;
-import sopt.org.motivooServer.domain.parentchild.repository.ParentChildRepository;
+import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
-
-import java.util.Random;
-
-import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
-import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INVALID_USER_TYPE;
 
 @Slf4j
 @Service
@@ -74,10 +70,9 @@ public class ParentChildService {
         String inviteCode = createInviteCode();
 
         Parentchild parentchild = Parentchild.builder()
-                                  .inviteCode(inviteCode)
-                                  .isMatched(false)
-                                  .build();
-        parentChildRepository.save(parentchild);
+            .inviteCode(inviteCode)
+            .isMatched(false).build();
+        parentchildRepository.save(parentchild);
         user.addParentChild(parentchild);
 
         return new OnboardingResponse(userId, inviteCode, health.getExerciseLevel().getValue());
@@ -89,7 +84,7 @@ public class ParentChildService {
                 () -> new UserException(INVALID_USER_TYPE)
         );
 
-        Parentchild parentchild = parentChildRepository.findByInviteCode(request.inviteCode());
+        Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode());
         if(parentchild!=null){
             checkForOneToOneMatch(parentchild); //이미 매칭이 완료된 경우 예외처리
             parentchild.matchingSuccess();

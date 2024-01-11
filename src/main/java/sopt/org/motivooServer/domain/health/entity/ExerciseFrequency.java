@@ -2,10 +2,12 @@ package sopt.org.motivooServer.domain.health.entity;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
+@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ExerciseFrequency {
 

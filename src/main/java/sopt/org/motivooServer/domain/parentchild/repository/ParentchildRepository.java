@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 
 
-public interface ParentChildRepository extends JpaRepository<Parentchild, Long> {
+public interface ParentchildRepository extends JpaRepository<Parentchild, Long> {
     Parentchild findByInviteCode(String inviteCode);
 
 }
