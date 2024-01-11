@@ -5,7 +5,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
-import sopt.org.motivooServer.domain.mission.entity.MissionQuest;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 
 @Builder

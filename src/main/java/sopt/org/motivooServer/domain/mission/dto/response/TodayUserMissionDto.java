@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
-import sopt.org.motivooServer.domain.mission.entity.MissionQuest;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 
 @Builder
@@ -14,11 +13,11 @@ public record TodayUserMissionDto(
 	@JsonProperty("mission_content") String missionContent,
 	@JsonProperty("mission_description") String missionDescription,
 	@JsonProperty("mission_step_count") Integer missionStepCount,
-	@JsonProperty("mission_quest") String missionQuest
+	@JsonProperty("mission_quest") String missionQuest,
+	@JsonProperty("mission_icon_url") String missionIconUrl
 ) {
 	public static TodayUserMissionDto of(UserMission userMission) {
 		return TodayUserMissionDto.builder()
-			.missionId(userMission.getId())
 			.missionContent(userMission.getMission().getContent())
 			.missionDescription(userMission.getMission().getDescriptionUrl())
 			.missionStepCount(userMission.getMission().getStepCount())
@@ -28,6 +27,7 @@ public record TodayUserMissionDto(
 	public static TodayUserMissionDto ofChoice(UserMission userMission) {
 		return TodayUserMissionDto.builder()
 			.missionId(userMission.getId())
-			.missionContent(userMission.getMission().getContent()).build();
+			.missionContent(userMission.getMission().getContent())
+			.missionIconUrl(userMission.getMission().getIconUrl()).build();
 	}
 }
