@@ -64,4 +64,5 @@ public class UserMission extends BaseTimeEntity {
 	public void updateCompletedStatus(final CompletedStatus completedStatus) {
 		this.completedStatus = completedStatus;
 	}
+
 }

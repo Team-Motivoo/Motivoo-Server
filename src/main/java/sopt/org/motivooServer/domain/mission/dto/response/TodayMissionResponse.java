@@ -14,10 +14,16 @@ public record TodayMissionResponse(
 	@JsonProperty("today_mission") TodayUserMissionDto todayMission
 ) {
 
-	public static TodayMissionResponse of(List<UserMission> missionChoiceList, UserMission todayMission) {
+	public static TodayMissionResponse of(List<UserMission> missionChoiceList) {
 		return TodayMissionResponse.builder()
-			.isChoiceFinished(todayMission==null)
-			.missionChoiceList(missionChoiceList.stream().map(TodayUserMissionDto::of).toList())
+			.isChoiceFinished(false)
+			.missionChoiceList(missionChoiceList.stream()
+				.map(TodayUserMissionDto::ofChoice).toList()).build();
+	}
+
+	public static TodayMissionResponse of(UserMission todayMission) {
+		return TodayMissionResponse.builder()
+			.isChoiceFinished(true)
 			.todayMission(TodayUserMissionDto.of(todayMission)).build();
 	}
 }

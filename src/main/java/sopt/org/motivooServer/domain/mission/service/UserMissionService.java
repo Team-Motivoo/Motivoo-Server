@@ -61,7 +61,7 @@ public class UserMissionService {
 		User myUser = getUserById(userId);
 		User opponentUser = getMatchedUserWith(myUser);
 
-		UserMission todayMission = getCurrentMission(myUser);
+		UserMission todayMission = myUser.getCurrentUserMission();
 		validateTodayDateMission(todayMission);
 
 		return MissionHistoryResponse.of(myUser, todayMission,
@@ -69,23 +69,6 @@ public class UserMissionService {
 			userMissionRepository.findUserMissionsByUserOrderByCreatedAt(opponentUser));
 	}
 
-	private User getMatchedUserWith(User user) {
-		return userRepository.findByIdAndParentchild(user.getId(), user.getParentchild()).orElseThrow(
-			() -> new ParentchildException(NOT_EXIST_PARENTCHILD_USER));
-	}
-
-	private UserMission getCurrentMission(User user) {
-		return userMissionRepository.findFirstByUserOrderByCreatedAt(user).orElseThrow(
-			() -> new MissionException(EMPTY_USER_MISSIONS));
-	}
-
-	// TODO 내일 하자..
-	private List<UserMission> filterTodayUserMission(User user) {
-		// 부모 미션 or 자식 미션 리스트
-		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType().getValue());
-
-		return new ArrayList<UserMission>();
-	}
 
 	@Transactional
 	public Long choiceTodayMission(final TodayMissionChoiceRequest request, final Long userId) {
@@ -107,33 +90,53 @@ public class UserMissionService {
 
 		log.info("현재 접속한 유저 - {} X 나와 매칭된 부모자녀 유저 - {}", myUser.getNickname(), opponentUser.getNickname());
 
-		UserMission todayMission = getCurrentMission(myUser);
+		UserMission todayMission = myUser.getCurrentUserMission();
 		validateTodayDateMission(todayMission);
 
-		boolean isStepCountCompleted = request.myStepCount() >= todayMission.getMission().getStepCount();
+		int currentStepCount = request.myStepCount();
+
+		return MissionStepStatusResponse.of(myUser, opponentUser, isStepCountCompleted(currentStepCount, todayMission));
+	}
+
+	private boolean isStepCountCompleted(int currentStepCount, UserMission todayMission) {
+		boolean isStepCountCompleted = currentStepCount >= todayMission.getMission().getStepCount();
 		if (isStepCountCompleted) {
 			todayMission.updateCompletedStatus(SUCCESS);
 			log.info("오늘의 미션 달성 완료로 DB 업데이트 반영!");
 		}
-
-		return MissionStepStatusResponse.of(myUser, opponentUser, isStepCountCompleted);
+		return isStepCountCompleted;
 	}
 
+	@Transactional  // TODO 여기 최대한 분리해보자
 	public TodayMissionResponse getTodayMission(final Long userId) {
 		User user = getUserById(userId);
 
-		UserMission todayMission = getCurrentMission(user);
-		validateTodayDateMission(todayMission);
+		UserMission todayMission = user.getCurrentUserMission();
+		if (validateTodayDateMission(todayMission)) {
+			return TodayMissionResponse.of(todayMission);
+		}
 
 		List<UserMission> todayMissionChoices = filterTodayUserMission(user);
+		user.setPreUserMissionChoice(todayMissionChoices);
 
-		return TodayMissionResponse.of(todayMissionChoices, todayMission);
+		return TodayMissionResponse.of(todayMissionChoices);
 	}
 
+
+	// TODO 필터링 로직
+	private List<UserMission> filterTodayUserMission(User user) {
+		// 부모 미션 or 자식 미션 리스트
+		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType());
+
+		return new ArrayList<UserMission>();
+	}
+
+	// 오늘의 미션에 대한 유효성 검사
 	private boolean validateTodayDateMission(UserMission todayMission) {
-		if (!todayMission.getCreatedAt().equals(LocalDate.now())) {
+		if (!todayMission.getCreatedAt().toLocalDate().equals(LocalDate.now())) {
 			log.info("오늘 날짜와 동일하지 않은 최근 미션!");
-			throw new MissionException(NOT_CHOICE_TODAY_MISSION);
+			return false;
+			// throw new MissionException(NOT_CHOICE_TODAY_MISSION);
 		}
 		return true;
 	}
@@ -151,5 +154,11 @@ public class UserMissionService {
 	private UserMission getUserMission(Long userMissionId) {
 		return userMissionRepository.findById(userMissionId).orElseThrow(
 			() -> new MissionException(USER_MISSION_NOT_FOUND));
+	}
+
+	// 자신과 매칭된 부모자녀 유저 조회
+	private User getMatchedUserWith(User user) {
+		return userRepository.findByIdAndParentchild(user.getId(), user.getParentchild()).orElseThrow(
+			() -> new ParentchildException(NOT_EXIST_PARENTCHILD_USER));
 	}
 }
