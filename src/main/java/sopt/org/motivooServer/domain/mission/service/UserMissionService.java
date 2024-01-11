@@ -79,6 +79,7 @@ public class UserMissionService {
 
 		UserMission userMission = UserMission.builder()
 			.mission(mission)
+			.missionQuest(missionQuestRepository.findRandomMissionQuest())
 			.user(user)
 			.completedStatus(IN_PROGRESS).build();
 		userMissionRepository.save(userMission);
@@ -115,7 +116,7 @@ public class UserMissionService {
 
 		UserMission todayMission = user.getCurrentUserMission();
 		if (validateTodayDateMission(todayMission)) {
-			return TodayMissionResponse.of(todayMission, missionQuestRepository.findRandomMissionQuest());
+			return TodayMissionResponse.of(todayMission);
 		}
 
 		List<UserMission> todayMissionChoices = filterTodayUserMission(user);
