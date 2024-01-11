@@ -41,6 +41,7 @@ public abstract class BaseControllerTest {
 
 	@Autowired
 	protected MockMvc mockMvc;
+
 	@MockBean
 	private RedisConfig redisConfig;
 
