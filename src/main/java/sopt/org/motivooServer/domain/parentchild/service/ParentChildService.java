@@ -79,7 +79,10 @@ public class ParentChildService {
                 () -> new UserException(INVALID_USER_TYPE)
         );
 
-        Parentchild parentchild = parentChildRepository.findByInviteCode(request.inviteCode());
+        Parentchild parentchild = parentChildRepository.findByInviteCode(request.inviteCode()).orElseThrow(
+                () -> new ParentchildException(PARENTCHILD_NOT_FOUND)
+        );
+
         if(parentchild!=null){
             checkForOneToOneMatch(parentchild); //이미 매칭이 완료된 경우 예외처리
             parentchild.matchingSuccess();

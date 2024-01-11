@@ -32,8 +32,8 @@ public class ParentChildController {
     }
 
     @PatchMapping("/parentchild/match")
-    public ResponseEntity<ApiResponse<InviteResponse>> validateInviteCode(Principal principal,
-                                                                          @Valid @RequestBody final InviteRequest request){
+    public ResponseEntity<ApiResponse<InviteResponse>> validateInviteCode(@Valid @RequestBody final InviteRequest request,
+                                                                          Principal principal){
         Long userId = getUserFromPrincipal(principal);
         return ApiResponse.success(INPUT_INVITE_CODE_SUCCESS, parentChildService.validateInviteCode(userId, request));
     }
