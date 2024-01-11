@@ -42,4 +42,10 @@ public class Mission extends BaseTimeEntity {
 	@Column(nullable = false)
 	private UserType target;
 
+	@Column(nullable = false)
+	private String bodyPart;
+
+	@Column(columnDefinition = "TEXT")
+	private String iconUrl;
+
 }
