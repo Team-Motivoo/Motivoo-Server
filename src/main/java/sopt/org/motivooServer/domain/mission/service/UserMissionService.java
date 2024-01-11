@@ -22,6 +22,7 @@ import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
+import sopt.org.motivooServer.domain.mission.entity.MissionQuestRepository;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.mission.exception.MissionException;
 import sopt.org.motivooServer.domain.mission.repository.MissionRepository;
@@ -43,6 +44,7 @@ public class UserMissionService {
 	private final UserMissionRepository userMissionRepository;
 	private final UserRepository userRepository;
 	private final MissionRepository missionRepository;
+	private final MissionQuestRepository missionQuestRepository;
 	private final S3Service s3Service;
 
 	// TODO userId를 이용하여 미션 리스트에서 하나 뽑아오기
@@ -113,7 +115,7 @@ public class UserMissionService {
 
 		UserMission todayMission = user.getCurrentUserMission();
 		if (validateTodayDateMission(todayMission)) {
-			return TodayMissionResponse.of(todayMission);
+			return TodayMissionResponse.of(todayMission, missionQuestRepository.findRandomMissionQuest());
 		}
 
 		List<UserMission> todayMissionChoices = filterTodayUserMission(user);
