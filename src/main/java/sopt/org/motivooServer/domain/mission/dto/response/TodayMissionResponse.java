@@ -22,9 +22,9 @@ public record TodayMissionResponse(
 				.map(TodayUserMissionDto::ofChoice).toList()).build();
 	}
 
-	public static TodayMissionResponse of(UserMission todayMission, MissionQuest missionQuest) {
+	public static TodayMissionResponse of(UserMission todayMission) {
 		return TodayMissionResponse.builder()
 			.isChoiceFinished(true)
-			.todayMission(TodayUserMissionDto.of(todayMission, missionQuest)).build();
+			.todayMission(TodayUserMissionDto.of(todayMission)).build();
 	}
 }

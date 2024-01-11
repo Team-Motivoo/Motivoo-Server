@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,14 +38,18 @@ public class UserMission extends BaseTimeEntity {
 	@JoinColumn(name = "mission_id", nullable = false)
 	private Mission mission;
 
+	@OneToOne
+	private MissionQuest missionQuest;
+
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
 
 	@Builder
-	private UserMission(CompletedStatus completedStatus, Mission mission, User user) {
+	private UserMission(CompletedStatus completedStatus, Mission mission, MissionQuest missionQuest, User user) {
 		this.completedStatus = completedStatus;
 		this.mission = mission;
+		this.missionQuest = missionQuest;
 		this.user = user;
 	}
 

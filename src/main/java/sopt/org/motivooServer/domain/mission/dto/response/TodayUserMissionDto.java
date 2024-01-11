@@ -16,13 +16,13 @@ public record TodayUserMissionDto(
 	@JsonProperty("mission_step_count") Integer missionStepCount,
 	@JsonProperty("mission_quest") String missionQuest
 ) {
-	public static TodayUserMissionDto of(UserMission userMission, MissionQuest missionQuest) {
+	public static TodayUserMissionDto of(UserMission userMission) {
 		return TodayUserMissionDto.builder()
 			.missionId(userMission.getId())
 			.missionContent(userMission.getMission().getContent())
 			.missionDescription(userMission.getMission().getDescriptionUrl())
 			.missionStepCount(userMission.getMission().getStepCount())
-			.missionQuest(missionQuest.getContent()).build();
+			.missionQuest(userMission.getMissionQuest().getContent()).build();
 	}
 
 	public static TodayUserMissionDto ofChoice(UserMission userMission) {
