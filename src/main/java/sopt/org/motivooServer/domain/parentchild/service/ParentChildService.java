@@ -11,6 +11,7 @@ import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.health.service.CalculateScore;
 import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
 import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
+import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 import sopt.org.motivooServer.domain.parentchild.exception.ParentchildException;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentChildRepository;
@@ -21,7 +22,7 @@ import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
 import java.util.Random;
 
-import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.MATCH_ALREADY_COMPLETED;
+import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INVALID_USER_TYPE;
 
 @Slf4j
@@ -34,6 +35,7 @@ public class ParentChildService {
     private final ParentChildRepository parentChildRepository;
     private final CalculateScore calculateScore;
     private static final int randomStrLen = 8;
+    private static final int matchingSuccess = 2;
 
     @Transactional
     public OnboardingResponse onboardInput(Long userId, OnboardingRequest request){
@@ -85,6 +87,25 @@ public class ParentChildService {
             return new InviteResponse(userId, true);
         }
         return new InviteResponse(userId, false);
+    }
+
+    public MatchingResponse checkMatching(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserException(INVALID_USER_TYPE)
+        );
+        if(user.getParentchild()!=null){
+            int matcedCnt = userRepository.countByParentchild(user.getParentchild());
+            log.info("매칭된 숫자="+matcedCnt);
+            if(matcedCnt == matchingSuccess) {
+                Long opponentUserId = userRepository.getOpponentId(user.getParentchild(), userId);
+                log.info("상대편 유저 아이디="+opponentUserId);
+                return new MatchingResponse(true, userId, opponentUserId);
+            }
+            //초대 코드만 생성하고 아직 매칭에 성공하지 못한 경우
+            throw new ParentchildException(MATCHING_NOT_FOUND);
+        }
+        //부모-자식 관계까 없는 경우
+        throw new ParentchildException(PARENTCHILD_NOT_FOUND);
     }
 
     public void checkForOneToOneMatch(Parentchild parentchild){

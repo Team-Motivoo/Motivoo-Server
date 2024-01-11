@@ -13,6 +13,7 @@ public enum ParentchildExceptionType implements BusinessExceptionType {
 	 * 404 Not Found
 	 */
 	PARENTCHILD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 부모-자녀 관계입니다."),
+	MATCHING_NOT_FOUND(HttpStatus.NOT_FOUND, "아직 매칭이 이루어지지 않았습니다."),
 
 	/**
 	 * 409 Conflict
