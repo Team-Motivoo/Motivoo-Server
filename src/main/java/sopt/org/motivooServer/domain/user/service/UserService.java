@@ -31,6 +31,7 @@ import java.util.List;
 public class UserService {
 	private final UserRepository userRepository;
 	private final HealthRepository healthRepository;
+	private static final int MATCHING_SUCCESS = 2;
 
 	public MyPageInfoResponse getMyInfo(final Long userId) {
 		User user = getUserById(userId);
@@ -68,7 +69,7 @@ public class UserService {
 		//부모-자녀 모두 탈퇴한 경우인지 판별
 		Parentchild parentchild = user.getParentchild();
 		List<User> users = userRepository.findByParentchild(parentchild);
-		if(users.size()==2) {
+		if(users.size()==MATCHING_SUCCESS) {
 			for(User deletedUser:users){
 				deletedUser.setDeleteExpired();
 			}
