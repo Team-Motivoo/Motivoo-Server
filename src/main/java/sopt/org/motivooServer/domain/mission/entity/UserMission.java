@@ -60,4 +60,8 @@ public class UserMission extends BaseTimeEntity {
 	public void updateImgUrl(final String imgUrl) {
 		this.imgUrl = imgUrl;
 	}
+
+	public void updateCompletedStatus(final CompletedStatus completedStatus) {
+		this.completedStatus = completedStatus;
+	}
 }

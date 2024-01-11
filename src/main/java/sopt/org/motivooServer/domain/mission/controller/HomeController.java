@@ -22,10 +22,11 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 @RequiredArgsConstructor
 public class HomeController {
 
-	private UserMissionService userMissionService;
+	private final UserMissionService userMissionService;
 
 	@PatchMapping
 	public ResponseEntity<ApiResponse<MissionStepStatusResponse>> getMissionCompleted(@RequestBody final MissionStepStatusRequest request, final Principal principal) {
-		return ApiResponse.success(MISSION_STEP_COUNT_STATUS_SUCCESS, userMissionService.getMissionCompleted(request, getUserFromPrincipal(principal)));
+		return ApiResponse.success(MISSION_STEP_COUNT_STATUS_SUCCESS,
+			userMissionService.getMissionCompleted(request, getUserFromPrincipal(principal)));
 	}
 }

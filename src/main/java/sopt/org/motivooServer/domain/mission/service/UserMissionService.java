@@ -6,6 +6,7 @@ import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExc
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -14,13 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
+import sopt.org.motivooServer.domain.mission.dto.request.MissionStepStatusRequest;
 import sopt.org.motivooServer.domain.mission.dto.request.TodayMissionChoiceRequest;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
-import sopt.org.motivooServer.domain.mission.dto.request.MissionStepStatusRequest;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
+import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
-import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.mission.exception.MissionException;
 import sopt.org.motivooServer.domain.mission.repository.MissionRepository;
@@ -58,8 +59,7 @@ public class UserMissionService {
 
 	public MissionHistoryResponse getUserMissionHistory(final Long userId) {
 		User myUser = getUserById(userId);
-		User opponentUser = userRepository.findByIdAndParentchild(userId, myUser.getParentchild()).orElseThrow(
-			() -> new ParentchildException(NOT_EXIST_PARENTCHILD_USER));
+		User opponentUser = getMatchedUserWith(myUser);
 
 		UserMission todayMission = getCurrentMission(myUser);
 		validateTodayDateMission(todayMission);
@@ -69,26 +69,22 @@ public class UserMissionService {
 			userMissionRepository.findUserMissionsByUserOrderByCreatedAt(opponentUser));
 	}
 
+	private User getMatchedUserWith(User user) {
+		return userRepository.findByIdAndParentchild(user.getId(), user.getParentchild()).orElseThrow(
+			() -> new ParentchildException(NOT_EXIST_PARENTCHILD_USER));
+	}
+
 	private UserMission getCurrentMission(User user) {
 		return userMissionRepository.findFirstByUserOrderByCreatedAt(user).orElseThrow(
 			() -> new MissionException(EMPTY_USER_MISSIONS));
 	}
 
-	public TodayMissionResponse getTodayMission(final Long userId) {
-		User user = getUserById(userId);
-
-		UserMission todayMission = getCurrentMission(user);
-		validateTodayDateMission(todayMission);
-
-		List<UserMission> todayMissionChoices = filterTodayUserMission(user);
-
-		return TodayMissionResponse.of(todayMissionChoices, todayMission);
-	}
-
+	// TODO 내일 하자..
 	private List<UserMission> filterTodayUserMission(User user) {
 		// 부모 미션 or 자식 미션 리스트
 		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType().getValue());
 
+		return new ArrayList<UserMission>();
 	}
 
 	@Transactional
@@ -104,20 +100,42 @@ public class UserMissionService {
 		return userMission.getId();
 	}
 
+	@Transactional
+	public MissionStepStatusResponse getMissionCompleted(final MissionStepStatusRequest request, final Long userId) {
+		User myUser = getUserById(userId);
+		User opponentUser = getMatchedUserWith(myUser);
+
+		log.info("현재 접속한 유저 - {} X 나와 매칭된 부모자녀 유저 - {}", myUser.getNickname(), opponentUser.getNickname());
+
+		UserMission todayMission = getCurrentMission(myUser);
+		validateTodayDateMission(todayMission);
+
+		boolean isStepCountCompleted = request.myStepCount() >= todayMission.getMission().getStepCount();
+		if (isStepCountCompleted) {
+			todayMission.updateCompletedStatus(SUCCESS);
+			log.info("오늘의 미션 달성 완료로 DB 업데이트 반영!");
+		}
+
+		return MissionStepStatusResponse.of(myUser, opponentUser, isStepCountCompleted);
+	}
+
+	public TodayMissionResponse getTodayMission(final Long userId) {
+		User user = getUserById(userId);
+
+		UserMission todayMission = getCurrentMission(user);
+		validateTodayDateMission(todayMission);
+
+		List<UserMission> todayMissionChoices = filterTodayUserMission(user);
+
+		return TodayMissionResponse.of(todayMissionChoices, todayMission);
+	}
+
 	private boolean validateTodayDateMission(UserMission todayMission) {
 		if (!todayMission.getCreatedAt().equals(LocalDate.now())) {
 			log.info("오늘 날짜와 동일하지 않은 최근 미션!");
 			throw new MissionException(NOT_CHOICE_TODAY_MISSION);
 		}
 		return true;
-	}
-
-	@Transactional
-	public MissionStepStatusResponse getMissionCompleted(final MissionStepStatusRequest request, final Long userId) {
-		User user = getUserById(userId);
-
-		return MissionStepStatusResponse.of(user, )
-
 	}
 
 	private User getUserById(Long userId) {

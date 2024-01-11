@@ -13,11 +13,11 @@ public record MissionStepStatusResponse(
 	@JsonProperty("is_step_count_completed") Boolean isStepCountCompleted
 ) {
 
-	public static MissionStepStatusResponse of(User user, Boolean status) {
+	public static MissionStepStatusResponse of(User user, User opponentUser, Boolean status) {
 		return MissionStepStatusResponse.builder()
 			.userType(user.getType().getValue())
 			.userId(user.getId())
-			.opponentUserId(user.getId())
+			.opponentUserId(opponentUser.getId())
 			.isStepCountCompleted(status).build();
 	}
 }

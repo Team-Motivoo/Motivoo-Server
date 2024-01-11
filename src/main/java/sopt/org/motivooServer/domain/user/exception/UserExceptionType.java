@@ -33,7 +33,7 @@ public enum UserExceptionType implements BusinessExceptionType {
 	/**
 	 * 401 UNAUTHORIZED
 	 */
-	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다."),
+	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
 
 
 
