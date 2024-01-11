@@ -98,6 +98,10 @@ public class User extends BaseTimeEntity {
 		this.age = age;
 	}
 
+	public void addParentChild(Parentchild parentchild) {
+		this.parentchild=parentchild;
+	}
+
 	public void clearPreUserMissionChoice() {
 		this.preUserMissionChoice.clear();
 	}
