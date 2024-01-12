@@ -15,6 +15,7 @@ public enum MissionExceptionType implements BusinessExceptionType {
 	EMPTY_USER_MISSIONS(HttpStatus.BAD_REQUEST, "유저 미션 리스트가 비어 있습니다."),
 	INVALID_MISSION_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 미션 타입 Enum 값입니다."),
 	NOT_FILTERED_TODAY_MISSION(HttpStatus.BAD_REQUEST, "아직 오늘의 미션 선택지가 정해지지 않았습니다."),
+	NOT_EXIST_TODAY_MISSION_CHOICE(HttpStatus.BAD_REQUEST, "미션 선택지에 존재하지 않는 미션 ID 값입니다."),
 
 
 	/**

@@ -48,6 +48,7 @@ public class UserMissionController {
 
 	@PostMapping("/today/choice")
 	public ResponseEntity<ApiResponse<TodayMissionResponse>> getTodayMission(final Principal principal) {
+		//TODO location 지정 & 상태코드 반영
 		return ApiResponse.success(GET_TODAY_MISSION_SUCCESS, userMissionService.getTodayMission(getUserFromPrincipal(principal)));
 	}
 

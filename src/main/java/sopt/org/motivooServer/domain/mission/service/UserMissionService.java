@@ -91,6 +91,8 @@ public class UserMissionService {
 	@Transactional
 	public Long choiceTodayMission(final TodayMissionChoiceRequest request, final Long userId) {
 		User user = getUserById(userId);
+		validateTodayMissionRequest(request.missionId(), user);
+
 		Mission mission = getMissionById(request.missionId());
 
 		UserMission userMission = UserMission.builder()
@@ -103,6 +105,15 @@ public class UserMissionService {
 		user.addUserMission(userMission);
 		user.clearPreUserMissionChoice();  // 오늘의 미션을 선정했다면, 선택지 리스트는 비워주기
 		return userMission.getId();
+	}
+
+	private static void validateTodayMissionRequest(Long missionId, User user) {
+		boolean missionExists = user.getUserMissionChoice().stream()
+			.anyMatch(userMissionChoices -> userMissionChoices.getMission().getId().equals(missionId));
+
+		if (!missionExists) {
+			throw new MissionException(NOT_EXIST_TODAY_MISSION_CHOICE);
+		}
 	}
 
 	@Transactional
