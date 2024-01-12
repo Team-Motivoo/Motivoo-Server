@@ -28,7 +28,6 @@ import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
-import sopt.org.motivooServer.domain.mission.dto.response.TodayUserMissionDto;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
 import sopt.org.motivooServer.domain.mission.entity.MissionType;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
@@ -131,7 +130,6 @@ public class UserMissionService {
 
 		return MissionStepStatusResponse.of(myUser, opponentUser, isStepCountCompleted(currentStepCount, todayMission));
 	}
-
 
 	private boolean isStepCountCompleted(int currentStepCount, UserMission todayMission) {
 		boolean isStepCountCompleted = currentStepCount >= todayMission.getMission().getStepCount();

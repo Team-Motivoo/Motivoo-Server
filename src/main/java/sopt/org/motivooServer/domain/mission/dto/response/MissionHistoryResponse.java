@@ -24,6 +24,7 @@ public record MissionHistoryResponse(
 		List<UserMission> my = new ArrayList<>();
 		List<UserMission> opponent = new ArrayList<>();
 
+		// createdAt 필드를 기준으로 동일하지 않은 날짜는 null로 대응시키기
 		for (UserMission myMission : myMissions) {
 			LocalDate myDate = myMission.getCreatedAt().toLocalDate();
 			UserMission opponentMission = opponentMissions.stream()
