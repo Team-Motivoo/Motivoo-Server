@@ -25,9 +25,8 @@ public class Mission extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String content;
 
-	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private MissionType type;
+	private String type;
 
 	@Column(nullable = false)
 	private String healthNotes;

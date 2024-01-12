@@ -1,5 +1,6 @@
 package sopt.org.motivooServer.domain.mission.service;
 
+import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.*;
 import static sopt.org.motivooServer.domain.mission.entity.CompletedStatus.*;
 import static sopt.org.motivooServer.domain.mission.exception.MissionExceptionType.*;
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
@@ -7,6 +8,7 @@ import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -14,6 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import sopt.org.motivooServer.domain.health.entity.ExerciseLevel;
+import sopt.org.motivooServer.domain.health.entity.Health;
+import sopt.org.motivooServer.domain.health.entity.HealthNote;
+import sopt.org.motivooServer.domain.health.exception.HealthException;
+import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionStepStatusRequest;
 import sopt.org.motivooServer.domain.mission.dto.request.TodayMissionChoiceRequest;
@@ -22,10 +29,13 @@ import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
-import sopt.org.motivooServer.domain.mission.entity.MissionQuestRepository;
+import sopt.org.motivooServer.domain.mission.entity.MissionType;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
+import sopt.org.motivooServer.domain.mission.entity.UserMissionChoices;
 import sopt.org.motivooServer.domain.mission.exception.MissionException;
+import sopt.org.motivooServer.domain.mission.repository.MissionQuestRepository;
 import sopt.org.motivooServer.domain.mission.repository.MissionRepository;
+import sopt.org.motivooServer.domain.mission.repository.UserMissionChoicesRepository;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionRepository;
 import sopt.org.motivooServer.domain.parentchild.exception.ParentchildException;
 import sopt.org.motivooServer.domain.user.entity.User;
@@ -41,11 +51,16 @@ import sopt.org.motivooServer.global.util.s3.S3Service;
 @RequiredArgsConstructor
 public class UserMissionService {
 
+
 	private final UserMissionRepository userMissionRepository;
+	private final UserMissionChoicesRepository userMissionChoicesRepository;
 	private final UserRepository userRepository;
 	private final MissionRepository missionRepository;
 	private final MissionQuestRepository missionQuestRepository;
+	private final HealthRepository healthRepository;
 	private final S3Service s3Service;
+
+	private static final int MAX_MISSION_CHOICES = 2;
 
 	// TODO userId를 이용하여 미션 리스트에서 하나 뽑아오기
 	@Transactional
@@ -82,7 +97,9 @@ public class UserMissionService {
 			.missionQuest(missionQuestRepository.findRandomMissionQuest())
 			.user(user)
 			.completedStatus(IN_PROGRESS).build();
+
 		userMissionRepository.save(userMission);
+		user.addUserMission(userMission);
 		return userMission.getId();
 	}
 
@@ -114,24 +131,88 @@ public class UserMissionService {
 	public TodayMissionResponse getTodayMission(final Long userId) {
 		User user = getUserById(userId);
 
+		if (user.getUserMissions().isEmpty()) {
+			log.info("유저 {}의 UserMissions 비어 있음", user.getNickname());
+			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
+			user.setPreUserMissionChoice(todayMissionChoices);
+			log.info("첫 오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
+			return TodayMissionResponse.of(todayMissionChoices);
+		}
+
 		UserMission todayMission = user.getCurrentUserMission();
 		if (validateTodayDateMission(todayMission)) {
 			return TodayMissionResponse.of(todayMission);
 		}
 
-		List<UserMission> todayMissionChoices = filterTodayUserMission(user);
+		List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
 		user.setPreUserMissionChoice(todayMissionChoices);
 
 		return TodayMissionResponse.of(todayMissionChoices);
 	}
 
 
-	// TODO 필터링 로직
-	private List<UserMission> filterTodayUserMission(User user) {
+	private List<UserMissionChoices> filterTodayUserMission(User user) {
+		final List<Mission> missionChoicesFiltered = new ArrayList<>();
+
 		// 부모 미션 or 자식 미션 리스트
 		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType());
+		log.info("{} 미션 리스트 가져옴", user.getType().getValue());
+		Health health = getHealthByUser(user);
+		log.info("Health: {}", health.getId());
 
-		return new ArrayList<UserMission>();
+		List<HealthNote> userNotes = health.getHealthNotes();
+		ExerciseLevel exerciseLevel = health.getExerciseLevel();
+
+		log.info("Mission 필터링 시작!");
+		for (Mission mission : missions) {
+			List<HealthNote> missionNotes = HealthNote.of(mission.getHealthNotes());
+			boolean hasUserNotes = missionNotes.stream().anyMatch(userNotes::contains);
+			// boolean hasExerciseLevel = mission.getType().containsLevel(exerciseLevel);
+
+			log.info("MissionType: {}", mission.getType());
+			boolean hasExerciseLevel = MissionType.of(mission.getType()).containsLevel(exerciseLevel);
+			log.info("MissionType-ExerciseLevel 포함 여부 검사: {}", hasExerciseLevel);
+
+			if (!hasUserNotes && !hasExerciseLevel) {
+				log.info("맞춤 Mission 리스트에 추가: {}", mission.getContent());
+				missionChoicesFiltered.add(mission);
+			}
+		}
+
+		Collections.shuffle(missionChoicesFiltered);
+
+		List<UserMissionChoices> missionChoices = new ArrayList<>();
+		for (int i = 0; i < Math.min(missionChoicesFiltered.size(), 2); i++) {
+			UserMissionChoices missionChoice = UserMissionChoices.builder()
+				.mission(missionChoicesFiltered.get(i))
+				.user(user)
+				.build();
+			missionChoices.add(userMissionChoicesRepository.save(missionChoice));
+		}
+		user.setPreUserMissionChoice(missionChoices);
+		return missionChoices;
+	}
+
+	private List<UserMissionChoices> filterTodayUserMissionV2(User user) {
+		// 부모 미션 or 자식 미션 리스트
+		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType());
+		Health health = getHealthByUser(user);
+		List<HealthNote> userNotes = health.getHealthNotes();
+		ExerciseLevel exerciseLevel = health.getExerciseLevel();
+
+		return missions.parallelStream()
+			.filter(mission -> {
+				List<HealthNote> missionNotes = HealthNote.of(mission.getHealthNotes());
+				boolean hasUserNotes = missionNotes.stream().anyMatch(userNotes::contains);
+				boolean hasExerciseLevel = MissionType.of(mission.getType()).containsLevel(exerciseLevel);
+				return !hasUserNotes && !hasExerciseLevel;
+			})
+			.limit(MAX_MISSION_CHOICES)
+			.map(mission -> UserMissionChoices.builder()
+				.mission(mission)
+				.user(user).build())
+			.map(userMissionChoicesRepository::save)
+			.toList();
 	}
 
 	// 오늘의 미션에 대한 유효성 검사
@@ -143,7 +224,6 @@ public class UserMissionService {
 		}
 		return true;
 	}
-
 	private User getUserById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(
 			() -> new UserException(USER_NOT_FOUND));
@@ -163,5 +243,11 @@ public class UserMissionService {
 	private User getMatchedUserWith(User user) {
 		return userRepository.findByIdAndParentchild(user.getId(), user.getParentchild()).orElseThrow(
 			() -> new ParentchildException(NOT_EXIST_PARENTCHILD_USER));
+	}
+
+	// 유저의 건강정보 조회 (주의사항 반영 의도)
+	private Health getHealthByUser(User user) {
+		return healthRepository.findByUser(user).orElseThrow(
+			() -> new HealthException(HEALTH_NOT_FOUND));
 	}
 }

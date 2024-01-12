@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
+import sopt.org.motivooServer.domain.mission.entity.UserMissionChoices;
 
 @Builder
 public record TodayMissionResponse(
@@ -14,11 +15,11 @@ public record TodayMissionResponse(
 	@JsonProperty("today_mission") TodayUserMissionDto todayMission
 ) {
 
-	public static TodayMissionResponse of(List<UserMission> missionChoiceList) {
+	public static TodayMissionResponse of(List<UserMissionChoices> missionChoiceList) {
 		return TodayMissionResponse.builder()
 			.isChoiceFinished(false)
 			.missionChoiceList(missionChoiceList.stream()
-				.map(TodayUserMissionDto::ofChoice).toList()).build();
+				.map(TodayUserMissionDto::of).toList()).build();
 	}
 
 	public static TodayMissionResponse of(UserMission todayMission) {

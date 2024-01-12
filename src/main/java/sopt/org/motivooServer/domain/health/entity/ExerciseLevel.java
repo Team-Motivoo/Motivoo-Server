@@ -17,7 +17,6 @@ public enum ExerciseLevel {
     BEGINNER("초보");
     private final String value;
 
-
     public static ExerciseLevel of(String value) {
         return Arrays.stream(ExerciseLevel.values())
                 .filter(exerciseLevel -> value.equals(exerciseLevel.value))

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
+import sopt.org.motivooServer.domain.mission.entity.UserMissionChoices;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,10 +25,10 @@ public record TodayUserMissionDto(
 			.missionQuest(userMission.getMissionQuest().getContent()).build();
 	}
 
-	public static TodayUserMissionDto ofChoice(UserMission userMission) {
+	public static TodayUserMissionDto of(UserMissionChoices userMissionChoices) {
 		return TodayUserMissionDto.builder()
-			.missionId(userMission.getId())
-			.missionContent(userMission.getMission().getContent())
-			.missionIconUrl(userMission.getMission().getIconUrl()).build();
+			.missionId(userMissionChoices.getId())
+			.missionContent(userMissionChoices.getMission().getContent())
+			.missionIconUrl(userMissionChoices.getMission().getIconUrl()).build();
 	}
 }
