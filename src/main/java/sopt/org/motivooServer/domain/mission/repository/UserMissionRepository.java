@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.user.entity.User;
@@ -20,4 +21,6 @@ public interface UserMissionRepository extends JpaRepository<UserMission, Long> 
 	// Scheduler를 통해 DB에 저장된 오늘의 미션 리스트 전부 가져오기
 	@Query("SELECT um FROM UserMission um WHERE DATE(um.createdAt) = DATE(:date)")
 	List<UserMission> findUserMissionsByCreatedAt(LocalDate date);
-}
+
+	@Query("SELECT um FROM UserMission um WHERE um.createdAt < :date")
+	List<UserMission> findUserMissionsByCreatedAtBefore(@Param("date") LocalDateTime date);}
