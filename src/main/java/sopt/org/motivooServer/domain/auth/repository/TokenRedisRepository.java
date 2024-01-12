@@ -74,7 +74,6 @@ public class TokenRedisRepository {
 
     private void setExpirationInRedis(String key, Date expiration) {
         RedisTemplate<String, String> redisTemplate = redisConfig.redisTemplate();
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
         Long now = new Date().getTime();
         Long remainTime = expiration.getTime() - now;
@@ -99,7 +98,6 @@ public class TokenRedisRepository {
 
     public void deleteRefreshToken(String refreshToken) {
         RedisTemplate<String, String> redisTemplate = redisConfig.redisTemplate();
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
         String key = PREFIX_REFRESH + refreshToken;
         redisTemplate.delete(key);

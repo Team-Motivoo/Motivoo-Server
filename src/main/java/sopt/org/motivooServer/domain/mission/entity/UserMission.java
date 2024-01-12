@@ -9,21 +9,23 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
 import sopt.org.motivooServer.domain.user.entity.User;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class UserMission extends BaseTimeEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_mission_id")
 	private Long id;
-
-	@Column(nullable = false)
-	private Double completedRate;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -36,9 +38,20 @@ public class UserMission extends BaseTimeEntity {
 	@JoinColumn(name = "mission_id", nullable = false)
 	private Mission mission;
 
+	@OneToOne
+	private MissionQuest missionQuest;
+
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
+
+	@Builder
+	private UserMission(CompletedStatus completedStatus, Mission mission, MissionQuest missionQuest, User user) {
+		this.completedStatus = completedStatus;
+		this.mission = mission;
+		this.missionQuest = missionQuest;
+		this.user = user;
+	}
 
 	//== 연관관계 메서드 ==//
 	public void setUser(User user) {
@@ -52,4 +65,9 @@ public class UserMission extends BaseTimeEntity {
 	public void updateImgUrl(final String imgUrl) {
 		this.imgUrl = imgUrl;
 	}
+
+	public void updateCompletedStatus(final CompletedStatus completedStatus) {
+		this.completedStatus = completedStatus;
+	}
+
 }

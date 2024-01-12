@@ -1,12 +1,20 @@
 package sopt.org.motivooServer.domain.parentchild.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Random;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
-import sopt.org.motivooServer.domain.health.entity.*;
+import sopt.org.motivooServer.domain.health.entity.ExerciseFrequency;
+import sopt.org.motivooServer.domain.health.entity.ExerciseLevel;
+import sopt.org.motivooServer.domain.health.entity.ExerciseTime;
+import sopt.org.motivooServer.domain.health.entity.ExerciseType;
+import sopt.org.motivooServer.domain.health.entity.Health;
+import sopt.org.motivooServer.domain.health.entity.HealthNote;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.health.service.CalculateScore;
 import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
@@ -14,13 +22,11 @@ import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 import sopt.org.motivooServer.domain.parentchild.exception.ParentchildException;
-import sopt.org.motivooServer.domain.parentchild.repository.ParentChildRepository;
+import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
-
-import java.util.Random;
 
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INVALID_USER_TYPE;
@@ -29,10 +35,10 @@ import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INV
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ParentChildService {
+public class ParentchildService {
     private final HealthRepository healthRepository;
     private final UserRepository userRepository;
-    private final ParentChildRepository parentChildRepository;
+    private final ParentchildRepository parentchildRepository;
     private final CalculateScore calculateScore;
     private static final int RANDOM_STR_LEN = 8;
     private static final int MATCHING_SUCCESS = 2;
@@ -45,6 +51,8 @@ public class ParentChildService {
 
         user.updateOnboardingInfo(UserType.of(request.type()), request.age());
 
+        log.info("user="+user.getNickname()+"유무="+request.isExercise()+"타입="+request.exerciseType()
+        +"횟수="+request.exerciseCount()+"시간="+request.exerciseTime()+"주의="+request.exerciseNote());
         Health health = Health.builder()
                         .user(user)
                         .isExercise(request.isExercise())
@@ -54,7 +62,7 @@ public class ParentChildService {
                         .healthNotes(HealthNote.of(request.exerciseNote()))
                         .exerciseLevel(ExerciseLevel.BEGINNER)
                         .build();
-
+        log.info("health user="+health.getUser());
         healthRepository.save(health);
 
         double exerciseScore = calculateScore.calculate(request.isExercise(), ExerciseType.of(request.exerciseType()),
@@ -67,7 +75,9 @@ public class ParentChildService {
                                   .inviteCode(inviteCode)
                                   .isMatched(false)
                                   .build();
-        parentChildRepository.save(parentchild);
+        log.info("parentchild="+parentchild.getId());
+
+        parentchildRepository.save(parentchild);
         user.addParentChild(parentchild);
 
         return new OnboardingResponse(userId, inviteCode, health.getExerciseLevel().getValue());
@@ -79,7 +89,7 @@ public class ParentChildService {
                 () -> new UserException(INVALID_USER_TYPE)
         );
 
-        Parentchild parentchild = parentChildRepository.findByInviteCode(request.inviteCode()).orElseThrow(
+        Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode()).orElseThrow(
                 () -> new ParentchildException(PARENTCHILD_NOT_FOUND)
         );
 

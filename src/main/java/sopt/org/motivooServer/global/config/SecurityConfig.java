@@ -11,6 +11,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import sopt.org.motivooServer.domain.auth.config.CustomAccessDeniedHandler;
 import sopt.org.motivooServer.domain.auth.config.CustomJwtAuthenticationEntryPoint;
 import sopt.org.motivooServer.domain.auth.config.JwtAuthenticationFilter;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -22,8 +24,9 @@ public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private static final String[] AUTH_WHITELIST = {
-		"/", "/**", "/oauth/**", "/api/**", "/actuator/health","/withdraw"
+		"/", "/**", "/oauth/**", "/api/**", "/actuator/health","/withdraw", "/mission/**", "/home"
 	};
 
 	@Bean
@@ -37,7 +40,7 @@ public class SecurityConfig {
 				.and()
 				.exceptionHandling()
 				.authenticationEntryPoint(customJwtAuthenticationEntryPoint)
-				// .accessDeniedHandler(customAccessDeniedHandler)
+				.accessDeniedHandler(customAccessDeniedHandler)
 				.and()
 				.authorizeHttpRequests()
 				.requestMatchers(AUTH_WHITELIST).permitAll()

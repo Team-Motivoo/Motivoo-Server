@@ -22,6 +22,7 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -59,16 +60,19 @@ public class UserService {
 		}
 	}
 
-	private void deleteKakaoAccount(Long userId, String accessToken){
+	@Transactional
+	public void deleteKakaoAccount(Long userId, String accessToken){
 		User user = userRepository.findById(userId).orElseThrow(
 				() -> new UserException(USER_NOT_FOUND)
 		);
 		userRepository.delete(user); //회원 탈퇴 deleted false -> true
-		user.updateDeletedAt(); //회원 탈퇴날짜 갱신
+		userRepository.updateDeleteAt(LocalDateTime.now().plusDays(30), user.getId()); //회원 탈퇴날짜 갱신
+		log.info("영구 탈퇴 날짜="+user.getDeletedAt());
 
 		//부모-자녀 모두 탈퇴한 경우인지 판별
 		Parentchild parentchild = user.getParentchild();
 		List<User> users = userRepository.findByParentchild(parentchild);
+		log.info("부모-자식 중 탈퇴한 사람 수="+users.size());
 		if(users.size()==MATCHING_SUCCESS) {
 			for(User deletedUser:users){
 				deletedUser.setDeleteExpired();
