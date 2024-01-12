@@ -60,6 +60,21 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(INTERNAL_SERVER_ERROR));
     }*/
 
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(IndexOutOfBoundsException.class)
+	public ResponseEntity<ErrorResponse> handleIndexOutOfBoundsException(final IndexOutOfBoundsException e) {
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(ErrorResponse.of(INDEX_OUT_OF_BOUND_ERROR));
+	}
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(NullPointerException.class)
+	public ResponseEntity<ErrorResponse> handleNullPointerException(final NullPointerException e) {
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(ErrorResponse.of(NULL_POINTER_ACCESS_ERROR));
+	}
+
+
 	/**
 	 * Custom Error
 	 */
