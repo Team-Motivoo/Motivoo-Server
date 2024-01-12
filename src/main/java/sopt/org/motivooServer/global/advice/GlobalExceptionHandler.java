@@ -3,20 +3,21 @@ package sopt.org.motivooServer.global.advice;
 import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
 import static sopt.org.motivooServer.global.advice.ErrorType.*;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.global.response.ApiResponse;
@@ -44,6 +45,28 @@ public class GlobalExceptionHandler {
 			validateDetails.put(validKeyName, error.getDefaultMessage());
 		}
 		return ApiResponse.fail(REQUEST_VALIDATION_EXCEPTION, validateDetails);
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(final HttpMessageNotReadableException e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			.body(ErrorResponse.of(VALIDATION_WRONG_HTTP_REQUEST));
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	protected ResponseEntity<ErrorResponse> handlerHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			.body(ErrorResponse.of(INVALID_HTTP_METHOD));
+	}
+
+	// Header에 원하는 Key가 없는 경우
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MissingRequestHeaderException.class)
+	protected ResponseEntity<ErrorResponse> handlerMissingRequestHeaderException(final MissingRequestHeaderException e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			.body(ErrorResponse.of(HEADER_REQUEST_MISSING_EXCEPTION));
 	}
 
 
