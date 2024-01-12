@@ -6,6 +6,8 @@
     "version" : "v0.0.1"
   },
   "servers" : [ {
+    "url" : "http://15.165.248.213"
+  }, {
     "url" : "http://localhost:8080"
   } ],
   "tags" : [ ],
@@ -34,6 +36,79 @@
           }
         }
       }
+    },
+    "/mission/image/{missionId}" : {
+      "patch" : {
+        "tags" : [ "유저미션" ],
+        "summary" : "미션 인증 사진 업로드를 위한 PreSigned Url 반환",
+        "description" : "미션 인증 사진 업로드를 위한 PreSigned Url 반환",
+        "operationId" : "미션 인증 사진 등록 API 성공 Example",
+        "parameters" : [ {
+          "name" : "missionId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json;charset=UTF-8" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/mission-image-missionId-891843899"
+              },
+              "examples" : {
+                "미션 인증 사진 등록 API 성공 Example" : {
+                  "value" : "{\n  \"img_prefix\" : \"mission/\"\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/mission-image-missionId1808541440"
+                },
+                "examples" : {
+                  "미션 인증 사진 등록 API 성공 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"img_presigned_url\" : \"https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/39e545f4-9ad8-4c05-a8cb-960d0787e776.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240109T051832Z&X-Amz-SignedHeaders=host&X-Amz-Expires=60&X-Amz-Credential=AKIASRIQXMUZKAKLJQGJ%2F20240109%2Fap-northeast-2%2Fs3%2Faws4_request&X-Amz-Signature=0c98a5efeaea9bbf607becaaeb511495b68e83b9897b193ef542fa4a8c352dd4\",\n    \"file_name\" : \"39e545f4-9ad8-4c05-a8cb-960d0787e776.jpg\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/me" : {
+      "get" : {
+        "tags" : [ "유저" ],
+        "summary" : "마이페이지 내 정보 조회",
+        "description" : "마이페이지 내 정보 조회",
+        "operationId" : "마이페이지 내 정보 조회 API 성공 Example",
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/user-me1088240176"
+                },
+                "examples" : {
+                  "마이페이지 내 정보 조회 API 성공 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"마이페이지 나의 정보 조회에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_nickname\" : \"모티뿡뿡이\",\n    \"user_age\" : 20,\n    \"user_type\" : \"CHILD\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components" : {
@@ -47,6 +122,81 @@
           },
           "data" : {
             "type" : "string",
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "mission-image-missionId-891843899" : {
+        "type" : "object",
+        "properties" : {
+          "img_prefix" : {
+            "type" : "string",
+            "description" : "운동 인증 사진 디렉터리"
+          }
+        }
+      },
+      "mission-image-missionId1808541440" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "img_presigned_url" : {
+                "type" : "string",
+                "description" : "S3 PreSigned Url"
+              },
+              "file_name" : {
+                "type" : "string",
+                "description" : "이미지 파일명(UUID로 임의 지정)"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "user-me1088240176" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "user_type" : {
+                "type" : "string",
+                "description" : "유저 타입 (부모/자식)"
+              },
+              "user_nickname" : {
+                "type" : "string",
+                "description" : "유저 닉네임"
+              },
+              "user_age" : {
+                "type" : "number",
+                "description" : "유저 나이"
+              }
+            },
             "description" : "응답 데이터"
           },
           "success" : {

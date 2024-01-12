@@ -104,6 +104,10 @@ public class S3Service {
 		}
 	}
 
+	public String getImgByFileName(String prefix, String fileName) {
+		return "https://"+bucketName+".s3.ap-northeast-2.amazonaws.com/"+prefix+fileName;
+	}
+
 	private String generateImageFileName() {
 		return UUID.randomUUID().toString() + ".jpg";
 	}

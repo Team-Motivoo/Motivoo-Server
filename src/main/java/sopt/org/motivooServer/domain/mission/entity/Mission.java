@@ -7,9 +7,15 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
+import sopt.org.motivooServer.domain.user.entity.UserType;
 
+@Getter
 @Entity
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class Mission extends BaseTimeEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,11 +25,26 @@ public class Mission extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String content;
 
-	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private MissionType type;
+	private String type;
+
+	@Column(nullable = false)
+	private String healthNotes;
+
+	@Column(nullable = false)
+	private int stepCount;
 
 	@Column(columnDefinition = "TEXT")
 	private String descriptionUrl;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private UserType target;
+
+	@Column(nullable = false)
+	private String bodyPart;
+
+	@Column(columnDefinition = "TEXT")
+	private String iconUrl;
 
 }

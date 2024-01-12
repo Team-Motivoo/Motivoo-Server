@@ -7,9 +7,11 @@ import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 
+@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum UserType {
 	PARENT("부모"),

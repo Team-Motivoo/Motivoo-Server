@@ -9,6 +9,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
 import static sopt.org.motivooServer.global.util.s3.S3BucketDirectory.*;
 
+import java.security.Principal;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,6 +26,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.mission.controller.UserMissionController;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
+import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
@@ -41,8 +44,7 @@ public class UserMissionControllerTest extends BaseControllerTest{
 	private UserMissionController userMissionController;
 
 	@MockBean
-	private UserRepository userRepository;
-
+	private Principal principal;
 
 	@Test
 	@DisplayName("미션 인증 사진 등록 API 테스트")

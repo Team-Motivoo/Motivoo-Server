@@ -1,5 +1,8 @@
 package sopt.org.motivooServer.domain.user.entity;
 
+import static sopt.org.motivooServer.domain.mission.exception.MissionExceptionType.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,13 +22,15 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
+import sopt.org.motivooServer.domain.mission.entity.UserMissionChoices;
+import sopt.org.motivooServer.domain.mission.exception.MissionException;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 
 @Getter
 @Entity
 @Table(name = "`user`")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE user SET user.deleted=true WHERE user_id=?")
+@SQLDelete(sql = "UPDATE user SET deleted=true WHERE user_id=?")
 public class User extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +45,12 @@ public class User extends BaseTimeEntity {
 
 	@Column(nullable = false)
 	private Boolean deleted = Boolean.FALSE;
+
+	@Column(name = "deleted_at")
+	private LocalDateTime deletedAt;
+
+	@Column(nullable = false)
+	private Boolean deleteExpired = Boolean.FALSE; //부모-자녀 둘 다 탈퇴한 경우 TRUE
 
 	@Column(nullable = false)
 	private String socialId;
@@ -59,7 +70,10 @@ public class User extends BaseTimeEntity {
 	private Parentchild parentchild;
 
 	@OneToMany(mappedBy = "user")
-	private List<UserMission> userMissions = new ArrayList<>();
+	private final List<UserMission> userMissions = new ArrayList<>();
+
+	@OneToMany
+	private final List<UserMissionChoices> userMissionChoice = new ArrayList<>();
 
 	@Builder
 	private User(String nickname, String socialId, SocialPlatform socialPlatform, String socialAccessToken,
@@ -93,6 +107,28 @@ public class User extends BaseTimeEntity {
 
 	public void addParentChild(Parentchild parentchild) {
 		this.parentchild=parentchild;
+	}
+
+	public void clearPreUserMissionChoice() {
+		this.userMissionChoice.clear();
+	}
+
+	public void setPreUserMissionChoice(List<UserMissionChoices> userMissionChoice) {
+		if (!this.userMissionChoice.isEmpty()) {
+			clearPreUserMissionChoice();
+		}
+		this.userMissionChoice.addAll(userMissionChoice);
+	}
+
+	// 가장 최근의 운동 미션 조회
+	public UserMission getCurrentUserMission() {
+		int lastIndex = userMissions.size() - 1;
+		if (lastIndex >= 0) {
+			return userMissions.get(lastIndex);
+		}
+
+		//TODO User 도메인에서 처리하는 로직인데 MissionException VS UserException 둘 중 어느 게 더 적합할지?
+		throw new MissionException(EMPTY_USER_MISSIONS);
 	}
 
 }

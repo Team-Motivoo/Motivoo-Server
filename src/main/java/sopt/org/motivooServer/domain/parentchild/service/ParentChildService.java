@@ -1,12 +1,23 @@
 package sopt.org.motivooServer.domain.parentchild.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
+import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
+
+import java.util.Random;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
-import sopt.org.motivooServer.domain.health.entity.*;
+import sopt.org.motivooServer.domain.health.entity.ExerciseFrequency;
+import sopt.org.motivooServer.domain.health.entity.ExerciseLevel;
+import sopt.org.motivooServer.domain.health.entity.ExerciseTime;
+import sopt.org.motivooServer.domain.health.entity.ExerciseType;
+import sopt.org.motivooServer.domain.health.entity.Health;
+import sopt.org.motivooServer.domain.health.entity.HealthNote;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.health.service.CalculateScore;
 import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
@@ -14,16 +25,11 @@ import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 import sopt.org.motivooServer.domain.parentchild.exception.ParentchildException;
-import sopt.org.motivooServer.domain.parentchild.repository.ParentChildRepository;
+import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
-
-import java.util.Random;
-
-import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
-import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INVALID_USER_TYPE;
 
 @Slf4j
 @Service
@@ -32,7 +38,7 @@ import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INV
 public class ParentChildService {
     private final HealthRepository healthRepository;
     private final UserRepository userRepository;
-    private final ParentChildRepository parentChildRepository;
+    private final ParentchildRepository parentchildRepository;
     private final CalculateScore calculateScore;
     private static final int randomStrLen = 8;
     private static final int matchingSuccess = 2;
@@ -64,10 +70,9 @@ public class ParentChildService {
         String inviteCode = createInviteCode();
 
         Parentchild parentchild = Parentchild.builder()
-                                  .inviteCode(inviteCode)
-                                  .isMatched(false)
-                                  .build();
-        parentChildRepository.save(parentchild);
+            .inviteCode(inviteCode)
+            .isMatched(false).build();
+        parentchildRepository.save(parentchild);
         user.addParentChild(parentchild);
 
         return new OnboardingResponse(userId, inviteCode, health.getExerciseLevel().getValue());
@@ -79,7 +84,7 @@ public class ParentChildService {
                 () -> new UserException(INVALID_USER_TYPE)
         );
 
-        Parentchild parentchild = parentChildRepository.findByInviteCode(request.inviteCode());
+        Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode());
         if(parentchild!=null){
             checkForOneToOneMatch(parentchild); //이미 매칭이 완료된 경우 예외처리
             parentchild.matchingSuccess();
