@@ -28,6 +28,7 @@ import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
+import sopt.org.motivooServer.domain.mission.dto.response.TodayUserMissionDto;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
 import sopt.org.motivooServer.domain.mission.entity.MissionType;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
@@ -100,6 +101,7 @@ public class UserMissionService {
 
 		userMissionRepository.save(userMission);
 		user.addUserMission(userMission);
+		user.clearPreUserMissionChoice();  // 오늘의 미션을 선정했다면, 선택지 리스트는 비워주기
 		return userMission.getId();
 	}
 
@@ -130,26 +132,40 @@ public class UserMissionService {
 	@Transactional  // TODO 여기 최대한 분리해보자
 	public TodayMissionResponse getTodayMission(final Long userId) {
 		User user = getUserById(userId);
+		log.info("TodayMission이 있을까, 없을까? {}개 있음 ㅋㅋ", user.getUserMissionChoice().size());
 
-		if (user.getUserMissions().isEmpty()) {
-			log.info("유저 {}의 UserMissions 비어 있음", user.getNickname());
-			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
-			user.setPreUserMissionChoice(todayMissionChoices);
-			log.info("첫 오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
-			return TodayMissionResponse.of(todayMissionChoices);
-		}
+		/**
+		 * UserMissionChoice 리스트 == Empty ?
+		 * - 오늘의 미션을 선정한 경우, 비워주기
+		 * - 아직 오늘의 미션이 선정되지 않은 경우
+		 * - 첫 오늘의 미션을 부여받을 때
+		 */
 
+		// 오늘의 미션이 선정된 경우
 		UserMission todayMission = user.getCurrentUserMission();
-		if (validateTodayDateMission(todayMission)) {
+		if (todayMission == null || user.getUserMissions().isEmpty() || !validateTodayDateMission(todayMission)) {
+
+			// 아직 오늘의 미션이 선정되지 않은 경우
+			// 1) 필터링 로직을 거친 적이 없는 경우 -> 필터 거치기
+			// 2) 필터링 로직을 한 번 이상 거친 경우 -> 저장된 거 가져오기
+			if (user.getUserMissionChoice().isEmpty()) {
+				log.info("유저 {}의 UserMissions 선택지 리스트가 비어 있음", user.getNickname());
+
+				List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
+				user.setPreUserMissionChoice(todayMissionChoices);
+				log.info("오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
+				return TodayMissionResponse.of(todayMissionChoices);
+			} else {
+				log.info("오늘의 미션이 세팅된 상태: {}", user.getUserMissionChoice().size());
+				return TodayMissionResponse.of(user.getUserMissionChoice());
+			}
+
+		} else {
+			log.info("오늘의 미션이 선정된 상태: {}", todayMission.getMission().getContent());
 			return TodayMissionResponse.of(todayMission);
 		}
-
-		List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
-		user.setPreUserMissionChoice(todayMissionChoices);
-
-		return TodayMissionResponse.of(todayMissionChoices);
+		// throw new MissionException(FAIL_TO_GET_TODAY_MISSION);
 	}
-
 
 	private List<UserMissionChoices> filterTodayUserMission(User user) {
 		final List<Mission> missionChoicesFiltered = new ArrayList<>();
@@ -167,17 +183,13 @@ public class UserMissionService {
 		for (Mission mission : missions) {
 			List<HealthNote> missionNotes = HealthNote.of(mission.getHealthNotes());
 			boolean hasUserNotes = missionNotes.stream().anyMatch(userNotes::contains);
-			// boolean hasExerciseLevel = mission.getType().containsLevel(exerciseLevel);
-
-			log.info("MissionType: {}", mission.getType());
 			boolean hasExerciseLevel = MissionType.of(mission.getType()).containsLevel(exerciseLevel);
-			log.info("MissionType-ExerciseLevel 포함 여부 검사: {}", hasExerciseLevel);
 
 			if (!hasUserNotes && !hasExerciseLevel) {
-				log.info("맞춤 Mission 리스트에 추가: {}", mission.getContent());
 				missionChoicesFiltered.add(mission);
 			}
 		}
+		log.info("맞춤 Mission 리스트에 추가(Shuffle 전): {}가지", missionChoicesFiltered.size());
 
 		Collections.shuffle(missionChoicesFiltered);
 
@@ -189,7 +201,13 @@ public class UserMissionService {
 				.build();
 			missionChoices.add(userMissionChoicesRepository.save(missionChoice));
 		}
+
+		if (missionChoices.isEmpty() || missionChoices.size() == 1) {
+			throw new MissionException(NOT_FILTERED_TODAY_MISSION);
+		}
 		user.setPreUserMissionChoice(missionChoices);
+		log.info("user.getUserMissionChoice().size()={}", user.getUserMissionChoice().size());
+		log.info("랜덤 선정된 오늘의 미션 선택지 - 1. {} 2. {}", user.getUserMissionChoice().get(0).getMission().getId(), user.getUserMissionChoice().get(1).getMission().getId());
 		return missionChoices;
 	}
 
