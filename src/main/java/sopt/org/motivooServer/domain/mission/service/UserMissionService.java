@@ -65,13 +65,14 @@ public class UserMissionService {
 
 	// TODO userId를 이용하여 미션 리스트에서 하나 뽑아오기
 	@Transactional
-	public MissionImgUrlResponse getMissionImgUrl(final MissionImgUrlRequest request, final Long missionId, final Long userId) {
+	public MissionImgUrlResponse getMissionImgUrl(final MissionImgUrlRequest request, final Long userId) {
 		User user = getUserById(userId);
-		UserMission userMission = getUserMission(missionId);
+		UserMission todayMission = user.getCurrentUserMission();
+		checkMissionChoice(todayMission);
 
 		PreSignedUrlResponse preSignedUrl = s3Service.getUploadPreSignedUrl(
 			S3BucketDirectory.of(request.imgPrefix()));
-		userMission.updateImgUrl(s3Service.getImgByFileName(request.imgPrefix(), preSignedUrl.fileName()));
+		todayMission.updateImgUrl(s3Service.getImgByFileName(request.imgPrefix(), preSignedUrl.fileName()));
 		return MissionImgUrlResponse.of(preSignedUrl.url(), preSignedUrl.fileName());
 	}
 
@@ -80,7 +81,7 @@ public class UserMissionService {
 		User opponentUser = getMatchedUserWith(myUser);
 
 		UserMission todayMission = myUser.getCurrentUserMission();
-		validateTodayDateMission(todayMission);
+		checkMissionChoice(todayMission);
 
 		return MissionHistoryResponse.of(myUser, todayMission,
 			userMissionRepository.findUserMissionsByUserOrderByCreatedAt(myUser),
@@ -124,12 +125,13 @@ public class UserMissionService {
 		log.info("현재 접속한 유저 - {} X 나와 매칭된 부모자녀 유저 - {}", myUser.getNickname(), opponentUser.getNickname());
 
 		UserMission todayMission = myUser.getCurrentUserMission();
-		validateTodayDateMission(todayMission);
+		checkMissionChoice(todayMission);
 
 		int currentStepCount = request.myStepCount();
 
 		return MissionStepStatusResponse.of(myUser, opponentUser, isStepCountCompleted(currentStepCount, todayMission));
 	}
+
 
 	private boolean isStepCountCompleted(int currentStepCount, UserMission todayMission) {
 		boolean isStepCountCompleted = currentStepCount >= todayMission.getMission().getStepCount();
@@ -244,6 +246,13 @@ public class UserMissionService {
 			.toList();
 	}
 
+	// 오늘의 미션 선정 여부 검사
+	private void checkMissionChoice(UserMission todayMission) {
+		if (!validateTodayDateMission(todayMission)) {
+			throw new MissionException(NOT_CHOICE_TODAY_MISSION);
+		}
+	}
+
 	// 오늘의 미션에 대한 유효성 검사
 	private boolean validateTodayDateMission(UserMission todayMission) {
 		if (!todayMission.getCreatedAt().toLocalDate().equals(LocalDate.now())) {
@@ -253,6 +262,7 @@ public class UserMissionService {
 		}
 		return true;
 	}
+
 	private User getUserById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(
 			() -> new UserException(USER_NOT_FOUND));

@@ -34,11 +34,10 @@ public class UserMissionController {
 	private final UserMissionService userMissionService;
 
 	//TODO 항상 유저의 오늘의 미션에만 인증 사진 등록이 가능하므로, @PathVariable은 생략할 예정
-	@PatchMapping("/image/{missionId}")
-	public ResponseEntity<ApiResponse<MissionImgUrlResponse>> getMissionImgUrl(@Valid @RequestBody final MissionImgUrlRequest request,
-																			@PathVariable final Long missionId) {
+	@PatchMapping("/image")
+	public ResponseEntity<ApiResponse<MissionImgUrlResponse>> getMissionImgUrl(@Valid @RequestBody final MissionImgUrlRequest request, final Principal principal) {
 		return ApiResponse.success(GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS,
-			userMissionService.getMissionImgUrl(request, missionId, getAuthenticatedUser()));
+			userMissionService.getMissionImgUrl(request, getAuthenticatedUser()));
 	}
 
 	@GetMapping

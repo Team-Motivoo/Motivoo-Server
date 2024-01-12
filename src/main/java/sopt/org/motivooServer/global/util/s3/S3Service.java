@@ -61,7 +61,7 @@ public class S3Service {
 			String url = preSigner.presignPutObject(preSignedUrlRequest).url().toString();
 			return PreSignedUrlResponse.of(fileName, url);
 		} catch (RuntimeException e) {
-			throw new BusinessException(FAIL_TO_UPLOAD_IMAGE);
+			throw new BusinessException(FAIL_TO_GET_IMAGE_PRE_SIGNED_URL);
 		}
 	}
 
