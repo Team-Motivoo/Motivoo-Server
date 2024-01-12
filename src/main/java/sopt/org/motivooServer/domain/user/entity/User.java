@@ -30,7 +30,7 @@ import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 @Entity
 @Table(name = "`user`")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE user SET user.deleted=true WHERE user_id=?")
+@SQLDelete(sql = "UPDATE user SET deleted=true WHERE user_id=?")
 public class User extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,7 +73,7 @@ public class User extends BaseTimeEntity {
 	private final List<UserMission> userMissions = new ArrayList<>();
 
 	@OneToMany
-	private final List<UserMissionChoices> preUserMissionChoice = new ArrayList<>();
+	private final List<UserMissionChoices> userMissionChoice = new ArrayList<>();
 
 	@Builder
 	private User(String nickname, String socialId, SocialPlatform socialPlatform, String socialAccessToken,
@@ -110,14 +110,14 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void clearPreUserMissionChoice() {
-		this.preUserMissionChoice.clear();
+		this.userMissionChoice.clear();
 	}
 
 	public void setPreUserMissionChoice(List<UserMissionChoices> userMissionChoice) {
-		if (!this.preUserMissionChoice.isEmpty()) {
+		if (!this.userMissionChoice.isEmpty()) {
 			clearPreUserMissionChoice();
 		}
-		this.preUserMissionChoice.addAll(userMissionChoice);
+		this.userMissionChoice.addAll(userMissionChoice);
 	}
 
 	// 가장 최근의 운동 미션 조회

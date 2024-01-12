@@ -1,7 +1,6 @@
 package sopt.org.motivooServer.domain.mission.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -29,7 +28,7 @@ public class UserMissionScheduler {
 
 		// 2. 새로운 미션 선택지
 		userMissionRepository.findAll().stream()
-			.filter(um -> !um.getUser().getPreUserMissionChoice().isEmpty())
+			.filter(um -> !um.getUser().getUserMissionChoice().isEmpty())
 			.forEach(um -> um.getUser().clearPreUserMissionChoice());
 	}
 }
