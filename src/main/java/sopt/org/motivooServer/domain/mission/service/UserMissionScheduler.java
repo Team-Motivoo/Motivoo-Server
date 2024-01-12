@@ -32,6 +32,4 @@ public class UserMissionScheduler {
 			.filter(um -> !um.getUser().getPreUserMissionChoice().isEmpty())
 			.forEach(um -> um.getUser().clearPreUserMissionChoice());
 	}
-
-
 }

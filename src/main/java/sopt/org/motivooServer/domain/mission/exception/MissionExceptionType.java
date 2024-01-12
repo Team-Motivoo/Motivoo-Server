@@ -13,6 +13,7 @@ public enum MissionExceptionType implements BusinessExceptionType {
 	 * 400 Bad Request
 	 */
 	EMPTY_USER_MISSIONS(HttpStatus.BAD_REQUEST, "유저 미션 리스트가 비어 있습니다."),
+	INVALID_MISSION_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 미션 타입 Enum 값입니다."),
 
 	/**
 	 * 404 Not Found

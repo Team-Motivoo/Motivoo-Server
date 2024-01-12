@@ -1,10 +1,10 @@
 package sopt.org.motivooServer.domain.parentchild.service;
 
-import java.util.Random;
 
+import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
+import java.util.Random;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
@@ -28,7 +28,7 @@ import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
-import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
+
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INVALID_USER_TYPE;
 
 @Slf4j
@@ -89,9 +89,11 @@ public class ParentchildService {
                 () -> new UserException(INVALID_USER_TYPE)
         );
 
+
         Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode()).orElseThrow(
                 () -> new ParentchildException(PARENTCHILD_NOT_FOUND)
         );
+
 
         if(parentchild!=null){
             checkForOneToOneMatch(parentchild); //이미 매칭이 완료된 경우 예외처리

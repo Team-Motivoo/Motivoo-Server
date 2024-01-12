@@ -14,7 +14,7 @@ import sopt.org.motivooServer.domain.user.repository.UserRepository;
 public class ExpiredMemberDeleteBatch {
     private final UserRepository userRepository;
 
-    //@Scheduled(cron="0/10 * * * * *")
+    @Scheduled(cron="0/10 * * * * *")
     //@Scheduled(cron = "@hourly")
     public void deleteExpiredUser(){
         log.info("영구적으로 탈퇴되었습니다.");

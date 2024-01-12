@@ -1,6 +1,7 @@
 package sopt.org.motivooServer.domain.health.entity;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.health.exception.HealthException;
 
@@ -8,6 +9,7 @@ import java.util.Arrays;
 
 import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.INVALID_EXERCISE_TIME;
 
+@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ExerciseTime {
 

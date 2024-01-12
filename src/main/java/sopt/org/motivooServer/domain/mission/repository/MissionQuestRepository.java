@@ -1,7 +1,9 @@
-package sopt.org.motivooServer.domain.mission.entity;
+package sopt.org.motivooServer.domain.mission.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import sopt.org.motivooServer.domain.mission.entity.MissionQuest;
 
 public interface MissionQuestRepository extends JpaRepository<MissionQuest, Long> {
 

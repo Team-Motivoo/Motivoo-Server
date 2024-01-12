@@ -46,7 +46,7 @@ public class UserMissionController {
 		return ApiResponse.success(GET_MISSION_HISTORY_SUCCESS, userMissionService.getUserMissionHistory(getUserFromPrincipal(principal)));
 	}
 
-	@GetMapping("/today")
+	@PostMapping("/today/choice")
 	public ResponseEntity<ApiResponse<TodayMissionResponse>> getTodayMission(final Principal principal) {
 		return ApiResponse.success(GET_TODAY_MISSION_SUCCESS, userMissionService.getTodayMission(getUserFromPrincipal(principal)));
 	}
