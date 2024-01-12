@@ -8,6 +8,7 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
 import static sopt.org.motivooServer.global.util.s3.S3BucketDirectory.*;
+import static sopt.org.motivooServer.util.ApiDocumentUtil.*;
 
 import java.security.Principal;
 
@@ -26,9 +27,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.mission.controller.UserMissionController;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
-import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
-import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 @Slf4j
@@ -61,26 +60,24 @@ public class UserMissionControllerTest extends BaseControllerTest{
 			GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS, response);
 
 		// when
-		when(userMissionController.getMissionImgUrl(request, missionId)).thenReturn(result);
+		when(userMissionController.getMissionImgUrl(request, principal)).thenReturn(result);
 
 		// then
-		mockMvc.perform(patch(DEFAULT_URL + "/image/{missionId}", missionId)
+		mockMvc.perform(patch(DEFAULT_URL + "/image")
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request))
+			.principal(principal)
 		).andDo(
 			MockMvcRestDocumentation.document("미션 인증 사진 등록 API 성공 Example",
-				preprocessRequest(prettyPrint()),
-				preprocessResponse(prettyPrint()),
+				getDocumentRequest(),
+				getDocumentResponse(),
 				resource(
 					ResourceSnippetParameters.builder()
 						.tag(TAG)
 						.description("미션 인증 사진 업로드를 위한 PreSigned Url 반환")
 						.requestFields(
 							fieldWithPath("img_prefix").type(STRING).description("운동 인증 사진 디렉터리")
-						)
-						.pathParameters(
-							parameterWithName("missionId").description("미션 아이디").ignored()
 						)
 						.responseFields(
 							fieldWithPath("code").type(NUMBER).description("상태 코드"),
