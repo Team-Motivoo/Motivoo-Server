@@ -43,7 +43,7 @@
 
 
 ## 🔧 시스템 아키텍처
-<img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/33430097-abaa-461a-9f38-7f86e95b3b0f" />
+<img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/df301bbd-1d3e-49aa-bc9d-c4ebdec046cd" />
 <br/><br/>
 
 ## ☁️ ERD
@@ -64,8 +64,16 @@
     🗂 main
         🗂 java/sopt/org/motivooServer
             📁 domain
-                🗂 common
-                🗂 health
+                🗂 auth    // 소셜로그인 관련 로직
+                    🗂 config
+                    🗂 controller
+                    🗂 dto
+                      🗂 redis
+                      🗂 request
+                      🗂 response
+                    🗂 repository
+                🗂 common   // BaseTimeEntity (createdAt, updatedAt)
+                🗂 health   // Health 
                     🗂 controller
                     🗂 dto
                       🗂 request
@@ -74,7 +82,7 @@
                     🗂 exception
                     🗂 repository
                     🗂 service
-                🗂 mission
+                🗂 mission   // Mission, UserMission, UserMissionChoices, MissioQuest 테이블
                     🗂 controller
                     🗂 dto
                       🗂 request
@@ -83,7 +91,7 @@
                     🗂 exception
                     🗂 repository
                     🗂 service
-                🗂 parentchild
+                🗂 parentchild  // Parentchild 부모-자녀 관계 테이블
                     🗂 controller
                     🗂 dto
                       🗂 request
@@ -92,16 +100,7 @@
                     🗂 exception
                     🗂 repository
                     🗂 service
-                🗂 step
-                    🗂 controller
-                    🗂 dto
-                      🗂 request
-                      🗂 response
-                    🗂 entity
-                    🗂 exception
-                    🗂 repository
-                    🗂 service
-                🗂 user
+                🗂 user       // User 
                     🗂 controller
                     🗂 dto
                       🗂 request
@@ -114,19 +113,23 @@
                 🗂 advice
                 🗂 config
                     🗂 swagger
-                    🗂 jwt
+                🗂 external
+                    🗂 s3
+                      🗂 config
+                    🗂 slack
                 🗂 healthcheck
                 🗂 response
-                🗂 util
-                  🗂 slack
         🗂 resources
             application.yaml
+            application-local.yaml
+            application-dev.yaml
             🗂 static
               🗂 docs
 
     🗂 test 
         🗂 java/sopt/org/motivooServer
           🗂 controller
+          🗂 util
 ```
 
 
@@ -140,7 +143,7 @@
 
 ### 🌳 Branch 전략
 
-<img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/7219ee3e-d249-4ee2-bebd-853f04f63d8e">
+<img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/2619fc0c-1b14-4abe-9407-43219fca9e71">
 
 <details>
 <summary>자세히 보기</summary>
