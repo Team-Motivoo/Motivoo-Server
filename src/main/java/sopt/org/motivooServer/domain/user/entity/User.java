@@ -1,13 +1,16 @@
 package sopt.org.motivooServer.domain.user.entity;
 
 import static sopt.org.motivooServer.domain.mission.exception.MissionExceptionType.*;
+import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
+import org.springframework.util.Assert;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,13 +48,13 @@ public class User extends BaseTimeEntity {
 	private UserType type;
 
 	@Column(nullable = false)
-	private Boolean deleted = Boolean.FALSE;
+	private boolean deleted = Boolean.FALSE;
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
 
 	@Column(nullable = false)
-	private Boolean deleteExpired = Boolean.FALSE; //부모-자녀 둘 다 탈퇴한 경우 TRUE
+	private boolean deleteExpired = Boolean.FALSE; //부모-자녀 둘 다 탈퇴한 경우 TRUE
 
 	@Column(nullable = false)
 	private String socialId;
@@ -88,6 +91,11 @@ public class User extends BaseTimeEntity {
 		this.deleted = deleted;
 	}
 
+	//== Null 체크를 위한 유효성 검사 ==//
+	private void validateAge() {
+		Objects.requireNonNull(age, NULL_VALUE_AGE.message());
+	}
+
 
 	//== 연관관계 메서드 ==//
 	public void addUserMission(UserMission userMission) {
@@ -102,6 +110,7 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void updateOnboardingInfo(UserType type, Integer age) {
+		validateAge();
 		this.type = type;
 		this.age = age;
 	}
