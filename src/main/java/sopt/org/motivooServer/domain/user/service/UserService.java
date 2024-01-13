@@ -67,7 +67,7 @@ public class UserService {
 				() -> new UserException(USER_NOT_FOUND)
 		);
 
-		userRepository.delete(user); //회원 탈퇴 deleted false -> true
+		userRepository.updateDelete(userId); //회원 탈퇴 deleted false -> true
 		userRepository.updateDeleteAt(LocalDateTime.now().plusDays(30), user.getId()); //회원 탈퇴날짜 갱신
 
 		log.info("영구 탈퇴 날짜="+user.getDeletedAt());

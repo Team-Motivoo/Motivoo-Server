@@ -38,6 +38,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("update User u set u.deletedAt=?1 where u.id=?2")
     void updateDeleteAt(LocalDateTime deletedAt, Long userId);
 
-//    @Query("UPDATE User u SET u.deleted=true WHERE u.id=?1")
-//    void updateDelete(Long userId);
+    @Query("UPDATE User u SET u.deleted=true WHERE u.id=?1")
+    void updateDelete(Long userId);
 }
