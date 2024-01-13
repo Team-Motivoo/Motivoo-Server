@@ -6,20 +6,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.mission.entity.UserMissionChoices;
@@ -30,7 +20,6 @@ import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 @Entity
 @Table(name = "`user`")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE user SET deleted=true WHERE user_id=?")
 public class User extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,9 +39,6 @@ public class User extends BaseTimeEntity {
 	private LocalDateTime deletedAt;
 
 	@Column(nullable = false)
-	private Boolean deleteExpired = Boolean.FALSE; //부모-자녀 둘 다 탈퇴한 경우 TRUE
-
-	@Column(nullable = false)
 	private String socialId;
 
 	private String nickname;
@@ -65,8 +51,8 @@ public class User extends BaseTimeEntity {
 	@Column(nullable = false)
 	private SocialPlatform socialPlatform;
 
-	@ManyToOne
-	@JoinColumn(name = "parentchild_id")
+	@ManyToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "parentchild_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Parentchild parentchild;
 
 	@OneToMany(mappedBy = "user")
@@ -77,7 +63,7 @@ public class User extends BaseTimeEntity {
 
 	@Builder
 	private User(String nickname, String socialId, SocialPlatform socialPlatform, String socialAccessToken,
-				 String refreshToken, UserType type, boolean deleted, boolean deleteExpired) {
+				 String refreshToken, UserType type, boolean deleted) {
 		this.nickname = nickname;
 		this.socialId = socialId;
 		this.socialPlatform = socialPlatform;
@@ -85,7 +71,6 @@ public class User extends BaseTimeEntity {
 		this.refreshToken = refreshToken;
 		this.type = type;
 		this.deleted = deleted;
-		this.deleteExpired = deleteExpired;
 	}
 
 
@@ -110,14 +95,14 @@ public class User extends BaseTimeEntity {
 		this.parentchild=parentchild;
 	}
 
-	private static final int USER_INFO_RETENTION_PERIOD = 30; //30일 이후에 영구 삭제
-	public void updateDeletedAt(){
-		this.deletedAt = LocalDateTime.now().plusDays(USER_INFO_RETENTION_PERIOD);
+	public void setParentchildToNull(){
+		this.parentchild = null;
+	}
+	public void setUserMissionToNull(){
+		this.userMissions.stream()
+				.forEach(m -> m=null);
 	}
 
-	public void setDeleteExpired() {
-		this.deleteExpired = Boolean.TRUE;
-	}
 	public void clearPreUserMissionChoice() {
 		this.preUserMissionChoice.clear();
 	}

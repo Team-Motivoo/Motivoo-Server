@@ -18,6 +18,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u.refreshToken from User u where u.id=?1")
     String findRefreshTokenById(Long id);
 
+    @Query("select u from User u where u.deletedAt < now()")
+    List<User> deleteExpiredUser();
+
     @Query("select count(u.id) from User u where u.parentchild=?1")
     int countByParentchild(Parentchild parentchild);
 
@@ -27,9 +30,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.parentchild = ?1 and u.deleted=true")
     List<User> findByParentchild(Parentchild parentchild);
 
-    @Modifying
-    @Query("delete from User u where u.deletedAt < now() and u.deleteExpired=true")
-    void deleteExpiredUser();
 
     @Query("select u from User u where u.id!=?1 and u.parentchild=?2")
     Optional<User> findByIdAndParentchild(Long userId, Parentchild parentchild);
@@ -38,4 +38,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("update User u set u.deletedAt=?1 where u.id=?2")
     void updateDeleteAt(LocalDateTime deletedAt, Long userId);
 
+//    @Query("UPDATE User u SET u.deleted=true WHERE u.id=?1")
+//    void updateDelete(Long userId);
 }

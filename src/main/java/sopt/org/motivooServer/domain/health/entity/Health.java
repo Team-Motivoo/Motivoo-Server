@@ -17,8 +17,8 @@ public class Health extends BaseTimeEntity {
 	@Column(name = "health_id")
 	private Long id;
 
-	@OneToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "user_id")
+	@OneToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private User user;
 
 	@Column(nullable = false)
@@ -65,4 +65,5 @@ public class Health extends BaseTimeEntity {
 		else
 			this.exerciseLevel = ExerciseLevel.BEGINNER;
 	}
+
 }

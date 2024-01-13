@@ -23,7 +23,6 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j
@@ -105,7 +104,6 @@ public class OauthService {
                 .refreshToken(refreshToken)
                 .type(UserType.NONE)
                 .deleted(Boolean.FALSE)
-                .deleteExpired(Boolean.FALSE)
                 .build();
         userRepository.save(newUser);
         return newUser;

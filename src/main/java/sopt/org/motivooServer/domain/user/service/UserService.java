@@ -15,6 +15,7 @@ import sopt.org.motivooServer.domain.health.entity.Health;
 import sopt.org.motivooServer.domain.health.exception.HealthException;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
+import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.domain.user.dto.response.MyHealthInfoResponse;
 import sopt.org.motivooServer.domain.user.dto.response.MyPageInfoResponse;
 import sopt.org.motivooServer.domain.user.entity.SocialPlatform;
@@ -32,6 +33,8 @@ import java.util.List;
 public class UserService {
 	private final UserRepository userRepository;
 	private final HealthRepository healthRepository;
+	private final ParentchildRepository parentchildRepository;
+
 	private static final int MATCHING_SUCCESS = 2;
 
 	public MyPageInfoResponse getMyInfo(final Long userId) {
@@ -65,19 +68,11 @@ public class UserService {
 		User user = userRepository.findById(userId).orElseThrow(
 				() -> new UserException(USER_NOT_FOUND)
 		);
+
 		userRepository.delete(user); //회원 탈퇴 deleted false -> true
 		userRepository.updateDeleteAt(LocalDateTime.now().plusDays(30), user.getId()); //회원 탈퇴날짜 갱신
-		log.info("영구 탈퇴 날짜="+user.getDeletedAt());
 
-		//부모-자녀 모두 탈퇴한 경우인지 판별
-		Parentchild parentchild = user.getParentchild();
-		List<User> users = userRepository.findByParentchild(parentchild);
-		log.info("부모-자식 중 탈퇴한 사람 수="+users.size());
-		if(users.size()==MATCHING_SUCCESS) {
-			for(User deletedUser:users){
-				deletedUser.setDeleteExpired();
-			}
-		}
+		log.info("영구 탈퇴 날짜="+user.getDeletedAt());
 
 		sendRevokeRequest(null, KAKAO, accessToken); //카카오 연결 해제
 	}
