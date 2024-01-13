@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 import sopt.org.motivooServer.domain.health.entity.Health;
 import sopt.org.motivooServer.domain.health.exception.HealthException;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
-import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.domain.user.dto.response.MyHealthInfoResponse;
 import sopt.org.motivooServer.domain.user.dto.response.MyPageInfoResponse;
@@ -24,7 +23,6 @@ import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Service

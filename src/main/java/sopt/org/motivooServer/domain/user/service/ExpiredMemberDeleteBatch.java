@@ -5,11 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import sopt.org.motivooServer.domain.health.entity.Health;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionChoicesRepository;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionRepository;
-import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
@@ -26,8 +24,9 @@ public class ExpiredMemberDeleteBatch {
     private final HealthRepository healthRepository;
     private final UserMissionRepository userMissionRepository;
     private final UserMissionChoicesRepository userMissionChoicesRepository;
-    @Scheduled(cron="0/10 * * * * *")
-    //@Scheduled(cron = "@hourly")
+
+    //@Scheduled(cron="0/10 * * * * *") //테스트 할 때에만 사용 나중에 삭제
+    @Scheduled(cron = "@monthly")
     public void deleteExpiredUser(){
         log.info("영구적으로 탈퇴되었습니다.");
 
@@ -57,7 +56,6 @@ public class ExpiredMemberDeleteBatch {
                         // user 삭제
                         userRepository.deleteById(userToDelete.getId());
                     }
-
 
                 });
 
