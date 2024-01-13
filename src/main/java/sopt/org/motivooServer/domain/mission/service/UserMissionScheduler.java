@@ -35,7 +35,7 @@ public class UserMissionScheduler {
 	}
 
 	// 매일 새벽 4시마다 30일 이전의 사진은 버킷에서 삭제한다
-	@Scheduled(cron = "0 04 * * *", zone = "Asia/Seoul")
+	@Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
 	public void deleteImgBefore30Days() {
 		LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
 		userMissionRepository.findUserMissionsByCreatedAtBefore(thirtyDaysAgo)
