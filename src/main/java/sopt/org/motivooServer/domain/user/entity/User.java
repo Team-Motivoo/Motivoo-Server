@@ -21,6 +21,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
+import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.mission.entity.UserMissionChoices;
 import sopt.org.motivooServer.domain.mission.exception.MissionException;
@@ -122,13 +123,14 @@ public class User extends BaseTimeEntity {
 
 	// 가장 최근의 운동 미션 조회
 	public UserMission getCurrentUserMission() {
-		int lastIndex = userMissions.size() - 1;
-		if (lastIndex >= 0) {
+		if (!userMissions.isEmpty()) {
+			int lastIndex = userMissions.size() - 1;
 			return userMissions.get(lastIndex);
 		}
 
 		//TODO User 도메인에서 처리하는 로직인데 MissionException VS UserException 둘 중 어느 게 더 적합할지?
-		throw new MissionException(EMPTY_USER_MISSIONS);
+		// throw new MissionException(EMPTY_USER_MISSIONS);
+		return null;
 	}
 
 }

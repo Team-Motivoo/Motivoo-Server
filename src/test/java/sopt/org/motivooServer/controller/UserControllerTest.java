@@ -99,7 +99,7 @@ public class UserControllerTest extends BaseControllerTest {
 			)).andExpect(status().isOk());
 	}
 
-/*	@Test
+	@Test
 	@DisplayName("마이페이지 운동정보 조회 테스트")
 	void userControllerMyHealthInfoTest() throws Exception {
 
@@ -118,22 +118,19 @@ public class UserControllerTest extends BaseControllerTest {
 		when(userController.getMyExercise(principal)).thenReturn(result);
 
 		// then
-		mockMvc.perform(get(DEFAULT_URL + "/exercise/{userId}", userId)
+		mockMvc.perform(get(DEFAULT_URL + "/exercise")
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
 			.principal(principal)
 		).andDo(
 			document("마이페이지 운동정보 조회 API 성공 Example",
-				preprocessRequest(prettyPrint()),
-				preprocessResponse(prettyPrint()),
+				getDocumentRequest(),
+				getDocumentResponse(),
 				resource(
 					ResourceSnippetParameters.builder()
 						.tag(TAG)
 						.description("마이페이지 운동정보 조회")
 						.requestFields()
-						.pathParameters(
-							parameterWithName("userId").description("유저 아이디").ignored()
-						)
 						.responseFields(
 							fieldWithPath("code").type(NUMBER).description("상태 코드"),
 							fieldWithPath("message").type(STRING).description("상태 메세지"),
@@ -147,5 +144,5 @@ public class UserControllerTest extends BaseControllerTest {
 						.build()
 				)
 			)).andExpect(status().isOk());
-	}*/
+	}
 }

@@ -22,6 +22,7 @@ public enum S3ExceptionType implements BusinessExceptionType {
 	 * 500 Internal Server Error
 	 */
 	FAIL_TO_UPLOAD_IMAGE(HttpStatus.INTERNAL_SERVER_ERROR, "S3 버킷에 이미지를 업로드하는 데 실패했습니다."),
+	FAIL_TO_GET_IMAGE_PRE_SIGNED_URL(HttpStatus.INTERNAL_SERVER_ERROR, "S3 버킷에 업로드할 경로를 조회하는 데 실패했습니다."),
 	FAIL_TO_DELETE_IMAGE(HttpStatus.INTERNAL_SERVER_ERROR, "S3 버킷으로부터 이미지를 삭제하는 데 실패했습니다.")
 
 	;
