@@ -19,7 +19,7 @@ public record MyHealthInfoResponse(
 
 	public static MyHealthInfoResponse of(Health health) {
 		return MyHealthInfoResponse.builder()
-			.isExercise(health.getIsExercise())
+			.isExercise(health.isExercise())
 			.exerciseType(health.getExerciseType().getValue())
 			.exerciseFrequency(health.getExerciseFrequency().getValue())
 			.exerciseTime(health.getExerciseTime().getValue())

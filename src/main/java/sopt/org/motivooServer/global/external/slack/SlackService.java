@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.util.slack;
+package sopt.org.motivooServer.global.external.slack;
 
 import static com.slack.api.model.block.composition.BlockCompositions.*;
 
@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SlackUtil {
+public class SlackService {
 
 	@Value("${slack.webhook.url}")
 	private String webhookUrl;

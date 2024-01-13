@@ -24,8 +24,8 @@ import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
 import sopt.org.motivooServer.domain.auth.config.RedisConfig;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivooServer.global.config.aws.AWSConfig;
-import sopt.org.motivooServer.global.util.s3.S3Service;
-import sopt.org.motivooServer.global.util.slack.SlackUtil;
+import sopt.org.motivooServer.global.external.s3.S3Service;
+import sopt.org.motivooServer.global.external.slack.SlackService;
 
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -56,7 +56,7 @@ public abstract class BaseControllerTest {
 	private CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
 
 	@MockBean
-	private SlackUtil slackUtil;
+	private SlackService slackService;
 
 	@MockBean
 	private AWSConfig awsConfig;
