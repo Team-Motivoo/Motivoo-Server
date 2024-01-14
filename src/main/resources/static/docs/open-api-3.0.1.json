@@ -83,6 +83,31 @@
         }
       }
     },
+    "/mission" : {
+      "get" : {
+        "tags" : [ "유저미션" ],
+        "summary" : "지난 30일 간의 운동 인증을 모아보는 API",
+        "description" : "지난 30일 간의 운동 인증을 모아보는 API",
+        "operationId" : "운동 모아보기 API 성공 Example",
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/mission1210499860"
+                },
+                "examples" : {
+                  "운동 모아보기 API 성공 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"이전 운동 미션 히스토리를 조회하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_type\" : \"자녀\",\n    \"today_mission\" : {\n      \"mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\"\n    },\n    \"mission_history\" : [ {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 15일 월요일\"\n    }, {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 15일 월요일\"\n    } ]\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/mission/image" : {
       "patch" : {
         "tags" : [ "유저미션" ],
@@ -114,6 +139,70 @@
                 "examples" : {
                   "미션 인증 사진 등록 API 성공 Example" : {
                     "value" : "{\n  \"code\" : 200,\n  \"message\" : \"미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"img_presigned_url\" : \"https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/39e545f4-9ad8-4c05-a8cb-960d0787e776.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240109T051832Z&X-Amz-SignedHeaders=host&X-Amz-Expires=60&X-Amz-Credential=AKIASRIQXMUZKAKLJQGJ%2F20240109%2Fap-northeast-2%2Fs3%2Faws4_request&X-Amz-Signature=0c98a5efeaea9bbf607becaaeb511495b68e83b9897b193ef542fa4a8c352dd4\",\n    \"file_name\" : \"39e545f4-9ad8-4c05-a8cb-960d0787e776.jpg\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mission/today" : {
+      "post" : {
+        "tags" : [ "유저미션" ],
+        "summary" : "2가지 운동 미션 중 오늘의 미션을 선택하는 API",
+        "description" : "2가지 운동 미션 중 오늘의 미션을 선택하는 API",
+        "operationId" : "오늘의 미션 선정 API 성공 Example",
+        "requestBody" : {
+          "content" : {
+            "application/json;charset=UTF-8" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/mission-today-43304617"
+              },
+              "examples" : {
+                "오늘의 미션 선정 API 성공 Example" : {
+                  "value" : "{\n  \"mission_id\" : 5\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "201",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/mission-today-912747800"
+                },
+                "examples" : {
+                  "오늘의 미션 선정 API 성공 Example" : {
+                    "value" : "{\n  \"code\" : 201,\n  \"message\" : \"오늘의 미션 선정에 성공했습니다.\",\n  \"success\" : true\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mission/today/choice" : {
+      "post" : {
+        "tags" : [ "유저미션" ],
+        "summary" : "2가지 미션 선택지 또는 그 중 선정한 오늘의 미션을 조회하는 API",
+        "description" : "2가지 미션 선택지 또는 그 중 선정한 오늘의 미션을 조회하는 API",
+        "operationId" : "오늘의 미션 조회 API 성공 Example #1",
+        "responses" : {
+          "201" : {
+            "description" : "201",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/mission-today-choice-1727247986"
+                },
+                "examples" : {
+                  "오늘의 미션 조회 API 성공 Example #1" : {
+                    "value" : "{\n  \"code\" : 201,\n  \"message\" : \"오늘의 미션을 조회하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"is_choice_finished\" : true,\n    \"mission_choice_list\" : null,\n    \"today_mission\" : {\n      \"mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"mission_description\" : \"Notion 링크\",\n      \"mission_step_count\" : 10000,\n      \"mission_quest\" : \"손가락 하트 만들어서 찍기 \"\n    }\n  }\n}"
                   }
                 }
               }
@@ -175,6 +264,23 @@
   },
   "components" : {
     "schemas" : {
+      "mission-today-912747800" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
       "api-health279159985" : {
         "type" : "object",
         "properties" : {
@@ -202,6 +308,129 @@
           "img_prefix" : {
             "type" : "string",
             "description" : "운동 인증 사진 디렉터리"
+          }
+        }
+      },
+      "mission1210499860" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "user_type" : {
+                "type" : "string",
+                "description" : "유저의 타입(PARENT|CHILD)"
+              },
+              "mission_history" : {
+                "type" : "array",
+                "description" : "미션 히스토리",
+                "items" : {
+                  "type" : "object",
+                  "properties" : {
+                    "date" : {
+                      "type" : "string",
+                      "description" : "미션 일자"
+                    },
+                    "opponent_mission_content" : {
+                      "type" : "string",
+                      "description" : "상대측의 미션 내용"
+                    },
+                    "my_mission_img_url" : {
+                      "type" : "string",
+                      "description" : "나의 미션 인증 이미지 url "
+                    },
+                    "opponent_mission_status" : {
+                      "type" : "string",
+                      "description" : "상대측의 미션 달성 상태 (진행중 | 성공 | 실패)"
+                    },
+                    "my_mission_status" : {
+                      "type" : "string",
+                      "description" : "나의 미션 달성 상태 (진행중 | 성공 | 실패)"
+                    },
+                    "my_mission_content" : {
+                      "type" : "string",
+                      "description" : "나의 미션 내용"
+                    },
+                    "opponent_mission_img_url" : {
+                      "type" : "string",
+                      "description" : "상대측의 미션 인증 이미지 url"
+                    }
+                  }
+                }
+              },
+              "today_mission" : {
+                "type" : "object",
+                "properties" : {
+                  "mission_content" : {
+                    "type" : "string",
+                    "description" : "오늘의 미션 내용"
+                  }
+                },
+                "description" : "오늘의 미션"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "mission-today-choice-1727247986" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "is_choice_finished" : {
+                "type" : "boolean",
+                "description" : "미션 선정 여부 → false"
+              },
+              "today_mission" : {
+                "type" : "object",
+                "properties" : {
+                  "mission_quest" : {
+                    "type" : "string",
+                    "description" : "흥미유발을 위한 랜덤 미션 퀘스트\n*사진 포즈"
+                  },
+                  "mission_description" : {
+                    "type" : "string",
+                    "description" : "운동 방법 설명 링크"
+                  },
+                  "mission_content" : {
+                    "type" : "string",
+                    "description" : "오늘의 미션 내용"
+                  },
+                  "mission_step_count" : {
+                    "type" : "number",
+                    "description" : "오늘의 미션 걸음 수"
+                  }
+                },
+                "description" : "오늘의 미션"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
           }
         }
       },
@@ -334,6 +563,15 @@
           "message" : {
             "type" : "string",
             "description" : "상태 메세지"
+          }
+        }
+      },
+      "mission-today-43304617" : {
+        "type" : "object",
+        "properties" : {
+          "mission_id" : {
+            "type" : "number",
+            "description" : "선택한 미션 번호"
           }
         }
       },
