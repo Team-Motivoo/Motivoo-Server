@@ -109,7 +109,7 @@ public class ParentchildService {
         }
 
         if(user.getParentchild() == parentchild) //내가 발급한 코드를 내가 입력한 경우
-            return new InviteResponse(userId, false, false);
+            return new InviteResponse(userId, false, true);
 
         checkForOneToOneMatch(parentchild); //이미 매칭이 완료된 경우 예외처리
         parentchild.matchingSuccess();
