@@ -9,6 +9,8 @@ application-local.yml
 application.yml
 application-test.yml
 
+firebase-ignore.json
+
 **.adoc
 **.http
 
