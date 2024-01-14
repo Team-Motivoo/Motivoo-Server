@@ -98,6 +98,8 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 	testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	testImplementation 'io.rest-assured:rest-assured'
+	swaggerUI 'org.webjars:swagger-ui:4.11.1'
 
 	// AWS sdk
 	implementation("software.amazon.awssdk:bom:2.21.0")
@@ -125,18 +127,40 @@ tasks.named('test') {
 
 tasks.withType(GenerateSwaggerUI) {
 	dependsOn 'openapi3'
+	doFirst {
+		def swaggerUIFile = file("${openapi3.outputDirectory}/api-spec/openapi3.yaml")
+		def securitySchemesContent =  "  securitySchemes:\n" +  \
+                                      "    APIKey:\n" +  \
+                                      "      type: apiKey\n" +  \
+                                      "      name: Authorization\n" +  \
+                                      "      in: header\n" + \
+                                      "security:\n" +
+				"  - APIKey: []  # Apply the security scheme here"
+//		def existingContent = swaggerUIFile.text
+//		def updatedContent = existingContent + securitySchemesContent
+//		swaggerUIFile.write(updatedContent)
+		swaggerUIFile.append securitySchemesContent
+	}
 
 	// local 확인용으로 json 정적파일 복사
 //	delete file('src/main/resources/static/docs')
-	copy {
-		from "build/resources/main/static/docs"
-		into "src/main/resources/static/docs/"
-	}
+//	copy {
+//		from "build/resources/main/static/docs"
+//		into "src/main/resources/static/docs/"
+//	}
 }
 
 // openAPI 작성 자동화 => 패키징 전에 openapi3 태스크를 먼저 실행하도록 유발
 bootJar {
 	dependsOn(':openapi3')
+	dependsOn generateSwaggerUISample
+	from("${generateSwaggerUISample.outputDir}") {
+		into 'static/docs'
+	}
+//	copy {
+//		from "build/resources/main/static/docs"
+//		into "src/main/resources/static/docs/"
+//	}
 }
 
 openapi3 {
