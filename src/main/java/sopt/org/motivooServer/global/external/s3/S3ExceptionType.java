@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.global.util.s3;
+package sopt.org.motivooServer.global.external.s3;
 
 import org.springframework.http.HttpStatus;
 

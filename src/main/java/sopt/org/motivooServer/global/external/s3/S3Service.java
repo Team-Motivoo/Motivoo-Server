@@ -1,7 +1,7 @@
-package sopt.org.motivooServer.global.util.s3;
+package sopt.org.motivooServer.global.external.s3;
 
 import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
-import static sopt.org.motivooServer.global.util.s3.S3ExceptionType.*;
+import static sopt.org.motivooServer.global.external.s3.S3ExceptionType.*;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -21,7 +21,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 import sopt.org.motivooServer.global.advice.BusinessException;
-import sopt.org.motivooServer.global.config.aws.AWSConfig;
 
 @Slf4j
 @Component

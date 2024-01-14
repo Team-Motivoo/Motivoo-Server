@@ -41,9 +41,9 @@ import sopt.org.motivooServer.domain.parentchild.exception.ParentchildException;
 import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
-import sopt.org.motivooServer.global.util.s3.PreSignedUrlResponse;
-import sopt.org.motivooServer.global.util.s3.S3BucketDirectory;
-import sopt.org.motivooServer.global.util.s3.S3Service;
+import sopt.org.motivooServer.global.external.s3.PreSignedUrlResponse;
+import sopt.org.motivooServer.global.external.s3.S3BucketDirectory;
+import sopt.org.motivooServer.global.external.s3.S3Service;
 
 @Slf4j
 @Service

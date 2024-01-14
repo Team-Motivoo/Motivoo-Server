@@ -21,14 +21,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.global.response.ApiResponse;
-import sopt.org.motivooServer.global.util.slack.SlackUtil;
+import sopt.org.motivooServer.global.external.slack.SlackService;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	private final SlackUtil slackUtil;
+	private final SlackService slackService;
 
 	/**
 	 * 400 Bad Request
@@ -76,7 +76,7 @@ public class GlobalExceptionHandler {
 
     /*@ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(final Exception e, final HttpServletRequest request) throws IOException {
-        slackUtil.sendAlert(e, request);
+        slackService.sendAlert(e, request);
 
         log.error("🔔🚨 Slack에 전송된 Error Log: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

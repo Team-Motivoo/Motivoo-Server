@@ -114,7 +114,7 @@ public class ParentChildService {
     }
 
     public void checkForOneToOneMatch(Parentchild parentchild){
-        if(parentchild.getIsMatched()){
+        if(parentchild.isMatched()){
             throw new ParentchildException(MATCH_ALREADY_COMPLETED);
         }
     }

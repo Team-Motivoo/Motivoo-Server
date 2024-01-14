@@ -6,7 +6,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
-import static sopt.org.motivooServer.global.util.s3.S3BucketDirectory.*;
 import static sopt.org.motivooServer.util.ApiDocumentUtil.*;
 
 import java.security.Principal;
@@ -24,10 +23,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.mission.controller.HomeController;
-import sopt.org.motivooServer.domain.mission.controller.UserMissionController;
-import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionStepStatusRequest;
-import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
