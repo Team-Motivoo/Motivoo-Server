@@ -44,6 +44,9 @@ public class User extends BaseTimeEntity {
 	@Column(nullable = false)
 	private boolean deleted = Boolean.FALSE;
 
+	@Column(name = "delete_expired") //TODO 필요없는 필드! 추후 삭제
+	private boolean deleteExpired = Boolean.FALSE;
+
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
 
@@ -101,7 +104,7 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void updateOnboardingInfo(UserType type, Integer age) {
-		validateAge();
+		//validateAge();
 		this.type = type;
 		this.age = age;
 	}

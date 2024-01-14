@@ -1,6 +1,7 @@
 package sopt.org.motivooServer.domain.parentchild.service;
 
 
+import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.EXIST_ONBOARDING_INFO;
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 import java.util.Random;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import sopt.org.motivooServer.domain.health.entity.ExerciseTime;
 import sopt.org.motivooServer.domain.health.entity.ExerciseType;
 import sopt.org.motivooServer.domain.health.entity.Health;
 import sopt.org.motivooServer.domain.health.entity.HealthNote;
+import sopt.org.motivooServer.domain.health.exception.HealthException;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.health.service.CalculateScore;
 import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
@@ -49,10 +51,14 @@ public class ParentchildService {
             () -> new UserException(INVALID_USER_TYPE)
         );
 
-        user.updateOnboardingInfo(UserType.of(request.type()), request.age());
+        if(healthRepository.findByUser(user)!=null)
+            throw new HealthException(EXIST_ONBOARDING_INFO);
 
         log.info("user="+user.getNickname()+"유무="+request.isExercise()+"타입="+request.exerciseType()
-        +"횟수="+request.exerciseCount()+"시간="+request.exerciseTime()+"주의="+request.exerciseNote());
+                +"횟수="+request.exerciseCount()+"시간="+request.exerciseTime()+"주의="+request.exerciseNote());
+
+        user.updateOnboardingInfo(UserType.of(request.type()), request.age());
+
         Health health = Health.builder()
                         .user(user)
                         .isExercise(request.isExercise())
@@ -67,6 +73,7 @@ public class ParentchildService {
 
         double exerciseScore = calculateScore.calculate(request.isExercise(), ExerciseType.of(request.exerciseType()),
                 ExerciseFrequency.of(request.exerciseCount()), ExerciseTime.of(request.exerciseTime()));
+        log.info("가중치 결과 점수="+exerciseScore);
         health.updateExerciseLevel(exerciseScore);
 
         String inviteCode = createInviteCode();
