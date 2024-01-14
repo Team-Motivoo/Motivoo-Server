@@ -3,7 +3,11 @@ package sopt.org.motivooServer.domain.parentchild.service;
 
 import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.EXIST_ONBOARDING_INFO;
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
+
+import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -97,19 +101,21 @@ public class ParentchildService {
                 () -> new UserException(INVALID_USER_TYPE)
         );
 
+        Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode());
 
-        Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode()).orElseThrow(
-                () -> new ParentchildException(PARENTCHILD_NOT_FOUND)
-        );
-
-
-        if(parentchild!=null){
-            checkForOneToOneMatch(parentchild); //이미 매칭이 완료된 경우 예외처리
-            parentchild.matchingSuccess();
-            user.addParentChild(parentchild);
-            return new InviteResponse(userId, true);
+        //잘못된 초대 코드를 입력하는 경우
+        if(parentchild == null){
+            return new InviteResponse(userId, false, false);
         }
-        return new InviteResponse(userId, false);
+
+        if(user.getParentchild() == parentchild) //내가 발급한 코드를 내가 입력한 경우
+            return new InviteResponse(userId, false, false);
+
+        checkForOneToOneMatch(parentchild); //이미 매칭이 완료된 경우 예외처리
+        parentchild.matchingSuccess();
+        user.addParentChild(parentchild);
+        return new InviteResponse(userId, true, false);
+
     }
 
     public CheckOnboardingResponse checkOnboardingInfo(Long userId){
