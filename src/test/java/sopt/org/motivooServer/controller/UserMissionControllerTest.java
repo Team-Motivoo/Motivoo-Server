@@ -217,7 +217,7 @@ public class UserMissionControllerTest extends BaseControllerTest{
 			// 			.build()
 			// 	))
 
-			.andExpect(MockMvcResultMatchers.status().isOk());
+			.andExpect(MockMvcResultMatchers.status().isCreated());
 	}
 
 
