@@ -29,7 +29,6 @@ import sopt.org.motivooServer.domain.mission.dto.request.TodayMissionChoiceReque
 import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
-import sopt.org.motivooServer.fixture.MissionFixture;
 import sopt.org.motivooServer.fixture.UserMissionFixture;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
@@ -40,7 +39,6 @@ public class UserMissionControllerTest extends BaseControllerTest{
 
 	private static final String DEFAULT_URL = "/mission";
 	private static final String TAG = "유저미션";
-	private static final String MISSION_ICON_URL = "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/icon/icon_mission_rest.png";
 
 	@MockBean
 	private UserMissionController userMissionController;
