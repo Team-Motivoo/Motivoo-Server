@@ -143,20 +143,20 @@ tasks.withType(GenerateSwaggerUI) {
 	}
 
 	// local 확인용으로 json 정적파일 복사
-	delete file('src/main/resources/static/docs')
-	copy {
-		from "build/resources/main/static/docs"
-		into "src/main/resources/static/docs/"
-	}
+//	delete file('src/main/resources/static/docs')
+//	copy {
+//		from "build/resources/main/static/docs"
+//		into "src/main/resources/static/docs/"
+//	}
 }
 
 // openAPI 작성 자동화 => 패키징 전에 openapi3 태스크를 먼저 실행하도록 유발
 bootJar {
-	dependsOn(':openapi3')
-//	dependsOn generateSwaggerUISample
-//	from("${generateSwaggerUISample.outputDir}") {
-//		into 'static/docs'
-//	}
+//	dependsOn(':openapi3')
+	dependsOn generateSwaggerUISample
+	from("${generateSwaggerUISample.outputDir}") {
+		into 'static/docs'
+	}
 //	copy {
 //		from "build/resources/main/static/docs"
 //		into "src/main/resources/static/docs/"
