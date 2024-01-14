@@ -1,5 +1,7 @@
 package sopt.org.motivooServer.domain.mission.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -60,6 +62,10 @@ public class UserMission extends BaseTimeEntity {
 		if (!user.getUserMissions().contains(this)) {
 			user.getUserMissions().add(this);
 		}
+	}
+
+	public void updateCreatedAt(LocalDateTime date) {
+		this.createdAt = date;
 	}
 
 	public void updateImgUrl(final String imgUrl) {

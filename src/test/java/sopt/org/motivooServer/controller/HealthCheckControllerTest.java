@@ -1,8 +1,8 @@
 package sopt.org.motivooServer.controller;
 
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
 import static com.epages.restdocs.apispec.ResourceDocumentation.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -23,7 +22,6 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.global.healthcheck.HealthCheckController;
 import sopt.org.motivooServer.global.response.ApiResponse;
-import sopt.org.motivooServer.util.ApiDocumentUtil;
 
 @Slf4j
 @DisplayName("HealthCheckController 테스트")
@@ -49,7 +47,7 @@ public class HealthCheckControllerTest extends BaseControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 		).andDo(
-			MockMvcRestDocumentation.document("healthCheck",
+			document("healthCheck",
 				getDocumentRequest(),
 				getDocumentResponse(),
 				resource(
