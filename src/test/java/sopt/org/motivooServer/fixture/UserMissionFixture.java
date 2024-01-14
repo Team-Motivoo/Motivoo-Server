@@ -9,6 +9,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
+import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivooServer.domain.mission.entity.CompletedStatus;
 import sopt.org.motivooServer.domain.mission.entity.MissionQuest;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
@@ -71,5 +72,9 @@ public class UserMissionFixture {
 		User parentUser = createUserV2();
 
 		return MissionHistoryResponse.of(childUser, createUserMission(), createUserMissions(), createUserMissions());
+	}
+
+	public static TodayMissionResponse createTodayMissionResponse() {
+		return TodayMissionResponse.of(createUserMission());
 	}
 }

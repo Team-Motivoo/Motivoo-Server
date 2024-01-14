@@ -27,6 +27,7 @@ import sopt.org.motivooServer.domain.mission.controller.UserMissionController;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
+import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivooServer.fixture.MissionFixture;
 import sopt.org.motivooServer.fixture.UserMissionFixture;
 import sopt.org.motivooServer.global.response.ApiResponse;
@@ -139,6 +140,84 @@ public class UserMissionControllerTest extends BaseControllerTest{
 						.build()
 				)
 			)).andExpect(MockMvcResultMatchers.status().isOk());
+	}
+
+	@Test
+	@DisplayName("오늘의 미션 조회 API 테스트")
+	void getTodayMission() throws Exception {
+
+		// given
+		TodayMissionResponse response = UserMissionFixture.createTodayMissionResponse();
+
+		ResponseEntity<ApiResponse<TodayMissionResponse>> result = ApiResponse.success(
+			GET_TODAY_MISSION_SUCCESS, response);
+
+		// when
+		when(userMissionController.getTodayMission(principal)).thenReturn(result);
+
+		// then
+		mockMvc.perform(post(DEFAULT_URL + "/today/choice")
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.principal(principal)
+		).andDo(
+			document("오늘의 미션 조회 API 성공 Example #1",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				resource(
+					ResourceSnippetParameters.builder()
+						.tag(TAG)
+						.description("2가지 미션 선택지 또는 그 중 선정한 오늘의 미션을 조회하는 API")
+						.requestFields(
+							// fieldWithPath("mission_id").type(NUMBER).description("선택한 미션 번호")
+						)
+						.responseFields(
+							fieldWithPath("code").type(NUMBER).description("상태 코드"),
+							fieldWithPath("message").type(STRING).description("상태 메세지"),
+							fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
+							fieldWithPath("data").description("응답 데이터"),
+							fieldWithPath("data.is_choice_finished").type(BOOLEAN).description("미션 선정 여부 → false"),
+							fieldWithPath("data.mission_choice_list").type(NULL).description("오늘의 미션 선택지 리스트"),
+							// fieldWithPath("data.mission_choice_list[]").type(OBJECT).description(""),
+							// fieldWithPath("data.mission_choice_list[].mission_id").type(NUMBER).description("미션 번호"),
+							// fieldWithPath("data.mission_choice_list[].mission_content").type(STRING).description("미션 내용"),
+							fieldWithPath("data.today_mission").type(OBJECT).description("오늘의 미션"),
+							fieldWithPath("data.today_mission.mission_content").type(STRING).description("오늘의 미션 내용"),
+							fieldWithPath("data.today_mission.mission_description").type(STRING).description("운동 방법 설명 링크"),
+							fieldWithPath("data.today_mission.mission_step_count").type(NUMBER).description("오늘의 미션 걸음 수"),
+							fieldWithPath("data.today_mission.mission_quest").type(STRING).description("흥미유발을 위한 랜덤 미션 퀘스트\n*사진 포즈"))
+
+						.build()
+				)
+			))
+			// document("오늘의 미션 조회 API 성공 Example #2",
+			// 	getDocumentRequest(),
+			// 	getDocumentResponse(),
+			// 	resource(
+			// 		ResourceSnippetParameters.builder()
+			// 			.tag(TAG)
+			// 			.description("2가지 미션 선택지 또는 그 중 선정한 오늘의 미션을 조회하는 API")
+			// 			.requestFields(
+			// 				fieldWithPath("mission_id").type(NUMBER).description("선택한 미션 번호")
+			// 			)
+			// 			.responseFields(
+			// 				fieldWithPath("code").type(NUMBER).description("상태 코드"),
+			// 				fieldWithPath("message").type(STRING).description("상태 메세지"),
+			// 				fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
+			// 				fieldWithPath("data").description("응답 데이터"),
+			// 				fieldWithPath("data.is_choice_finished").type(BOOLEAN).description("미션 선정 여부 → false"),
+			// 				fieldWithPath("data.mission_choice_list").type(ARRAY).description("오늘의 미션 선택지 리스트"),
+			// 				fieldWithPath("data.mission_choice_list[].mission_id").type(NUMBER).description("미션 번호"),
+			// 				fieldWithPath("data.mission_choice_list[].mission_content").type(STRING).description("미션 내용"),
+			// 				fieldWithPath("data.today_mission").type(OBJECT).description("오늘의 미션"),
+			// 				fieldWithPath("data.today_mission.mission_content").type(STRING).description("오늘의 미션 내용"),
+			// 				fieldWithPath("data.today_mission.mission_description").type(STRING).description("운동 방법 설명 링크"),
+			// 				fieldWithPath("data.today_mission.mission_quest").type(STRING).description("흥미유발을 위한 랜덤 미션 퀘스트\n*사진 포즈"))
+			//
+			// 			.build()
+			// 	))
+
+			.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
 
