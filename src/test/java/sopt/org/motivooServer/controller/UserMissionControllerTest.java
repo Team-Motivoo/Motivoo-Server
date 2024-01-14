@@ -25,6 +25,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.mission.controller.UserMissionController;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
+import sopt.org.motivooServer.domain.mission.dto.request.TodayMissionChoiceRequest;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
@@ -168,9 +169,7 @@ public class UserMissionControllerTest extends BaseControllerTest{
 					ResourceSnippetParameters.builder()
 						.tag(TAG)
 						.description("2가지 미션 선택지 또는 그 중 선정한 오늘의 미션을 조회하는 API")
-						.requestFields(
-							// fieldWithPath("mission_id").type(NUMBER).description("선택한 미션 번호")
-						)
+						.requestFields()
 						.responseFields(
 							fieldWithPath("code").type(NUMBER).description("상태 코드"),
 							fieldWithPath("message").type(STRING).description("상태 메세지"),
@@ -218,6 +217,46 @@ public class UserMissionControllerTest extends BaseControllerTest{
 			// 	))
 
 			.andExpect(MockMvcResultMatchers.status().isCreated());
+	}
+
+	@Test
+	@DisplayName("오늘의 미션 선정 API 테스트")
+	void choiceTodayMission() throws Exception {
+
+		// given
+		TodayMissionChoiceRequest request = new TodayMissionChoiceRequest(5L);
+		ResponseEntity<ApiResponse<Object>> result = ApiResponse.success(
+			CHOICE_TODAY_MISSION_SUCCESS);
+
+		// when
+		when(userMissionController.choiceTodayMission(request, principal)).thenReturn(result);
+
+		// then
+		mockMvc.perform(post(DEFAULT_URL + "/today")
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(request))
+			.principal(principal)
+		).andDo(
+			document("오늘의 미션 선정 API 성공 Example",
+				getDocumentRequest(),
+				getDocumentResponse(),
+				resource(
+					ResourceSnippetParameters.builder()
+						.tag(TAG)
+						.description("2가지 운동 미션 중 오늘의 미션을 선택하는 API")
+						.requestFields(
+							fieldWithPath("mission_id").type(NUMBER).description("선택한 미션 번호")
+						)
+						.responseFields(
+							fieldWithPath("code").type(NUMBER).description("상태 코드"),
+							fieldWithPath("message").type(STRING).description("상태 메세지"),
+							fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"))
+							// fieldWithPath("data").type(NULL).description("응답 데이터"))
+
+						.build()
+				)
+			)).andExpect(MockMvcResultMatchers.status().isCreated());
 	}
 
 
