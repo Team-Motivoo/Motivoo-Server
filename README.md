@@ -47,7 +47,7 @@
 <br/><br/>
 
 ## ☁️ ERD
-<img width=600 src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/94639ac5-a0f9-4cc0-9aba-fb3a835c99a7">
+<img width=600 src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/fcc46c18-c238-4e00-84fc-2dc7c905470a">
 <br/><br/>
 
 ## 📂 Project Structure
