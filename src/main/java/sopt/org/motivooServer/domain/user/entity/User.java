@@ -85,6 +85,17 @@ public class User extends BaseTimeEntity {
 		this.deleted = deleted;
 	}
 
+
+	@Builder(builderMethodName = "builderInTest")
+	private User(Integer age, UserType type, String socialId, String nickname, SocialPlatform socialPlatform) {
+		this.age = age;
+		this.type = type;
+		this.socialId = socialId;
+		this.nickname = nickname;
+		this.socialPlatform = socialPlatform;
+	}
+
+
 	//== 연관관계 메서드 ==//
 	public void addUserMission(UserMission userMission) {
 		this.userMissions.add(userMission);
