@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
+import sopt.org.motivooServer.domain.health.dto.response.CheckOnboardingResponse;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
 import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
 import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
@@ -29,6 +30,12 @@ public class ParentChildController {
                                                                         Principal principal){
         Long userId = getUserFromPrincipal(principal);
         return ApiResponse.success(ONBOARDING_SUCCESS, parentchildService.onboardInput(userId, request));
+    }
+
+    @GetMapping("/user/onboarding")
+    public ResponseEntity<ApiResponse<CheckOnboardingResponse>> checkOnboardingInfo(Principal principal){
+        Long userId = getUserFromPrincipal(principal);
+        return ApiResponse.success(CHECK_ONBOARDING_INFO_SUCCESS, parentchildService.checkOnboardingInfo(userId));
     }
 
     @PatchMapping("/parentchild/match")

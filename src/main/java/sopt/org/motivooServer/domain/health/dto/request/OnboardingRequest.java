@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record OnboardingRequest (
         String type,
+
         int age,
         @JsonProperty("is_exercise")
         boolean isExercise,

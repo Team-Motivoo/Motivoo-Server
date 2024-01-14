@@ -39,6 +39,7 @@ public enum SuccessType {
 	ONBOARDING_SUCCESS(HttpStatus.CREATED, "온보딩 질문 입력에 성공했습니다."),
 	INPUT_INVITE_CODE_SUCCESS(HttpStatus.OK, "초대코드 입력에 성공했습니다."),
 	MATCHING_SUCCESS(HttpStatus.OK, "매칭에 성공했습니다."),
+	CHECK_ONBOARDING_INFO_SUCCESS(HttpStatus.OK, "운동정보 완료 여부 확인에 성공했습니다."),
 
 	/**
 	 * 201 Created

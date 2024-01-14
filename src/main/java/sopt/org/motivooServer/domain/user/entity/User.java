@@ -85,12 +85,6 @@ public class User extends BaseTimeEntity {
 		this.deleted = deleted;
 	}
 
-	//== Null 체크를 위한 유효성 검사 ==//
-	private void validateAge() {
-		Objects.requireNonNull(age, NULL_VALUE_AGE.message());
-	}
-
-
 	//== 연관관계 메서드 ==//
 	public void addUserMission(UserMission userMission) {
 		this.userMissions.add(userMission);
@@ -104,7 +98,6 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void updateOnboardingInfo(UserType type, Integer age) {
-		//validateAge();
 		this.type = type;
 		this.age = age;
 	}
