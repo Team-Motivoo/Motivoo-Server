@@ -1,6 +1,7 @@
-package sopt.org.motivooServer.global.util.s3;
+package sopt.org.motivooServer.global.external.s3;
 
-import static sopt.org.motivooServer.global.util.s3.S3ExceptionType.*;
+import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
+import static sopt.org.motivooServer.global.external.s3.S3ExceptionType.*;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -20,7 +21,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 import sopt.org.motivooServer.global.advice.BusinessException;
-import sopt.org.motivooServer.global.config.aws.AWSConfig;
 
 @Slf4j
 @Component
@@ -30,13 +30,17 @@ public class S3Service {
 	private static final Long MAX_FILE_SIZE = 5 * 1024 * 1024L;
 
 	private static final Long PRE_SIGNED_URL_EXPIRE_MINUTE = 1L;  // 만료시간 1분
+	private static final String IMAGE_EXTENSION = ".jpg";
 
 	private final String bucketName;
-	private final AWSConfig awsConfig;
 
-	public S3Service(@Value("${aws-property.s3-bucket-name}") final String bucketName, AWSConfig awsConfig) {
+	private final S3Client s3Client;
+	private final S3Presigner s3Presigner;
+
+	public S3Service(@Value("${aws-property.s3-bucket-name}") final String bucketName, final S3Client s3Client, final S3Presigner s3Presigner) {
 		this.bucketName = bucketName;
-		this.awsConfig = awsConfig;
+		this.s3Client = s3Client;
+		this.s3Presigner = s3Presigner;
 	}
 
 	// PreSigned Url을 통한 이미지 업로드
@@ -48,8 +52,6 @@ public class S3Service {
 		log.info("업로드할 image 경로: {}", prefix);
 
 		try {
-			final S3Presigner preSigner = awsConfig.getS3PreSigner();
-
 			PutObjectRequest request = PutObjectRequest.builder()
 				.bucket(bucketName)
 				.key(key).build();
@@ -58,10 +60,10 @@ public class S3Service {
 				.signatureDuration(Duration.ofMinutes(PRE_SIGNED_URL_EXPIRE_MINUTE))
 				.putObjectRequest(request).build();
 
-			String url = preSigner.presignPutObject(preSignedUrlRequest).url().toString();
+			String url = s3Presigner.presignPutObject(preSignedUrlRequest).url().toString();
 			return PreSignedUrlResponse.of(fileName, url);
 		} catch (RuntimeException e) {
-			throw new BusinessException(FAIL_TO_UPLOAD_IMAGE);
+			throw new BusinessException(FAIL_TO_GET_IMAGE_PRE_SIGNED_URL);
 		}
 	}
 
@@ -75,7 +77,6 @@ public class S3Service {
 		log.info("업로드할 image: {}", image);
 
 		try {
-			final S3Client s3Client = awsConfig.getS3Client();
 			PutObjectRequest request = PutObjectRequest.builder()
 				.bucket(bucketName)
 				.key(key)
@@ -94,8 +95,6 @@ public class S3Service {
 	// S3 버킷에 업로드된 이미지 삭제
 	public void deleteImage(String key) {
 		try {
-			final S3Client s3Client = awsConfig.getS3Client();
-
 			s3Client.deleteObject((DeleteObjectRequest.Builder builder) ->
 				builder.bucket(bucketName)
 					.key(key).build());
@@ -109,19 +108,19 @@ public class S3Service {
 	}
 
 	private String generateImageFileName() {
-		return UUID.randomUUID().toString() + ".jpg";
+		return UUID.randomUUID() + IMAGE_EXTENSION;
 	}
 
 	private void validateExtension(MultipartFile image) {
 		String contentType = image.getContentType();
 		if (!IMAGE_EXTENSIONS.contains(contentType)) {
-			throw new RuntimeException("이미지 확장자는 jpg, png, webp만 가능합니다.");
+			throw new BusinessException(UNSUPPORTED_IMAGE_EXTENSION);
 		}
 	}
 
 	private void validateFileSize(MultipartFile image) {
 		if (image.getSize() > MAX_FILE_SIZE) {
-			throw new RuntimeException("이미지 사이즈는 5MB를 넘을 수 없습니다.");
+			throw new BusinessException(UNSUPPORTED_IMAGE_SIZE);
 		}
 	}
 }

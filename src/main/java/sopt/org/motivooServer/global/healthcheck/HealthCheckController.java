@@ -19,9 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.global.response.ApiResponse;
-import sopt.org.motivooServer.global.util.s3.PreSignedUrlResponse;
-import sopt.org.motivooServer.global.util.s3.S3BucketDirectory;
-import sopt.org.motivooServer.global.util.s3.S3Service;
+import sopt.org.motivooServer.global.external.s3.PreSignedUrlResponse;
+import sopt.org.motivooServer.global.external.s3.S3BucketDirectory;
+import sopt.org.motivooServer.global.external.s3.S3Service;
 
 @Slf4j
 @RestController

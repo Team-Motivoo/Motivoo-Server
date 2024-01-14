@@ -15,26 +15,22 @@ public enum UserExceptionType implements BusinessExceptionType {
 	INVALID_USER_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 회원 유형입니다."),
 	INVALID_SOCIAL_PLATFORM(HttpStatus.BAD_REQUEST, "유효하지 않은 소셜 플랫폼입니다."),
 	NULL_VALUE_USERTYPE_ENUM(HttpStatus.BAD_REQUEST, "데이터베이스의 유저 타입이 유효하지 않은 값입니다."),
+	NULL_VALUE_AGE(HttpStatus.BAD_REQUEST, "유저의 나이는 null이어서는 안 됩니다."),
 
 
 	/**
 	 * 401 Unauthorized
 	 */
-	EMPTY_PRINCIPLE_EXCEPTION(HttpStatus.UNAUTHORIZED, "엑세스 토큰이 비어있거나, 유효하지 않은 엑세스 토큰입니다."),
+	EMPTY_PRINCIPLE_EXCEPTION(HttpStatus.UNAUTHORIZED, "액세스 토큰이 비어있거나, 유효하지 않은 엑세스 토큰입니다."),
+	TOKEN_UNSUPPORTED(HttpStatus.UNAUTHORIZED, "변조된 토큰입니다."),
+	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
+	TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "토큰을 찾을 수 없습니다."),
 
 
 	/**
 	 * 404 Not Found
 	 */
-	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "토큰이 없습니다."),
-	TOKEN_UNSUPPORTED(HttpStatus.NOT_FOUND, "변조된 토큰입니다."),
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
-
-	/**
-	 * 401 UNAUTHORIZED
-	 */
-	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
-
 
 
 	;

@@ -1,6 +1,5 @@
 package sopt.org.motivooServer.domain.health.entity;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

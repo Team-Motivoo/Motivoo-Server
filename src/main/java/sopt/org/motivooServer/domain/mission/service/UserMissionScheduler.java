@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.mission.entity.CompletedStatus;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionRepository;
+import sopt.org.motivooServer.global.external.s3.S3Service;
 
 @Slf4j
 @Component
@@ -17,7 +18,7 @@ import sopt.org.motivooServer.domain.mission.repository.UserMissionRepository;
 public class UserMissionScheduler {
 
 	private final UserMissionRepository userMissionRepository;
-	private final UserMissionService userMissionService;
+	private final S3Service s3Service;
 
 	@Scheduled(cron = "@daily", zone = "Asia/Seoul")
 	public void setCompletedStatus() {
@@ -29,7 +30,15 @@ public class UserMissionScheduler {
 
 		// 2. 새로운 미션 선택지
 		userMissionRepository.findAll().stream()
-			.filter(um -> !um.getUser().getPreUserMissionChoice().isEmpty())
+			.filter(um -> !um.getUser().getUserMissionChoice().isEmpty())
 			.forEach(um -> um.getUser().clearPreUserMissionChoice());
+	}
+
+	// 매일 새벽 4시마다 30일 이전의 사진은 버킷에서 삭제한다
+	@Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
+	public void deleteImgBefore30Days() {
+		LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+		userMissionRepository.findUserMissionsByCreatedAtBefore(thirtyDaysAgo)
+			.forEach(um -> s3Service.deleteImage(um.getImgUrl()));
 	}
 }

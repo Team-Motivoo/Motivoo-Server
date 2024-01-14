@@ -1,17 +1,28 @@
 package sopt.org.motivooServer.domain.user.entity;
-
-import static sopt.org.motivooServer.domain.mission.exception.MissionExceptionType.*;
+import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.mission.entity.UserMissionChoices;
-import sopt.org.motivooServer.domain.mission.exception.MissionException;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 
 @Getter
@@ -31,7 +42,7 @@ public class User extends BaseTimeEntity {
 	private UserType type;
 
 	@Column(nullable = false)
-	private Boolean deleted = Boolean.FALSE;
+	private boolean deleted = Boolean.FALSE;
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
@@ -57,7 +68,7 @@ public class User extends BaseTimeEntity {
 	private final List<UserMission> userMissions = new ArrayList<>();
 
 	@OneToMany
-	private final List<UserMissionChoices> preUserMissionChoice = new ArrayList<>();
+	private final List<UserMissionChoices> userMissionChoice = new ArrayList<>();
 
 	@Builder
 	private User(String nickname, String socialId, SocialPlatform socialPlatform, String socialAccessToken,
@@ -69,6 +80,11 @@ public class User extends BaseTimeEntity {
 		this.refreshToken = refreshToken;
 		this.type = type;
 		this.deleted = deleted;
+	}
+
+	//== Null 체크를 위한 유효성 검사 ==//
+	private void validateAge() {
+		Objects.requireNonNull(age, NULL_VALUE_AGE.message());
 	}
 
 
@@ -85,6 +101,7 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void updateOnboardingInfo(UserType type, Integer age) {
+		validateAge();
 		this.type = type;
 		this.age = age;
 	}
@@ -102,25 +119,26 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void clearPreUserMissionChoice() {
-		this.preUserMissionChoice.clear();
+		this.userMissionChoice.clear();
 	}
 
 	public void setPreUserMissionChoice(List<UserMissionChoices> userMissionChoice) {
-		if (!this.preUserMissionChoice.isEmpty()) {
+		if (!this.userMissionChoice.isEmpty()) {
 			clearPreUserMissionChoice();
 		}
-		this.preUserMissionChoice.addAll(userMissionChoice);
+		this.userMissionChoice.addAll(userMissionChoice);
 	}
 
 	// 가장 최근의 운동 미션 조회
 	public UserMission getCurrentUserMission() {
-		int lastIndex = userMissions.size() - 1;
-		if (lastIndex >= 0) {
+		if (!userMissions.isEmpty()) {
+			int lastIndex = userMissions.size() - 1;
 			return userMissions.get(lastIndex);
 		}
 
 		//TODO User 도메인에서 처리하는 로직인데 MissionException VS UserException 둘 중 어느 게 더 적합할지?
-		throw new MissionException(EMPTY_USER_MISSIONS);
+		// throw new MissionException(EMPTY_USER_MISSIONS);
+		return null;
 	}
 
 }

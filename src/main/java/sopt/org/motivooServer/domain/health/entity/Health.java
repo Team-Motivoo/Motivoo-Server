@@ -1,7 +1,10 @@
 package sopt.org.motivooServer.domain.health.entity;
 
+import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.*;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,7 +25,7 @@ public class Health extends BaseTimeEntity {
 	private User user;
 
 	@Column(nullable = false)
-	private Boolean isExercise;
+	private boolean isExercise;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -48,6 +51,7 @@ public class Health extends BaseTimeEntity {
 	@Builder
 	private Health(User user, boolean isExercise, ExerciseType exerciseType,
 				   ExerciseFrequency exerciseFrequency, ExerciseTime exerciseTime, List<HealthNote> healthNotes, ExerciseLevel exerciseLevel){
+		validateIsExercise();
 		this.user = user;
 		this.isExercise = isExercise;
 		this.exerciseType = exerciseType;
@@ -57,7 +61,11 @@ public class Health extends BaseTimeEntity {
 		this.exerciseLevel = exerciseLevel;
 	}
 
-	public void updateExerciseLevel(double score){
+	private void validateIsExercise() {
+		Objects.requireNonNull(isExercise, NULL_VALUE_IS_EXERCISE.message());
+	}
+
+	public void updateExerciseLevel(double score) {
 		if(score>36 && score<=96)
 			this.exerciseLevel = ExerciseLevel.ADVANCED;
 		else if(score>=18 && score<=36)

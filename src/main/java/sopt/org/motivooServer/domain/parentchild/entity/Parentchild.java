@@ -21,7 +21,7 @@ public class Parentchild extends BaseTimeEntity {
 	private Long id;
 
 	@Column(nullable = false)
-	private Boolean isMatched;
+	private boolean isMatched;
 
 	@Column(nullable = false)
 	private String inviteCode;

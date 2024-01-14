@@ -3,11 +3,11 @@ package sopt.org.motivooServer.controller;
 import static com.epages.restdocs.apispec.ResourceDocumentation.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
-import static sopt.org.motivooServer.global.util.s3.S3BucketDirectory.*;
+import static sopt.org.motivooServer.global.external.s3.S3BucketDirectory.*;
+import static sopt.org.motivooServer.util.ApiDocumentUtil.*;
 
 import java.security.Principal;
 
@@ -18,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
@@ -26,13 +25,10 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.mission.controller.UserMissionController;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
-import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
-import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 @Slf4j
-@WithMockUser(roles = "USER")
 @DisplayName("UserMissionController 테스트")
 @WebMvcTest(UserMissionController.class)
 public class UserMissionControllerTest extends BaseControllerTest{
@@ -61,26 +57,24 @@ public class UserMissionControllerTest extends BaseControllerTest{
 			GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS, response);
 
 		// when
-		when(userMissionController.getMissionImgUrl(request, missionId)).thenReturn(result);
+		when(userMissionController.getMissionImgUrl(request, principal)).thenReturn(result);
 
 		// then
-		mockMvc.perform(patch(DEFAULT_URL + "/image/{missionId}", missionId)
+		mockMvc.perform(patch(DEFAULT_URL + "/image")
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request))
+			.principal(principal)
 		).andDo(
 			MockMvcRestDocumentation.document("미션 인증 사진 등록 API 성공 Example",
-				preprocessRequest(prettyPrint()),
-				preprocessResponse(prettyPrint()),
+				getDocumentRequest(),
+				getDocumentResponse(),
 				resource(
 					ResourceSnippetParameters.builder()
 						.tag(TAG)
 						.description("미션 인증 사진 업로드를 위한 PreSigned Url 반환")
 						.requestFields(
 							fieldWithPath("img_prefix").type(STRING).description("운동 인증 사진 디렉터리")
-						)
-						.pathParameters(
-							parameterWithName("missionId").description("미션 아이디").ignored()
 						)
 						.responseFields(
 							fieldWithPath("code").type(NUMBER).description("상태 코드"),
@@ -93,4 +87,6 @@ public class UserMissionControllerTest extends BaseControllerTest{
 				)
 			)).andExpect(MockMvcResultMatchers.status().isOk());
 	}
+
+
 }

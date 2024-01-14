@@ -1,5 +1,7 @@
 package sopt.org.motivooServer.domain.auth.config;
 
+import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,6 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import sopt.org.motivooServer.global.advice.BusinessException;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -41,10 +45,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (NumberFormatException e) {
             log.error("refresh token은 유저 아이디를 담고있지 않습니다.");
-            throw new RuntimeException("refresh token은 유저 아이디를 담고있지 않습니다.");
+            throw new BusinessException(TOKEN_NOT_CONTAINS_USER_ID);
         } catch (Exception e) {
             log.error("Spring Security doFilter 중에 발생한 에러: {}", e);
-            throw new RuntimeException("Spring Security doFilter 중에 발생한 에러");
+            throw new BusinessException(FAIL_TO_AUTHENTICATE_JWT_TOKEN);
         }
 
         // 다음 필터로 요청 전달

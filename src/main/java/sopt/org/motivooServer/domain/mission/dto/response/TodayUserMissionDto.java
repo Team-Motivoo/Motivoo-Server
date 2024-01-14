@@ -27,7 +27,7 @@ public record TodayUserMissionDto(
 
 	public static TodayUserMissionDto of(UserMissionChoices userMissionChoices) {
 		return TodayUserMissionDto.builder()
-			.missionId(userMissionChoices.getId())
+			.missionId(userMissionChoices.getMission().getId())
 			.missionContent(userMissionChoices.getMission().getContent())
 			.missionIconUrl(userMissionChoices.getMission().getIconUrl()).build();
 	}

@@ -25,7 +25,7 @@ public class ExpiredMemberDeleteBatch {
     private final UserMissionRepository userMissionRepository;
     private final UserMissionChoicesRepository userMissionChoicesRepository;
 
-    //@Scheduled(cron="0/10 * * * * *") //테스트 할 때에만 사용 나중에 삭제
+    //@Scheduled(cron="0/10 * * * * *") //TODO 테스트 할 때에만 사용 나중에 삭제
     @Scheduled(cron = "@monthly")
     public void deleteExpiredUser(){
         log.info("영구적으로 탈퇴되었습니다.");
@@ -35,7 +35,7 @@ public class ExpiredMemberDeleteBatch {
         users.stream()
                 .filter(user -> userRepository.findByIdAndParentchild(user.getId(), user.getParentchild()) != null)
                 .flatMap(user -> userRepository.findByIdAndParentchild(user.getId(), user.getParentchild()).stream())
-                .filter(u -> u.getDeleted())
+                .filter(u -> u.isDeleted())
                 .forEach(u -> {
                     log.info("parentchild 삭제=" + u.getParentchild().getId());
                     // parentchild 삭제
