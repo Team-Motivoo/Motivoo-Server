@@ -165,7 +165,7 @@ public class UserMissionService {
 
 		// 오늘의 미션이 선정된 경우
 		UserMission todayMission = user.getCurrentUserMission();
-		if (todayMission == null || user.getUserMissions().isEmpty() || !validateTodayDateMission(todayMission)) {
+		if (todayMission == null || user.getUserMissions().isEmpty()) {
 
 			// 아직 오늘의 미션이 선정되지 않은 경우
 			// 1) 필터링 로직을 거친 적이 없는 경우 -> 필터 거치기
