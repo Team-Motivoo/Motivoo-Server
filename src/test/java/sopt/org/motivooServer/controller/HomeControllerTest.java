@@ -48,12 +48,14 @@ public class HomeControllerTest extends BaseControllerTest{
 		// given
 		MissionStepStatusRequest request = new MissionStepStatusRequest(14000, 3000);
 		MissionStepStatusResponse response =  MissionStepStatusResponse.builder()
+			.date("2024년 1월 5일")
 			.userType("CHILD")
 			.userId(2L)
 			.userGoalStepCount(10000)
 			.opponentUserId(3L)
 			.opponentUserGoalStepCount(20000)
-			.isStepCountCompleted(false).build();
+			.isStepCountCompleted(false)
+			.isOpponentUserWithdraw(false).build();
 
 		ResponseEntity<ApiResponse<MissionStepStatusResponse>> result = ApiResponse.success(
 			GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS, response);
@@ -84,12 +86,14 @@ public class HomeControllerTest extends BaseControllerTest{
 							fieldWithPath("message").type(STRING).description("상태 메세지"),
 							fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
 							fieldWithPath("data").description("응답 데이터"),
+							fieldWithPath("data.date").type(STRING).description("오늘의 날짜"),
 							fieldWithPath("data.user_type").type(STRING).description("유저의 타입(PARENT|CHILD)"),
 							fieldWithPath("data.user_id").type(NUMBER).description("유저 자신의 아이디"),
 							fieldWithPath("data.user_goal_step_count").type(NUMBER).description("유저 오늘의 미션 목표 걸음 수 "),
 							fieldWithPath("data.opponent_user_id").type(NUMBER).description("매칭된 상대 유저의 아이디"),
 							fieldWithPath("data.opponent_user_goal_step_count").type(NUMBER).description("상대 유저 오늘의 미션 목표 걸음 수"),
-							fieldWithPath("data.is_step_count_completed").type(BOOLEAN).description("걸음 수 달성 여부 → 운동 인증하기 버튼 활성화"))
+							fieldWithPath("data.is_step_count_completed").type(BOOLEAN).description("걸음 수 달성 여부 → 운동 인증하기 버튼 활성화"),
+							fieldWithPath("data.is_step_count_completed").type(BOOLEAN).description("상대 유저의 탈퇴 여부"))
 						.build()
 				)
 			)).andExpect(MockMvcResultMatchers.status().isOk());
