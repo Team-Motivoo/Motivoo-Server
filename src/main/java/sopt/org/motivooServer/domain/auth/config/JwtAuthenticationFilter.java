@@ -45,7 +45,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (NumberFormatException e) {
             log.error("refresh token은 유저 아이디를 담고있지 않습니다.");
-            throw new BusinessException(TOKEN_NOT_CONTAINS_USER_ID);
+            filterChain.doFilter(request, response);
+//            throw new BusinessException(TOKEN_NOT_CONTAINS_USER_ID);
         } catch (Exception e) {
             log.error("Spring Security doFilter 중에 발생한 에러: {}", e);
             throw new BusinessException(FAIL_TO_AUTHENTICATE_JWT_TOKEN);
