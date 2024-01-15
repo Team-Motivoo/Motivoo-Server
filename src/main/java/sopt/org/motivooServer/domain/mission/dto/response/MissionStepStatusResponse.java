@@ -20,13 +20,13 @@ public record MissionStepStatusResponse(
 	@JsonProperty("is_opponent_user_withdraw") Boolean isOpponentUserWithdraw
 ) {
 
-	public static MissionStepStatusResponse of(User user, User opponentUser, Boolean status) {
+	public static MissionStepStatusResponse of(User user, User opponentUser, int myGoalStep, int opponentGoalStep, Boolean status) {
 		return MissionStepStatusResponse.builder()
 			.userType(user.getType().getValue())
 			.userId(user.getId())
-			.userGoalStepCount(user.getCurrentUserMission().getMission().getStepCount())
+			.userGoalStepCount(myGoalStep)
 			.opponentUserId(opponentUser.getId())
-			.opponentUserGoalStepCount(opponentUser.getCurrentUserMission().getMission().getStepCount())
+			.opponentUserGoalStepCount(opponentGoalStep)
 			.isStepCountCompleted(status)
 			.isOpponentUserWithdraw(opponentUser.isDeleted()).build();
 	}
