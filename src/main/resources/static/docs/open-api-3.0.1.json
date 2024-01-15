@@ -34,8 +34,7 @@
           }
         }
       }
-<<<<<<< HEAD
-=======
+
     },
     "/home" : {
       "patch" : {
@@ -253,7 +252,7 @@
           }
         }
       }
->>>>>>> 1ed5282323769c5025c30d3efa88777f37c73201
+
     }
   },
   "components" : {
@@ -278,8 +277,7 @@
             "description" : "상태 메세지"
           }
         }
-<<<<<<< HEAD
-=======
+
       },
       "mission-image-891843899" : {
         "type" : "object",
@@ -608,7 +606,7 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
->>>>>>> 1ed5282323769c5025c30d3efa88777f37c73201
+
       }
     }
   }
