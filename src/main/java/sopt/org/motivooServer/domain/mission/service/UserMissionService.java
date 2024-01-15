@@ -152,6 +152,14 @@ public class UserMissionService {
 		 * - 첫 오늘의 미션을 부여받을 때
 		 */
 
+		// 처음 가입한 유저의 경우
+		if (user.getUserMissions().isEmpty() && user.getUserMissionChoice().isEmpty()) {
+			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
+			user.setPreUserMissionChoice(todayMissionChoices);
+			log.info("첫 가입 유저 오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
+			return TodayMissionResponse.of(todayMissionChoices);
+		}
+
 		// 오늘의 미션이 선정된 경우
 		UserMission todayMission = user.getCurrentUserMission();
 		if (todayMission == null || user.getUserMissions().isEmpty() || !validateTodayDateMission(todayMission)) {
