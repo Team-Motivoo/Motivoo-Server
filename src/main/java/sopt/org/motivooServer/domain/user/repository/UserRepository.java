@@ -3,6 +3,7 @@ package sopt.org.motivooServer.domain.user.repository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,7 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     User findBySocialId(String socialId);
+
     @Query("select u.refreshToken from User u where u.id=?1")
     String findRefreshTokenById(Long id);
 
@@ -40,4 +42,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("UPDATE User u SET u.deleted=true WHERE u.id=?1")
     void updateDelete(Long userId);
+
+    @Query("select u from User u where u.id=?1 and u.deleted=false")
+    Optional<User> findById(Long id);
 }
