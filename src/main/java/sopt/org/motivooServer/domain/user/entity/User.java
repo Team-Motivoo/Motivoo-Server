@@ -1,10 +1,8 @@
 package sopt.org.motivooServer.domain.user.entity;
-import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -82,9 +80,13 @@ public class User extends BaseTimeEntity {
 		this.deleted = deleted;
 	}
 
-	//== Null 체크를 위한 유효성 검사 ==//
-	private void validateAge() {
-		Objects.requireNonNull(age, NULL_VALUE_AGE.message());
+	@Builder(builderMethodName = "builderInTest")
+	private User(Integer age, UserType type, String socialId, String nickname, SocialPlatform socialPlatform) {
+		this.age = age;
+		this.type = type;
+		this.socialId = socialId;
+		this.nickname = nickname;
+		this.socialPlatform = socialPlatform;
 	}
 
 
@@ -101,7 +103,6 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void updateOnboardingInfo(UserType type, Integer age) {
-		validateAge();
 		this.type = type;
 		this.age = age;
 	}

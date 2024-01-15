@@ -20,7 +20,6 @@ public enum SuccessType {
 	//미션
 	GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS(HttpStatus.OK, "미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다."),
 	GET_MISSION_HISTORY_SUCCESS(HttpStatus.OK, "이전 운동 미션 히스토리를 조회하는 데 성공했습니다."),
-	GET_TODAY_MISSION_SUCCESS(HttpStatus.OK, "오늘의 미션을 조회하는 데 성공했습니다."),
 
 	//유저
 	GET_MYINFO_SUCCESS(HttpStatus.OK, "마이페이지 나의 정보 조회에 성공했습니다."),
@@ -43,8 +42,9 @@ public enum SuccessType {
 	/**
 	 * 201 Created
 	 */
-	CHOICE_TODAY_MISSION_SUCCESS(HttpStatus.CREATED, "오늘의 미션 선정에 성공했습니다.")
 
+	CHOICE_TODAY_MISSION_SUCCESS(HttpStatus.CREATED, "오늘의 미션 선정에 성공했습니다."),
+	GET_TODAY_MISSION_SUCCESS(HttpStatus.CREATED, "오늘의 미션을 조회하는 데 성공했습니다.")
 
 	;
 

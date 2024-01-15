@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
@@ -47,4 +48,17 @@ public class Mission extends BaseTimeEntity {
 	@Column(columnDefinition = "TEXT")
 	private String iconUrl;
 
+	@Builder
+	private Mission(String content, String type, String healthNotes, int stepCount, String descriptionUrl,
+		UserType target,
+		String bodyPart, String iconUrl) {
+		this.content = content;
+		this.type = type;
+		this.healthNotes = healthNotes;
+		this.stepCount = stepCount;
+		this.descriptionUrl = descriptionUrl;
+		this.target = target;
+		this.bodyPart = bodyPart;
+		this.iconUrl = iconUrl;
+	}
 }

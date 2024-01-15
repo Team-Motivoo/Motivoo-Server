@@ -43,7 +43,7 @@ public record MissionHistoryResponse(
 
 		return MissionHistoryResponse.builder()
 			.userType(user.getType().getValue())
-			.todayMission(TodayUserMissionDto.of(todayMission))
+			.todayMission(TodayUserMissionDto.ofHistory(todayMission))
 			.missionHistory(IntStream.range(0, myMissions.size())
 				.mapToObj(i -> ParentchildMissionDto.of(my.get(i), opponent.get(i)))
 				.collect(Collectors.toList()))
