@@ -3,6 +3,7 @@ package sopt.org.motivooServer.global.advice;
 import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
 import static sopt.org.motivooServer.global.advice.ErrorType.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.global.response.ApiResponse;
@@ -74,14 +76,15 @@ public class GlobalExceptionHandler {
 	 * 500 Internal Server Error
 	 */
 
-    /*@ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(final Exception e, final HttpServletRequest request) throws IOException {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(final Exception e, final HttpServletRequest request) throws
+		IOException {
         slackService.sendAlert(e, request);
 
         log.error("🔔🚨 Slack에 전송된 Error Log: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.of(INTERNAL_SERVER_ERROR));
-    }*/
+    }
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(IndexOutOfBoundsException.class)
@@ -90,12 +93,12 @@ public class GlobalExceptionHandler {
 			.body(ErrorResponse.of(INDEX_OUT_OF_BOUND_ERROR));
 	}
 
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	/*@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(NullPointerException.class)
 	public ResponseEntity<ErrorResponse> handleNullPointerException(final NullPointerException e) {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 			.body(ErrorResponse.of(NULL_POINTER_ACCESS_ERROR));
-	}
+	}*/
 
 
 	/**

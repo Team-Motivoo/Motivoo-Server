@@ -25,6 +25,11 @@ public record TodayUserMissionDto(
 			.missionQuest(userMission.getMissionQuest().getContent()).build();
 	}
 
+	public static TodayUserMissionDto ofHistory(UserMission userMission) {
+		return TodayUserMissionDto.builder()
+			.missionContent(userMission.getMission().getContent()).build();
+	}
+
 	public static TodayUserMissionDto of(UserMissionChoices userMissionChoices) {
 		return TodayUserMissionDto.builder()
 			.missionId(userMissionChoices.getMission().getId())
