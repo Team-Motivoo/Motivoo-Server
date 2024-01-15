@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface HealthRepository extends JpaRepository<Health, Long> {
     Optional<Health> findByUser(User user);
-	Optional<Health> findByUserId(Long userId);
+	Optional<Health> findByUserId(Long userId);  // TODO primitive? (null에 대한 안전성 보장)
     void deleteByUser(User user);
-
 }
