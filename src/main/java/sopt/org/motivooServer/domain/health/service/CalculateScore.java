@@ -18,14 +18,14 @@ public class CalculateScore {
     private double getExerciseScore(boolean isExercise, ExerciseType type) {
         if(!isExercise){
             return switch (type) {
-                case HIGH_LEVEL -> 4.2;
-                case MEDIUM_LEVEL -> 2.1;
+                case HIGH_LEVEL_ACTIVE, HIGH_LEVEL_INACTIVE -> 4.2;
+                case MEDIUM_LEVEL_ACTIVE, MEDIUM_LEVEL_INACTIVE -> 2.1;
                 default -> 1.05;
             };
         }
         return switch (type) {
-            case HIGH_LEVEL -> 6;
-            case MEDIUM_LEVEL -> 3;
+            case HIGH_LEVEL_ACTIVE, HIGH_LEVEL_INACTIVE -> 6;
+            case MEDIUM_LEVEL_ACTIVE, MEDIUM_LEVEL_INACTIVE -> 3;
             default -> 1.5;
         };
     }

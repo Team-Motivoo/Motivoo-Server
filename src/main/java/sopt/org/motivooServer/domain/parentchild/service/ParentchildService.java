@@ -77,7 +77,6 @@ public class ParentchildService {
         log.info("health user="+health.getId());
         healthRepository.save(health);
 
-
         double exerciseScore = calculateScore.calculate(request.isExercise(), ExerciseType.of(request.exerciseType()),
                 ExerciseFrequency.of(request.exerciseCount()), ExerciseTime.of(request.exerciseTime()));
         log.info("가중치 결과 점수="+exerciseScore);
