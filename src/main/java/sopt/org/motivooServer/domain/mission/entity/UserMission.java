@@ -1,5 +1,6 @@
 package sopt.org.motivooServer.domain.mission.entity;
 
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
