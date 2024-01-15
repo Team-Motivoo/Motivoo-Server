@@ -13,51 +13,37 @@ public class CalculateScore {
         double frequencyScore = getFrequencyScore(frequency);
         double timeScore = getTimeScore(time);
 
-        return exerciseScore+frequencyScore+timeScore;
+        return exerciseScore*frequencyScore*timeScore;
     }
     private double getExerciseScore(boolean isExercise, ExerciseType type) {
         if(!isExercise){
-            switch (type) {
-                case HIGH_LEVEL:
-                    return 4.2;
-                case MEDIUM_LEVEL:
-                    return 2.1;
-                default:
-                    return 1.05;
-            }
+            return switch (type) {
+                case HIGH_LEVEL_ACTIVE, HIGH_LEVEL_INACTIVE -> 4.2;
+                case MEDIUM_LEVEL_ACTIVE, MEDIUM_LEVEL_INACTIVE -> 2.1;
+                default -> 1.05;
+            };
         }
-        switch (type) {
-            case HIGH_LEVEL:
-                return 6;
-            case MEDIUM_LEVEL:
-                return 3;
-            default:
-                return 1.5;
-        }
+        return switch (type) {
+            case HIGH_LEVEL_ACTIVE, HIGH_LEVEL_INACTIVE -> 6;
+            case MEDIUM_LEVEL_ACTIVE, MEDIUM_LEVEL_INACTIVE -> 3;
+            default -> 1.5;
+        };
     }
     private double getFrequencyScore(ExerciseFrequency frequency) {
-        switch (frequency) {
-            case LESS_THAN_ONCE:
-                return 1.0;
-            case ONCE_OR_TWICE:
-                return 2.0;
-            case THREE_OR_FOUR_TIMES:
-                return 3.0;
-            default:
-                return 4.0;
-        }
+        return switch (frequency) {
+            case LESS_THAN_ONCE -> 1.0;
+            case ONCE_OR_TWICE -> 2.0;
+            case THREE_OR_FOUR_TIMES -> 3.0;
+            default -> 4.0;
+        };
     }
     private double getTimeScore(ExerciseTime time) {
-        switch (time) {
-            case LESS_THAN_HALFHOUR:
-                return 1.0;
-            case HALFHOUR_TO_ONEHOUR:
-                return 2.0;
-            case ONEHOUR_TO_TWOHOURS:
-                return 3.0;
-            default:
-                return 4.0;
-        }
+        return switch (time) {
+            case LESS_THAN_HALFHOUR -> 1.0;
+            case HALFHOUR_TO_ONEHOUR -> 2.0;
+            case ONEHOUR_TO_TWOHOURS -> 3.0;
+            default -> 4.0;
+        };
     }
 
 }

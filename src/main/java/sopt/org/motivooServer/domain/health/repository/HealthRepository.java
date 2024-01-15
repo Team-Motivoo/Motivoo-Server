@@ -9,5 +9,6 @@ import java.util.Optional;
 public interface HealthRepository extends JpaRepository<Health, Long> {
     Optional<Health> findByUser(User user);
 	Optional<Health> findByUserId(Long userId);
+    void deleteByUser(User user);
 
 }

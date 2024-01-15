@@ -32,4 +32,5 @@ public class UserController {
 	public ResponseEntity<ApiResponse<MyHealthInfoResponse>> getMyExercise(Principal principal) {
 		return ApiResponse.success(GET_MYPAGE_HEALTH_INFO_SUCCESS, userService.getMyHealthInfo(getUserFromPrincipal(principal)));
 	}
+
 }

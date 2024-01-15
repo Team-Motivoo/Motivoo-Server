@@ -51,7 +51,6 @@ import sopt.org.motivooServer.global.external.s3.S3Service;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserMissionService {
-
 	private final UserMissionRepository userMissionRepository;
 	private final UserMissionChoicesRepository userMissionChoicesRepository;
 	private final UserRepository userRepository;

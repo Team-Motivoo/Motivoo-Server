@@ -17,8 +17,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @EnableScheduling
 public class ScheduleConfig {
 
-	private static final int POOL_SIZE = 10;
-	private static ThreadPoolTaskScheduler scheduler;
+    private static final int POOL_SIZE = 10;
+    private static ThreadPoolTaskScheduler scheduler;
+
 
 	@Bean
 	public TaskScheduler scheduler() {

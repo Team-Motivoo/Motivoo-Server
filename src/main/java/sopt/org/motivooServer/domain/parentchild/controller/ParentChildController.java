@@ -7,11 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
+import sopt.org.motivooServer.domain.health.dto.response.CheckOnboardingResponse;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
 import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
 import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
-import sopt.org.motivooServer.domain.parentchild.service.ParentChildService;
+import sopt.org.motivooServer.domain.parentchild.service.ParentchildService;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 import java.security.Principal;
@@ -23,25 +24,31 @@ import static sopt.org.motivooServer.global.response.SuccessType.*;
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ParentChildController {
-    private final ParentChildService parentChildService;
+    private final ParentchildService parentchildService;
     @PostMapping("/user/exercise")
-    public ResponseEntity<ApiResponse<OnboardingResponse>> onboardInput(Principal principal,
-                                                                        @Valid @RequestBody final OnboardingRequest request){
+    public ResponseEntity<ApiResponse<OnboardingResponse>> onboardInput(@Valid @RequestBody final OnboardingRequest request,
+                                                                        Principal principal){
         Long userId = getUserFromPrincipal(principal);
-        return ApiResponse.success(ONBOARDING_SUCCESS, parentChildService.onboardInput(userId, request));
+        return ApiResponse.success(ONBOARDING_SUCCESS, parentchildService.onboardInput(userId, request));
+    }
+
+    @GetMapping("/user/onboarding")
+    public ResponseEntity<ApiResponse<CheckOnboardingResponse>> checkOnboardingInfo(Principal principal){
+        Long userId = getUserFromPrincipal(principal);
+        return ApiResponse.success(CHECK_ONBOARDING_INFO_SUCCESS, parentchildService.checkOnboardingInfo(userId));
     }
 
     @PatchMapping("/parentchild/match")
-    public ResponseEntity<ApiResponse<InviteResponse>> validateInviteCode(Principal principal,
-                                                                          @Valid @RequestBody final InviteRequest request){
+    public ResponseEntity<ApiResponse<InviteResponse>> validateInviteCode(@Valid @RequestBody final InviteRequest request,
+                                                                          Principal principal){
         Long userId = getUserFromPrincipal(principal);
-        return ApiResponse.success(INPUT_INVITE_CODE_SUCCESS, parentChildService.validateInviteCode(userId, request));
+        return ApiResponse.success(INPUT_INVITE_CODE_SUCCESS, parentchildService.validateInviteCode(userId, request));
     }
 
     @GetMapping("/onboarding/match")
     public ResponseEntity<ApiResponse<MatchingResponse>> validateMatching(Principal principal){
         Long userId = getUserFromPrincipal(principal);
-        return ApiResponse.success(MATCHING_SUCCESS, parentChildService.checkMatching(userId));
+        return ApiResponse.success(MATCHING_SUCCESS, parentchildService.checkMatching(userId));
     }
 
 }

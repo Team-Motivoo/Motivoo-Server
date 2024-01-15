@@ -117,6 +117,9 @@ dependencies {
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	// Feign
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.7'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 }

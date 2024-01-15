@@ -7,7 +7,10 @@ public record InviteResponse (
         Long userId,
 
         @JsonProperty("is_matched")
-        boolean isMatched
+        boolean isMatched,
+
+        @JsonProperty("my_invite_code")
+        boolean myInviteCode
 ){
 
 }

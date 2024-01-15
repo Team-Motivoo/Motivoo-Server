@@ -26,7 +26,7 @@ public class SecurityConfig {
 	private final CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private static final String[] AUTH_WHITELIST = {
-		"/", "/**", "/oauth/**", "/api/**", "/actuator/health", "/mission/**", "/home"
+		"/", "/**", "/oauth/**", "/api/**", "/actuator/health","/withdraw", "/mission/**", "/home"
 	};
 
 	@Bean

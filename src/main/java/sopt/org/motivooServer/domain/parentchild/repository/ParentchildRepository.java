@@ -7,5 +7,6 @@ import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 
 public interface ParentchildRepository extends JpaRepository<Parentchild, Long> {
     Parentchild findByInviteCode(String inviteCode);
+    void deleteById(Long id);
 
 }
