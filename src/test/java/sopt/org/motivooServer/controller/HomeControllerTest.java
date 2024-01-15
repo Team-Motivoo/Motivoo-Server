@@ -1,5 +1,6 @@
 package sopt.org.motivooServer.controller;
 
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
 import static com.epages.restdocs.apispec.ResourceDocumentation.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -16,7 +17,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
@@ -68,7 +68,7 @@ public class HomeControllerTest extends BaseControllerTest{
 			.content(objectMapper.writeValueAsString(request))
 			.principal(principal)
 		).andDo(
-			MockMvcRestDocumentation.document("홈 화면 미션 달성 상태 조회 API 성공 Example",
+			document("홈 화면 미션 달성 상태 조회 API 성공 Example",
 				getDocumentRequest(),
 				getDocumentResponse(),
 				resource(
