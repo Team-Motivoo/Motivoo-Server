@@ -13,7 +13,7 @@ public class CalculateScore {
         double frequencyScore = getFrequencyScore(frequency);
         double timeScore = getTimeScore(time);
 
-        return exerciseScore+frequencyScore+timeScore;
+        return exerciseScore*frequencyScore*timeScore;
     }
     private double getExerciseScore(boolean isExercise, ExerciseType type) {
         if(!isExercise){

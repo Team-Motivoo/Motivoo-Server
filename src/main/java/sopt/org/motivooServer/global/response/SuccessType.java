@@ -35,9 +35,10 @@ public enum SuccessType {
 
 
 	//온보딩
-	ONBOARDING_SUCCESS(HttpStatus.OK, "온보딩 질문 입력에 성공했습니다."),
+	ONBOARDING_SUCCESS(HttpStatus.CREATED, "온보딩 질문 입력에 성공했습니다."),
 	INPUT_INVITE_CODE_SUCCESS(HttpStatus.OK, "초대코드 입력에 성공했습니다."),
 	MATCHING_SUCCESS(HttpStatus.OK, "매칭에 성공했습니다."),
+	CHECK_ONBOARDING_INFO_SUCCESS(HttpStatus.OK, "운동정보 완료 여부 확인에 성공했습니다."),
 
 	/**
 	 * 201 Created
@@ -45,6 +46,7 @@ public enum SuccessType {
 
 	CHOICE_TODAY_MISSION_SUCCESS(HttpStatus.CREATED, "오늘의 미션 선정에 성공했습니다."),
 	GET_TODAY_MISSION_SUCCESS(HttpStatus.CREATED, "오늘의 미션을 조회하는 데 성공했습니다.")
+
 
 	;
 

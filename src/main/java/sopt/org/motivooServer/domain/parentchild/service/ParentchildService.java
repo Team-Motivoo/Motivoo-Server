@@ -1,6 +1,7 @@
 package sopt.org.motivooServer.domain.parentchild.service;
 
 
+import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.EXIST_ONBOARDING_INFO;
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 import java.util.Random;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
+import sopt.org.motivooServer.domain.health.dto.response.CheckOnboardingResponse;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
 import sopt.org.motivooServer.domain.health.entity.ExerciseFrequency;
 import sopt.org.motivooServer.domain.health.entity.ExerciseLevel;
@@ -15,6 +17,7 @@ import sopt.org.motivooServer.domain.health.entity.ExerciseTime;
 import sopt.org.motivooServer.domain.health.entity.ExerciseType;
 import sopt.org.motivooServer.domain.health.entity.Health;
 import sopt.org.motivooServer.domain.health.entity.HealthNote;
+import sopt.org.motivooServer.domain.health.exception.HealthException;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.health.service.CalculateScore;
 import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
@@ -49,10 +52,14 @@ public class ParentchildService {
             () -> new UserException(INVALID_USER_TYPE)
         );
 
+        log.info("user="+user.getNickname()+"유무="+request.isExercise()+"타입="+request.exerciseType()
+                +"횟수="+request.exerciseCount()+"시간="+request.exerciseTime()+"주의="+request.exerciseNote());
+
+        if(healthRepository.findByUser(user) != null) //두번 API 호출하는 것을 막음
+            throw new HealthException(EXIST_ONBOARDING_INFO);
+
         user.updateOnboardingInfo(UserType.of(request.type()), request.age());
 
-        log.info("user="+user.getNickname()+"유무="+request.isExercise()+"타입="+request.exerciseType()
-        +"횟수="+request.exerciseCount()+"시간="+request.exerciseTime()+"주의="+request.exerciseNote());
         Health health = Health.builder()
                         .user(user)
                         .isExercise(request.isExercise())
@@ -67,6 +74,7 @@ public class ParentchildService {
 
         double exerciseScore = calculateScore.calculate(request.isExercise(), ExerciseType.of(request.exerciseType()),
                 ExerciseFrequency.of(request.exerciseCount()), ExerciseTime.of(request.exerciseTime()));
+        log.info("가중치 결과 점수="+exerciseScore);
         health.updateExerciseLevel(exerciseScore);
 
         String inviteCode = createInviteCode();
@@ -102,6 +110,16 @@ public class ParentchildService {
             return new InviteResponse(userId, true);
         }
         return new InviteResponse(userId, false);
+    }
+
+    public CheckOnboardingResponse checkOnboardingInfo(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserException(INVALID_USER_TYPE)
+        );
+
+        if(!healthRepository.findByUser(user).isEmpty())
+            return new CheckOnboardingResponse(true);
+        return new CheckOnboardingResponse(false);
     }
 
     public MatchingResponse checkMatching(Long userId){
