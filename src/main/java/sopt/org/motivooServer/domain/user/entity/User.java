@@ -83,7 +83,6 @@ public class User extends BaseTimeEntity {
 		this.deleted = deleted;
 	}
 
-
 	@Builder(builderMethodName = "builderInTest")
 	private User(Integer age, UserType type, String socialId, String nickname, SocialPlatform socialPlatform) {
 		this.age = age;

@@ -12,9 +12,12 @@ import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ExerciseType {
-    HIGH_LEVEL("고강도"),
-    MEDIUM_LEVEL("중강도"),
-    LOW_LEVEL("저강도")
+    HIGH_LEVEL_ACTIVE("고강도 운동"),
+    MEDIUM_LEVEL_ACTIVE("중강도 운동"),
+    LOW_LEVEL_ACTIVE("저강도 운동"),
+    HIGH_LEVEL_INACTIVE("고강도 활동"),
+    MEDIUM_LEVEL_INACTIVE("중강도 활동"),
+    LOW_LEVEL_INACTIVE("저강도 활동")
     ;
     private final String value;
 

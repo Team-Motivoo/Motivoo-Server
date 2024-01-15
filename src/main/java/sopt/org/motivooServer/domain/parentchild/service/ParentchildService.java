@@ -4,10 +4,7 @@ package sopt.org.motivooServer.domain.parentchild.service;
 import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.EXIST_ONBOARDING_INFO;
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 
-import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +56,8 @@ public class ParentchildService {
         log.info("user="+user.getNickname()+"유무="+request.isExercise()+"타입="+request.exerciseType()
                 +"횟수="+request.exerciseCount()+"시간="+request.exerciseTime()+"주의="+request.exerciseNote());
 
-        if(healthRepository.findByUser(user) != null) //두번 API 호출하는 것을 막음
+
+        if(!healthRepository.findByUser(user).isEmpty()) //두번 API 호출하는 것을 막음
             throw new HealthException(EXIST_ONBOARDING_INFO);
 
         user.updateOnboardingInfo(UserType.of(request.type()), request.age());
@@ -73,7 +71,7 @@ public class ParentchildService {
                         .healthNotes(HealthNote.of(request.exerciseNote()))
                         .exerciseLevel(ExerciseLevel.BEGINNER)
                         .build();
-        log.info("health user="+health.getUser());
+        log.info("health user="+health.getId());
         healthRepository.save(health);
 
         double exerciseScore = calculateScore.calculate(request.isExercise(), ExerciseType.of(request.exerciseType()),
@@ -81,17 +79,22 @@ public class ParentchildService {
         log.info("가중치 결과 점수="+exerciseScore);
         health.updateExerciseLevel(exerciseScore);
 
+        //초대 받는 입장
+        if(user.getParentchild()!=null)
+            return new OnboardingResponse(userId, null, health.getExerciseLevel().getValue());
+
         String inviteCode = createInviteCode();
 
         Parentchild parentchild = Parentchild.builder()
                                   .inviteCode(inviteCode)
                                   .isMatched(false)
                                   .build();
-        log.info("parentchild="+parentchild.getId());
 
-        parentchildRepository.save(parentchild);
+
+        //초대 하는 입장
         user.addParentChild(parentchild);
 
+        parentchildRepository.save(parentchild);
         return new OnboardingResponse(userId, inviteCode, health.getExerciseLevel().getValue());
     }
 
