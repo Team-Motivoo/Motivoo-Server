@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -147,6 +148,13 @@ public class UserMissionService {
 
 		Mission mission = getMissionById(request.missionId());
 
+		UserMission userMission = createTodayUserMission(mission, user);
+		user.clearPreUserMissionChoice();  // 오늘의 미션을 선정했다면, 선택지 리스트는 비워주기
+		return userMission.getId();
+	}
+
+	@NotNull
+	private UserMission createTodayUserMission(Mission mission, User user) {
 		UserMission userMission = UserMission.builder()
 			.mission(mission)
 			.missionQuest(missionQuestRepository.findRandomMissionQuest())
@@ -155,8 +163,7 @@ public class UserMissionService {
 
 		userMissionRepository.save(userMission);
 		user.addUserMission(userMission);
-		user.clearPreUserMissionChoice();  // 오늘의 미션을 선정했다면, 선택지 리스트는 비워주기
-		return userMission.getId();
+		return userMission;
 	}
 
 	private static void validateTodayMissionRequest(Long missionId, User user) {
