@@ -31,9 +31,6 @@ import java.time.LocalDateTime;
 public class UserService {
 	private final UserRepository userRepository;
 	private final HealthRepository healthRepository;
-	private final ParentchildRepository parentchildRepository;
-
-	private static final int MATCHING_SUCCESS = 2;
 
 	public MyPageInfoResponse getMyInfo(final Long userId) {
 		User user = getUserById(userId);
@@ -63,9 +60,7 @@ public class UserService {
 
 	@Transactional
 	public void deleteKakaoAccount(Long userId, String accessToken){
-		User user = userRepository.findById(userId).orElseThrow(
-				() -> new UserException(USER_NOT_FOUND)
-		);
+		User user = getUserById(userId);
 
 		userRepository.updateDelete(userId); //회원 탈퇴 deleted false -> true
 		userRepository.updateDeleteAt(LocalDateTime.now().plusDays(30), user.getId()); //회원 탈퇴날짜 갱신

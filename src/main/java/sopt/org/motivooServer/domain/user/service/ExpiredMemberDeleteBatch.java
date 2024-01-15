@@ -43,21 +43,25 @@ public class ExpiredMemberDeleteBatch {
 
                     // 해당 parentchild에 속한 모든 user 삭제
                     List<User> usersToDelete = userRepository.findByParentchild(u.getParentchild());
-                    for (User userToDelete : usersToDelete) {
-                        // user의 참조 끊기
-                        userToDelete.setParentchildToNull();
-                        userToDelete.setUserMissionToNull();
-
-                        log.info("탈퇴할 유저 닉네임=" + userToDelete.getNickname());
-                        healthRepository.deleteByUser(userToDelete);
-                        userMissionChoicesRepository.deleteByUser(userToDelete);
-                        userMissionRepository.deleteByUser(userToDelete);
-
-                        // user 삭제
-                        userRepository.deleteById(userToDelete.getId());
-                    }
+                    deleteUser(usersToDelete);
 
                 });
+    }
+
+    private void deleteUser(List<User> usersToDelete){
+        for (User userToDelete : usersToDelete) {
+            // user의 참조 끊기
+            userToDelete.setParentchildToNull();
+            userToDelete.setUserMissionToNull();
+
+            log.info("탈퇴할 유저 닉네임=" + userToDelete.getNickname());
+            healthRepository.deleteByUser(userToDelete);
+            userMissionChoicesRepository.deleteByUser(userToDelete);
+            userMissionRepository.deleteByUser(userToDelete);
+
+            // user 삭제
+            userRepository.deleteById(userToDelete.getId());
+        }
 
     }
 }

@@ -4,10 +4,7 @@ package sopt.org.motivooServer.domain.parentchild.service;
 import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.EXIST_ONBOARDING_INFO;
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 
-import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
