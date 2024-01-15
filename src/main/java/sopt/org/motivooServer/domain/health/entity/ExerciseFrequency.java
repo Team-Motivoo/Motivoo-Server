@@ -1,11 +1,13 @@
 package sopt.org.motivooServer.domain.health.entity;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import sopt.org.motivooServer.domain.health.exception.HealthException;
 
 import java.util.Arrays;
+
+import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.INVALID_EXERCISE_FREQUENCY;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -23,6 +25,6 @@ public enum ExerciseFrequency {
         return Arrays.stream(ExerciseFrequency.values())
                 .filter(exerciseFrequency -> value.equals(exerciseFrequency.value))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException());//TO-DO
+                .orElseThrow(() -> new HealthException(INVALID_EXERCISE_FREQUENCY));
     }
 }

@@ -31,6 +31,7 @@ public enum SuccessType {
 	LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공했습니다."),
 	LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃에 성공했습니다."),
 	REISSUE_SUCCESS(HttpStatus.OK, "토큰 재발급에 성공했습니다."),
+	SIGNOUT_SUCCESS(HttpStatus.OK, "회원탈퇴에 성공했습니다."),
 
 
 	//온보딩
@@ -41,9 +42,9 @@ public enum SuccessType {
 	/**
 	 * 201 Created
 	 */
-	CHOICE_TODAY_MISSION_SUCCESS(HttpStatus.CREATED, "오늘의 미션 선정에 성공했습니다."),
-	GET_TODAY_MISSION_SUCCESS(HttpStatus.CREATED, "오늘의 미션을 조회하는 데 성공했습니다."),
 
+	CHOICE_TODAY_MISSION_SUCCESS(HttpStatus.CREATED, "오늘의 미션 선정에 성공했습니다."),
+	GET_TODAY_MISSION_SUCCESS(HttpStatus.CREATED, "오늘의 미션을 조회하는 데 성공했습니다.")
 
 	;
 

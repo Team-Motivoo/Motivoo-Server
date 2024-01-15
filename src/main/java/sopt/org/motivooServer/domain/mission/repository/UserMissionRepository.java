@@ -22,5 +22,7 @@ public interface UserMissionRepository extends JpaRepository<UserMission, Long> 
 	@Query("SELECT um FROM UserMission um WHERE DATE(um.createdAt) = DATE(:date)")
 	List<UserMission> findUserMissionsByCreatedAt(LocalDate date);
 
+	void deleteByUser(User user);
 	@Query("SELECT um FROM UserMission um WHERE um.createdAt < :date")
 	List<UserMission> findUserMissionsByCreatedAtBefore(@Param("date") LocalDateTime date);}
+

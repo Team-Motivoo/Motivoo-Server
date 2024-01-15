@@ -1,5 +1,7 @@
 package sopt.org.motivooServer.domain.mission.entity;
 
+
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -11,7 +13,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -44,7 +45,7 @@ public class UserMission extends BaseTimeEntity {
 	private MissionQuest missionQuest;
 
 	@ManyToOne
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private User user;
 
 	@Builder

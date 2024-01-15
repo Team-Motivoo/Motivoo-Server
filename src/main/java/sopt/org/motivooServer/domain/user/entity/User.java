@@ -1,16 +1,11 @@
 package sopt.org.motivooServer.domain.user.entity;
 
-import static sopt.org.motivooServer.domain.mission.exception.MissionExceptionType.*;
-import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.springframework.util.Assert;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,17 +19,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
-import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.mission.entity.UserMissionChoices;
-import sopt.org.motivooServer.domain.mission.exception.MissionException;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 
 @Getter
 @Entity
 @Table(name = "`user`")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE user SET deleted=true WHERE user_id=?")
 public class User extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,9 +46,6 @@ public class User extends BaseTimeEntity {
 	private LocalDateTime deletedAt;
 
 	@Column(nullable = false)
-	private boolean deleteExpired = Boolean.FALSE; //부모-자녀 둘 다 탈퇴한 경우 TRUE
-
-	@Column(nullable = false)
 	private String socialId;
 
 	private String nickname;
@@ -69,8 +58,8 @@ public class User extends BaseTimeEntity {
 	@Column(nullable = false)
 	private SocialPlatform socialPlatform;
 
-	@ManyToOne
-	@JoinColumn(name = "parentchild_id")
+	@ManyToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "parentchild_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Parentchild parentchild;
 
 	@OneToMany(mappedBy = "user")
@@ -120,6 +109,14 @@ public class User extends BaseTimeEntity {
 
 	public void addParentChild(Parentchild parentchild) {
 		this.parentchild=parentchild;
+	}
+
+	public void setParentchildToNull(){
+		this.parentchild = null;
+	}
+	public void setUserMissionToNull(){
+		this.userMissions.stream()
+				.forEach(m -> m=null);
 	}
 
 	public void clearPreUserMissionChoice() {

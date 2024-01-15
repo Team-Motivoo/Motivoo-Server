@@ -1,7 +1,6 @@
 package sopt.org.motivooServer.domain.health.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import sopt.org.motivooServer.domain.health.entity.ExerciseLevel;
 
 public record OnboardingResponse (
         @JsonProperty("user_id")
