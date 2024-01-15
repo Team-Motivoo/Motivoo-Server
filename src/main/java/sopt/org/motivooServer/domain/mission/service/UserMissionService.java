@@ -214,50 +214,37 @@ public class UserMissionService {
 	@Transactional  // TODO 여기 최대한 분리해보자
 	public TodayMissionResponse getTodayMission(final Long userId) {
 		User user = getUserById(userId);
+		checkMatchedUserWithdraw(user);
 		log.info("TodayMission이 있을까, 없을까? {}개 있음 ㅋㅋ", user.getUserMissionChoice().size());
 
-		// TODO 상대방이 탈퇴한 경우에 대한 예외처리?
-
 		/**
-		 * UserMissionChoice 리스트 == Empty ?
-		 * - 오늘의 미션을 선정한 경우, 비워주기
-		 * - 아직 오늘의 미션이 선정되지 않은 경우
-		 * - 첫 오늘의 미션을 부여받을 때
-		 */
+		 * 아직 오늘의 미션이 선정되지 않은 경우
+		 * */
+		// 1) 처음 가입한 유저의 경우 or 필터링 로직을 거친 적이 없는 경우 -> 필터 거치기
+		if (user.getUserMissions().isEmpty() || user.getUserMissionChoice().isEmpty()) {
+			log.info("유저 {}의 UserMissions 선택지 리스트가 비어 있음", user.getNickname());
 
-		// 처음 가입한 유저의 경우
-		if (user.getUserMissions().isEmpty() && user.getUserMissionChoice().isEmpty()) {
 			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
 			user.setPreUserMissionChoice(todayMissionChoices);
 			log.info("첫 가입 유저 오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
 			return TodayMissionResponse.of(todayMissionChoices);
 		}
 
-		// 오늘의 미션이 선정된 경우
+		// 2) 필터링 로직을 한 번 이상 거친 경우 -> 저장된 거 가져오기
 		UserMission todayMission = user.getCurrentUserMission();
-		if (todayMission == null || user.getUserMissions().isEmpty()) {
-
-			// 아직 오늘의 미션이 선정되지 않은 경우
-			// 1) 필터링 로직을 거친 적이 없는 경우 -> 필터 거치기
-			// 2) 필터링 로직을 한 번 이상 거친 경우 -> 저장된 거 가져오기
-			if (user.getUserMissionChoice().isEmpty()) {
-				log.info("유저 {}의 UserMissions 선택지 리스트가 비어 있음", user.getNickname());
-
-				List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
-				user.setPreUserMissionChoice(todayMissionChoices);
-				log.info("오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
-				return TodayMissionResponse.of(todayMissionChoices);
-			} else {
-				log.info("오늘의 미션이 세팅된 상태: {}", user.getUserMissionChoice().size());
-				return TodayMissionResponse.of(user.getUserMissionChoice());
-			}
-
-		} else {
-			log.info("오늘의 미션이 선정된 상태: {}", todayMission.getMission().getContent());
-			return TodayMissionResponse.of(todayMission);
+		if (!validateTodayDateMission(todayMission) || !user.getUserMissionChoice().isEmpty()) {
+			log.info("오늘의 미션 선택지가 세팅된 상태: {}", user.getUserMissionChoice().size());
+			return TodayMissionResponse.of(user.getUserMissionChoice());
 		}
+
+		/**
+		 * 	 오늘의 미션이 선정된 경우
+		 */
+		log.info("오늘의 미션이 선정된 상태: {}", todayMission.getMission().getContent());
+		return TodayMissionResponse.of(todayMission);
 		// throw new MissionException(FAIL_TO_GET_TODAY_MISSION);
 	}
+
 
 	private List<UserMissionChoices> filterTodayUserMission(User user) {
 		final List<Mission> missionChoicesFiltered = new ArrayList<>();
@@ -325,6 +312,14 @@ public class UserMissionService {
 			.toList();
 	}
 
+	// 매칭된 유저의 탈퇴 여부 검사
+	private void checkMatchedUserWithdraw(User user) {
+		User opponentUser = getMatchedUserWith(user);
+		if (opponentUser.isDeleted()) {
+			throw new UserException(ALREADY_WITHDRAW_USER);
+		}
+	}
+
 	// 오늘의 미션 선정 여부 검사
 	private void checkMissionChoice(UserMission todayMission) {
 		if (!validateTodayDateMission(todayMission)) {
@@ -337,7 +332,6 @@ public class UserMissionService {
 		if (!todayMission.getCreatedAt().toLocalDate().equals(LocalDate.now())) {
 			log.info("오늘 날짜와 동일하지 않은 최근 미션!");
 			return false;
-			// throw new MissionException(NOT_CHOICE_TODAY_MISSION);
 		}
 		return true;
 	}
