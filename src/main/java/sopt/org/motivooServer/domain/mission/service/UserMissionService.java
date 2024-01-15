@@ -8,8 +8,13 @@ import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +43,8 @@ import sopt.org.motivooServer.domain.mission.repository.MissionRepository;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionChoicesRepository;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionRepository;
 import sopt.org.motivooServer.domain.parentchild.exception.ParentchildException;
-import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.domain.user.entity.User;
+import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.external.s3.PreSignedUrlResponse;
@@ -61,7 +66,6 @@ public class UserMissionService {
 
 	private static final int MAX_MISSION_CHOICES = 2;
 
-	// TODO userId를 이용하여 미션 리스트에서 하나 뽑아오기
 	@Transactional
 	public MissionImgUrlResponse getMissionImgUrl(final MissionImgUrlRequest request, final Long userId) {
 		User user = getUserById(userId);
@@ -74,18 +78,67 @@ public class UserMissionService {
 		return MissionImgUrlResponse.of(preSignedUrl.url(), preSignedUrl.fileName());
 	}
 
+	@Transactional
 	public MissionHistoryResponse getUserMissionHistory(final Long userId) {
 		User myUser = getUserById(userId);
 		User opponentUser = getMatchedUserWith(myUser);
 
 		UserMission todayMission = myUser.getCurrentUserMission();
-		checkMissionChoice(todayMission);
+		//checkMissionChoice(todayMission);
 
-		return MissionHistoryResponse.of(myUser, todayMission,
-			userMissionRepository.findUserMissionsByUserOrderByCreatedAt(myUser),
-			userMissionRepository.findUserMissionsByUserOrderByCreatedAt(opponentUser));
+		Map<LocalDate, List<UserMission>> missionsByDate = groupUserMissionsByDate(userId, opponentUser.getId());
+		log.info("missionsByDate size: {}", missionsByDate.size());
+		for (LocalDate localDateTime : missionsByDate.keySet()) {
+			log.info("missionsByDate.get(localDateTime) size: {}", missionsByDate.get(localDateTime).size());
+
+			// log.info("key={}, value={} 🥹{}", localDateTime, missionsByDate.get(localDateTime).get(0).getMission().getContent(),
+			// 	missionsByDate.get(localDateTime).get(1).getMission().getContent());
+		}
+		return MissionHistoryResponse.of(myUser, todayMission, missionsByDate);
 	}
 
+	private Map<LocalDate, List<UserMission>> groupUserMissionsByDate(Long myUserId, Long opponentUserId) {
+		List<User> users = userRepository.findAllByIds(Arrays.asList(myUserId, opponentUserId));  // 둘 중 1명이 탈퇴할 경우를 대비, ID값으로만 조회
+		List<UserMission> emptyUserMissions = new ArrayList<>();
+
+		// 두 유저가 가진 모든 UserMission의 createdAt 날짜 집합
+		Set<LocalDate> userDates = new HashSet<>();
+		users.forEach(user -> {
+			userDates.addAll(user.getUserMissions().stream()
+				.map(userMission -> userMission.getCreatedAt().toLocalDate())
+				.collect(Collectors.toSet()));
+			log.info("userDates.size(): {}", userDates.size());
+		});
+
+		users.forEach(user -> {
+			// 각 유저가 가진 날짜 집합
+			Set<LocalDate> myDates = user.getUserMissions().stream()
+				.map(userMission -> userMission.getCreatedAt().toLocalDate())
+				.collect(Collectors.toSet());
+
+			// userDates 과 myDates를 비교하여 없는 날짜에는 빈 값의 UserMission 생성해주기
+			userDates.forEach(date -> {
+				if (!myDates.contains(date)) {
+					UserMission um = UserMission.builderForEmpty()
+						.completedStatus(NONE)
+						.user(user)
+						.mission(getEmptyMission())
+						.build();
+
+					emptyUserMissions.add(um);
+					user.getUserMissions().add(um);
+
+					um.updateCreatedAt(date.atStartOfDay());  // 동일한 날짜로 세팅
+				}
+			});
+		});
+		userMissionRepository.saveAll(emptyUserMissions);
+
+		// 그룹화
+		return users.stream()
+			.flatMap(user -> user.getUserMissions().stream())
+			.collect(Collectors.groupingBy(userMission -> userMission.getCreatedAt().toLocalDate()));
+	}
 
 	@Transactional
 	public Long choiceTodayMission(final TodayMissionChoiceRequest request, final Long userId) {
@@ -315,5 +368,11 @@ public class UserMissionService {
 		return healthRepository.findByUser(user).orElseThrow(
 			() -> new HealthException(HEALTH_NOT_FOUND));
 	}
+
+	// 미션 히스토리 - 상대방의 오늘의 미션 미선정 시
+	private Mission getEmptyMission() {
+		return missionRepository.findMissionsByTarget(UserType.NONE).get(0);
+	}
+
 
 }

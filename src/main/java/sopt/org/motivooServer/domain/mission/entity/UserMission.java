@@ -56,6 +56,13 @@ public class UserMission extends BaseTimeEntity {
 		this.user = user;
 	}
 
+	@Builder(builderMethodName = "builderForEmpty")
+	private UserMission(CompletedStatus completedStatus, Mission mission, User user) {
+		this.completedStatus = completedStatus;
+		this.mission = mission;
+		this.user = user;
+	}
+
 	//== 연관관계 메서드 ==//
 	public void setUser(User user) {
 		this.user = user;

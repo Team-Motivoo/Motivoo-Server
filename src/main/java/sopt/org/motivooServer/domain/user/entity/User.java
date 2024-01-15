@@ -6,13 +6,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,6 +21,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
@@ -70,10 +75,10 @@ public class User extends BaseTimeEntity {
 	@JoinColumn(name = "parentchild_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Parentchild parentchild;
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
 	private final List<UserMission> userMissions = new ArrayList<>();
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	private final List<UserMissionChoices> userMissionChoice = new ArrayList<>();
 
 	@Builder
@@ -132,6 +137,7 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void setPreUserMissionChoice(List<UserMissionChoices> userMissionChoice) {
+		log.info("임시 UserMission 선택지(매일 자정 초기화 후, 메인 홈 첫 진입 시 업데이트: {}가지", userMissionChoice.size());
 		if (!this.userMissionChoice.isEmpty()) {
 			clearPreUserMissionChoice();
 		}

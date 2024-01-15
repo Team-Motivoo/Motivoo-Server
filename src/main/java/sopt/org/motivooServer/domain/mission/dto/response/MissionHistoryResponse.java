@@ -3,6 +3,7 @@ package sopt.org.motivooServer.domain.mission.dto.response;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -20,32 +21,26 @@ public record MissionHistoryResponse(
 ) {
 
 
-	public static MissionHistoryResponse of(User user, UserMission todayMission, List<UserMission> myMissions, List<UserMission> opponentMissions) {
-		List<UserMission> my = new ArrayList<>();
-		List<UserMission> opponent = new ArrayList<>();
+	public static MissionHistoryResponse of(User user, UserMission todayMission, Map<LocalDate, List<UserMission>> missionGroupsByDate) {
 
-		// createdAt 필드를 기준으로 동일하지 않은 날짜는 null로 대응시키기
-		for (UserMission myMission : myMissions) {
-			LocalDate myDate = myMission.getCreatedAt().toLocalDate();
-			UserMission opponentMission = opponentMissions.stream()
-				.filter(om -> myDate.equals(om.getCreatedAt().toLocalDate()))
-				.findFirst()
-				.orElse(null);
+		List<ParentchildMissionDto> parentchildMissions = new ArrayList<>(missionGroupsByDate.size());
 
-			if (opponentMission != null) {
-				my.add(myMission);
-				opponent.add(opponentMission);
-			} else {
-				my.add(myMission);
-				opponent.add(null);
-			}
+		for (Map.Entry<LocalDate, List<UserMission>> entry : missionGroupsByDate.entrySet()) {
+			parentchildMissions.add(ParentchildMissionDto.of(entry.getValue().get(0), entry.getValue().get(1)));
 		}
+		return MissionHistoryResponse.builder()
+			.userType(user.getType().getValue())
+			.todayMission(TodayUserMissionDto.ofHistory(todayMission))
+			.missionHistory(parentchildMissions).build();
+	}
+
+	public static MissionHistoryResponse of(User user, UserMission todayMission, List<UserMission> myMissions, List<UserMission> opponentMissions) {
 
 		return MissionHistoryResponse.builder()
 			.userType(user.getType().getValue())
 			.todayMission(TodayUserMissionDto.ofHistory(todayMission))
 			.missionHistory(IntStream.range(0, myMissions.size())
-				.mapToObj(i -> ParentchildMissionDto.of(my.get(i), opponent.get(i)))
+				.mapToObj(i -> ParentchildMissionDto.of(myMissions.get(i), opponentMissions.get(i)))
 				.collect(Collectors.toList()))
 			.build();
 	}

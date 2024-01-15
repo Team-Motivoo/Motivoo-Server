@@ -1,17 +1,16 @@
 package sopt.org.motivooServer.domain.user.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
-
 import sopt.org.motivooServer.domain.user.entity.User;
-
-import java.util.List;
 
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -45,4 +44,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u where u.id=?1 and u.deleted=false")
     Optional<User> findById(Long id);
+
+    @Query("SELECT u FROM User u WHERE u.id IN :ids")
+    List<User> findAllByIds(@Param("ids") List<Long> ids);
 }
