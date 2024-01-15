@@ -120,16 +120,33 @@ public class UserMissionService {
 		User myUser = getUserById(userId);
 		User opponentUser = getMatchedUserWith(myUser);
 
+		int myGoalStep = 0;
+		int opponentGoalStep = 0;
+
 		log.info("현재 접속한 유저 - {} X 나와 매칭된 부모자녀 유저 - {}", myUser.getNickname(), opponentUser.getNickname());
 
-		UserMission todayMission = myUser.getCurrentUserMission();
-		if (todayMission != null) {
-			checkMissionChoice(todayMission);
+		if (myUser.getUserMissions().isEmpty() || opponentUser.getUserMissions().isEmpty()) {
+			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
 		}
 
-		int currentStepCount = request.myStepCount();
+		UserMission todayMission = myUser.getCurrentUserMission();
+		UserMission opponentTodayMission = opponentUser.getCurrentUserMission();
+		if (opponentTodayMission != null) {
+			opponentGoalStep = opponentTodayMission.getMission().getStepCount();
+		}
 
-		return MissionStepStatusResponse.of(myUser, opponentUser, isStepCountCompleted(currentStepCount, todayMission));
+
+		if (todayMission != null && !validateTodayDateMission(todayMission)) {
+			log.info("todayMission = {} at {}", todayMission.getMission().getContent(), todayMission.getCreatedAt());
+			checkMissionChoice(todayMission);
+			myGoalStep = todayMission.getMission().getStepCount();
+
+			int currentStepCount = request.myStepCount();
+
+			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, isStepCountCompleted(currentStepCount, todayMission));
+		}
+		return MissionStepStatusResponse.of(myUser, opponentUser, 0, 0, false);
+
 	}
 
 	private boolean isStepCountCompleted(int currentStepCount, UserMission todayMission) {
@@ -165,7 +182,7 @@ public class UserMissionService {
 
 		// 오늘의 미션이 선정된 경우
 		UserMission todayMission = user.getCurrentUserMission();
-		if (todayMission == null || user.getUserMissions().isEmpty() || !validateTodayDateMission(todayMission)) {
+		if (todayMission == null || user.getUserMissions().isEmpty()) {
 
 			// 아직 오늘의 미션이 선정되지 않은 경우
 			// 1) 필터링 로직을 거친 적이 없는 경우 -> 필터 거치기
@@ -298,4 +315,5 @@ public class UserMissionService {
 		return healthRepository.findByUser(user).orElseThrow(
 			() -> new HealthException(HEALTH_NOT_FOUND));
 	}
+
 }

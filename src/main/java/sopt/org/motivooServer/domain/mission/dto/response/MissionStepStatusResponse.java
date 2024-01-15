@@ -11,7 +11,6 @@ import sopt.org.motivooServer.domain.user.entity.User;
 
 @Builder
 public record MissionStepStatusResponse(
-	String date,
 	@JsonProperty("user_type") String userType,
 	@JsonProperty("user_id") Long userId,
 	@JsonProperty("user_goal_step_count") Integer userGoalStepCount,
@@ -21,14 +20,13 @@ public record MissionStepStatusResponse(
 	@JsonProperty("is_opponent_user_withdraw") Boolean isOpponentUserWithdraw
 ) {
 
-	public static MissionStepStatusResponse of(User user, User opponentUser, Boolean status) {
+	public static MissionStepStatusResponse of(User user, User opponentUser, int myGoalStep, int opponentGoalStep, Boolean status) {
 		return MissionStepStatusResponse.builder()
-			.date(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)))
 			.userType(user.getType().getValue())
 			.userId(user.getId())
-			.userGoalStepCount(user.getCurrentUserMission().getMission().getStepCount())
+			.userGoalStepCount(myGoalStep)
 			.opponentUserId(opponentUser.getId())
-			.opponentUserGoalStepCount(opponentUser.getCurrentUserMission().getMission().getStepCount())
+			.opponentUserGoalStepCount(opponentGoalStep)
 			.isStepCountCompleted(status)
 			.isOpponentUserWithdraw(opponentUser.isDeleted()).build();
 	}
