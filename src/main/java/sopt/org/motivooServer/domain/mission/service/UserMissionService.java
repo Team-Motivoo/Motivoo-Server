@@ -38,6 +38,7 @@ import sopt.org.motivooServer.domain.mission.repository.MissionRepository;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionChoicesRepository;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionRepository;
 import sopt.org.motivooServer.domain.parentchild.exception.ParentchildException;
+import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
@@ -50,7 +51,6 @@ import sopt.org.motivooServer.global.external.s3.S3Service;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserMissionService {
-
 
 	private final UserMissionRepository userMissionRepository;
 	private final UserMissionChoicesRepository userMissionChoicesRepository;
@@ -144,6 +144,8 @@ public class UserMissionService {
 	public TodayMissionResponse getTodayMission(final Long userId) {
 		User user = getUserById(userId);
 		log.info("TodayMission이 있을까, 없을까? {}개 있음 ㅋㅋ", user.getUserMissionChoice().size());
+
+		// TODO 상대방이 탈퇴한 경우에 대한 예외처리?
 
 		/**
 		 * UserMissionChoice 리스트 == Empty ?

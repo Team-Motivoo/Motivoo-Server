@@ -16,6 +16,7 @@ public enum UserExceptionType implements BusinessExceptionType {
 	INVALID_SOCIAL_PLATFORM(HttpStatus.BAD_REQUEST, "유효하지 않은 소셜 플랫폼입니다."),
 	NULL_VALUE_USERTYPE_ENUM(HttpStatus.BAD_REQUEST, "데이터베이스의 유저 타입이 유효하지 않은 값입니다."),
 	NULL_VALUE_AGE(HttpStatus.BAD_REQUEST, "유저의 나이는 null이어서는 안 됩니다."),
+	ALREADY_WITHDRAW_USER(HttpStatus.BAD_REQUEST, "이미 탈퇴한 유저입니다."),
 
 
 	/**
