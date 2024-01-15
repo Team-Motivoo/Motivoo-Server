@@ -15,7 +15,7 @@ public class SlackTestController {
 
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<ApiResponse> exceptionTest() {
+	public ResponseEntity<ApiResponse<Object>> exceptionTest() {
 		throw new IllegalArgumentException();
 	}
 }
