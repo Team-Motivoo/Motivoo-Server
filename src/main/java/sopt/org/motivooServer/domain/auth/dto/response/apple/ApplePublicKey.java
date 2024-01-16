@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class ApplePublicKey {
-
     private String kty;
     private String kid;
     private String use;

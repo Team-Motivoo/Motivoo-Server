@@ -56,7 +56,6 @@ public class ParentchildService {
         log.info("user="+user.getNickname()+"유무="+request.isExercise()+"타입="+request.exerciseType()
                 +"횟수="+request.exerciseCount()+"시간="+request.exerciseTime()+"주의="+request.exerciseNote());
 
-
         if(!healthRepository.findByUser(user).isEmpty()) //두번 API 호출하는 것을 막음
             throw new HealthException(EXIST_ONBOARDING_INFO);
 

@@ -2,6 +2,7 @@ package sopt.org.motivooServer.domain.auth.service;
 
 import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.*;
 
+import feign.FeignException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
+import sopt.org.motivooServer.domain.auth.service.apple.AppleLoginService;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.exception.UserExceptionType;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
@@ -23,6 +26,7 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -36,16 +40,53 @@ public class OauthService {
     private final TokenRedisRepository tokenRedisRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final AppleLoginService appleLoginService;
+
     @Transactional
     public LoginResponse login(OauthTokenRequest tokenRequest) {
         String providerName = tokenRequest.tokenType();
-        ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
+
+        //카카오
+        if (providerName.equals("kakao")) {
+            ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
+
+            String refreshToken = jwtTokenProvider.createRefreshToken();
+            User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
+            String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getId()));
+
+            return getLoginResponse(user, accessToken, refreshToken);
+        }
+
+        //애플
+        String socialId = appleLoginService.getAppleId(tokenRequest.accessToken());
+
+        boolean isRegistered = userRepository.existsBySocialPlatformAndSocialId(SocialPlatform.of(tokenRequest.tokenType()), socialId);
 
         String refreshToken = jwtTokenProvider.createRefreshToken();
-        User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
-        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getId()));
+        if (!isRegistered) {
+            User user = User.builder()
+//                    .nickname(nickName)
+                    .socialId(socialId)
+                    .socialPlatform(SocialPlatform.of(tokenRequest.tokenType()))
+                    .socialAccessToken(tokenRequest.accessToken())
+                    .refreshToken(refreshToken)
+                    .type(UserType.NONE)
+                    .deleted(Boolean.FALSE)
+                    .build();
+            userRepository.save(user);
+        }
 
-        return getLoginResponse(user, accessToken, refreshToken);
+        List<User> users = userRepository.findBySocialPlatformAndSocialId(SocialPlatform.of(tokenRequest.tokenType()), socialId);
+        if (users.isEmpty()) throw new UserException(UserExceptionType.INVALID_USER_TYPE);
+        User loginUser = users.get(0);
+
+        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(loginUser.getId()));
+        OauthTokenResponse tokenDto = new OauthTokenResponse(accessToken, refreshToken);
+        loginUser.updateRefreshToken(tokenDto.refreshToke());
+
+
+        log.info("JWT Access Token: ", loginUser.getNickname(), tokenDto.accessToken());
+        return getLoginResponse(loginUser, accessToken, refreshToken);
     }
 
     private LoginResponse getLoginResponse(User user, String accessToken, String refreshToken) {
@@ -84,10 +125,19 @@ public class OauthService {
     }
 
     private SocialPlatform getSocialPlatform(String providerName) {
-        if (providerName.equals("kakao")) {
-            return SocialPlatform.KAKAO;
+        try {
+            switch (providerName){
+                case "kakao":
+                    return SocialPlatform.KAKAO;
+                case "apple":
+                    return SocialPlatform.APPLE;
+                default:
+                    throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
+
+            }
+        }catch (FeignException e){
+            throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
         }
-        throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
 
     }
 
