@@ -53,12 +53,13 @@ public class FirebaseConfig {
 			FirebaseApp.initializeApp(options);
 
 			DatabaseReference ref = FirebaseDatabase.getInstance()
-				.getReference("/public_resource");
+				.getReference("/Users");
 			ref.addListenerForSingleValueEvent(new ValueEventListener() {
 				@Override
 				public void onDataChange(DataSnapshot dataSnapshot) {
 					String res = (String)dataSnapshot.getValue();
 					System.out.println(res);
+					log.info("Firebase DB에서 받아온 데이터: {}", res);
 				}
 
 				@Override
@@ -66,6 +67,9 @@ public class FirebaseConfig {
 
 				}
 			});
+
+			log.info("파이어베이스 연결에 성공했습니다.");
+
 
 		} catch (IOException e) {
 			log.error("파이어베이스 서버와의 연결에 실패했습니다.");
