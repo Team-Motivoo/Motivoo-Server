@@ -36,6 +36,7 @@ public class FirebaseConfig {
 
 	@PostConstruct
 	public void init() {
+		log.info("Firebase 파일명: {}", SERVICE_ACCOUNT_JSON);
 		try {
 			ClassPathResource resource = new ClassPathResource(SERVICE_ACCOUNT_JSON);
 			InputStream serviceAccount = resource.getInputStream();
@@ -49,10 +50,7 @@ public class FirebaseConfig {
 
 			FirebaseApp.initializeApp(options);
 
-			// getOpponentStepCount();
-
 			log.info("파이어베이스 연결에 성공했습니다.");
-
 
 		} catch (IOException e) {
 			log.error("파이어베이스 서버와의 연결에 실패했습니다.");

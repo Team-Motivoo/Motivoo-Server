@@ -1,44 +1,42 @@
 package sopt.org.motivooServer.controller;
 
-import com.epages.restdocs.apispec.ResourceSnippetParameters;
-import lombok.extern.slf4j.Slf4j;
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
+import static com.epages.restdocs.apispec.ResourceDocumentation.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static sopt.org.motivooServer.global.response.SuccessType.*;
+import static sopt.org.motivooServer.util.ApiDocumentUtil.*;
+
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.restdocs.mockmvc.*;
-import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+
+import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
 import sopt.org.motivooServer.domain.health.dto.response.CheckOnboardingResponse;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
 import sopt.org.motivooServer.domain.parentchild.controller.ParentChildController;
-import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
-import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static sopt.org.motivooServer.global.response.SuccessType.*;
-import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentRequest;
-import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentResponse;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-
-import javax.management.openmbean.SimpleType;
 
 @Slf4j
+@WithMockUser(roles = "USER")
 @DisplayName("ParentchildController 테스트")
 @WebMvcTest(ParentchildControllerTest.class)
 public class ParentchildControllerTest extends BaseControllerTest {
