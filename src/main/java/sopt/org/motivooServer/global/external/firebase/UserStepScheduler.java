@@ -34,7 +34,7 @@ public class UserStepScheduler {
 	public void readUserStep() {
 		log.info("유저 걸음 수 읽기 연산 스케줄러 실행");
 		try {
-			firebaseService.selectUserStep();
+			firebaseService.selectAllUserStep();
 			log.info("스케줄러에서 유저 select 성공");
 		} catch (Exception e) {
 			log.error("파이어베이스 스케줄러 실행 중 발생한 에러: {}", e.getMessage());
