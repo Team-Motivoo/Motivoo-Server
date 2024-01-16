@@ -27,4 +27,8 @@ public enum ErrorType {
 	public int getHttpStatusCode() {
 		return httpStatus.value();
 	}
+
+	public String message() {
+		return this.message;
+	}
 }

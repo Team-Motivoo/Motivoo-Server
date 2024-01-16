@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import sopt.org.motivooServer.global.advice.BusinessExceptionType;
+import sopt.org.motivooServer.global.advice.ErrorType;
 
 @Getter
 @Builder
@@ -55,6 +56,15 @@ public class ApiResponse<T> {
 			.body(ApiResponse.<T>builder()
 				.code(exceptionType.getHttpStatusCode())
 				.message(exceptionType.message())
+				.success(false)
+				.data(data).build());
+	}
+
+	public static <T> ResponseEntity<ApiResponse<T>> fail(ErrorType errorType, T data) {
+		return ResponseEntity.status(errorType.getHttpStatus())
+			.body(ApiResponse.<T>builder()
+				.code(errorType.getHttpStatusCode())
+				.message(errorType.message())
 				.success(false)
 				.data(data).build());
 	}
