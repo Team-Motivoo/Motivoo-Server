@@ -59,9 +59,11 @@ public class SecurityConfig {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins("*")
-						.allowedOriginPatterns("*")
-						.allowedMethods("*");
+					.allowedOrigins("*")
+					.allowedOriginPatterns("*")
+					.allowedMethods("OPTIONS", "GET", "POST", "PATCH", "PUT", "DELETE")
+					.allowCredentials(true)
+					.maxAge(3600);
 			}
 		};
 	}

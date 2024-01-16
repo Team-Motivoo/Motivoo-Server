@@ -25,6 +25,11 @@ public enum CommonExceptionType implements BusinessExceptionType{
 	FAIL_TO_AUTHENTICATE_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "내부 인증 필터를 거치는 데 실패한 액세스 토큰입니다"),
 	TOKEN_NOT_CONTAINS_USER_ID(HttpStatus.UNAUTHORIZED, "리프레시 토큰은 유저 아이디를 담고있지 않습니다."),
 
+	/**
+	 * 500 Internal Server Error
+	 */
+	FIREBASE_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파이어베이스와의 연결에 실패했습니다."),
+
 	;
 
 	private final HttpStatus status;
