@@ -23,7 +23,6 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.mission.controller.HomeController;
-import sopt.org.motivooServer.domain.mission.dto.request.MissionStepStatusRequest;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
@@ -46,7 +45,6 @@ public class HomeControllerTest extends BaseControllerTest{
 	void getMissionCompleted() throws Exception {
 
 		// given
-		MissionStepStatusRequest request = new MissionStepStatusRequest(14000, 3000);
 		MissionStepStatusResponse response =  MissionStepStatusResponse.builder()
 			.userType("CHILD")
 			.userId(2L)
@@ -60,13 +58,12 @@ public class HomeControllerTest extends BaseControllerTest{
 			GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS, response);
 
 		// when
-		when(homeController.getMissionCompleted(request, principal)).thenReturn(result);
+		when(homeController.getMissionCompleted(principal)).thenReturn(result);
 
 		// then
 		mockMvc.perform(patch(DEFAULT_URL)
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(request))
 			.principal(principal)
 		).andDo(
 			document("홈 화면 미션 달성 상태 조회 API 성공 Example",

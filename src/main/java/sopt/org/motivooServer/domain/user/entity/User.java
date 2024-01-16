@@ -137,11 +137,11 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void setPreUserMissionChoice(List<UserMissionChoices> userMissionChoice) {
-		log.info("임시 UserMission 선택지(매일 자정 초기화 후, 메인 홈 첫 진입 시 업데이트: {}가지", userMissionChoice.size());
-		if (!this.userMissionChoice.isEmpty()) {
-			clearPreUserMissionChoice();
+		log.info("임시 UserMission 선택지(매일 자정 초기화 후, 메인 홈 첫 진입 시 업데이트: {}가지 / User-{}가지", userMissionChoice.size(), this.userMissionChoice.size());
+		if (this.userMissionChoice.isEmpty()) {
+			this.userMissionChoice.addAll(userMissionChoice);
 		}
-		this.userMissionChoice.addAll(userMissionChoice);
+
 	}
 
 	// 가장 최근의 운동 미션 조회
