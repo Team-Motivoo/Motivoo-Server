@@ -43,7 +43,7 @@
 
 
 ## 🔧 시스템 아키텍처
-<img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/df301bbd-1d3e-49aa-bc9d-c4ebdec046cd" />
+<img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/c557f8ff-1d10-4b9c-82fa-057f85c52caf" />
 <br/><br/>
 
 ## ☁️ ERD
