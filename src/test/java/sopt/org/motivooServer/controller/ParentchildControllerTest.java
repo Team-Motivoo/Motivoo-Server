@@ -15,6 +15,8 @@ import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
 import sopt.org.motivooServer.domain.health.dto.response.CheckOnboardingResponse;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
 import sopt.org.motivooServer.domain.parentchild.controller.ParentChildController;
+import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
+import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
@@ -30,8 +32,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static sopt.org.motivooServer.global.response.SuccessType.CHECK_ONBOARDING_INFO_SUCCESS;
-import static sopt.org.motivooServer.global.response.SuccessType.ONBOARDING_SUCCESS;
+import static sopt.org.motivooServer.global.response.SuccessType.*;
 import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentRequest;
 import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentResponse;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -41,7 +42,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 @WebMvcTest(ParentchildControllerTest.class)
 public class ParentchildControllerTest extends BaseControllerTest {
 
-    private static final String DEFAULT_URL = "/user";
     private final String TAG = "parentchild";
 
     @MockBean
@@ -72,7 +72,7 @@ public class ParentchildControllerTest extends BaseControllerTest {
         when(parentChildController.onboardInput(request, principal)).thenReturn(result);
 
         //then
-        mockMvc.perform(RestDocumentationRequestBuilders.post(DEFAULT_URL+"/exercise")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/user/exercise")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
@@ -118,7 +118,7 @@ public class ParentchildControllerTest extends BaseControllerTest {
         when(parentChildController.checkOnboardingInfo(principal)).thenReturn(result);
 
         //then
-        mockMvc.perform(get(DEFAULT_URL+"/onboarding")
+        mockMvc.perform(get("/user/onboarding")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .principal(principal)
@@ -141,6 +141,51 @@ public class ParentchildControllerTest extends BaseControllerTest {
                         )
                 )).andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+    @Test
+    @DisplayName("초대 코드 입력(매칭) 테스트")
+    void validateInviteCode() throws Exception {
+        //given
+        InviteRequest request = new InviteRequest("aaaaaaaa");
+        InviteResponse response = new InviteResponse(1L, true, false);
+
+        ResponseEntity<ApiResponse<InviteResponse>> result = ApiResponse.success(
+                INPUT_INVITE_CODE_SUCCESS, response);
+        //when
+        when(parentChildController.validateInviteCode(request, principal)).thenReturn(result);
+
+        //then
+        mockMvc.perform(patch("/parentchild/match")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .principal(principal)
+        ).andDo(
+                document("초대 코드 입력 API 성공 Example",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag(TAG)
+                                        .description("초대 코드 입력 후 부모-자식 관계 매칭하는 API")
+                                        .requestFields(
+                                                fieldWithPath("invite_code").type(JsonFieldType.STRING).description("제공받은 초대 코드")
+                                        )
+                                        .responseFields(
+                                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("data").description("응답 데이터"),
+                                                fieldWithPath("data.user_id").type(LONG).description("유저 아이디"),
+                                                fieldWithPath("data.is_matched").type(BOOLEAN).description("매칭 여부"),
+                                                fieldWithPath("data.my_invite_code").type(BOOLEAN).description("내가 발급한 코드인지 판별"))
+                                        .build()
+                        )
+                )).andExpect(MockMvcResultMatchers.status().isOk());
+
+    }
+
+
 
 
 }
