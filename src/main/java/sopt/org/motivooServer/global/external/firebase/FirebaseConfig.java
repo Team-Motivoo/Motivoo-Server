@@ -2,6 +2,7 @@ package sopt.org.motivooServer.global.external.firebase;
 
 import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -38,8 +39,9 @@ public class FirebaseConfig {
 	public void init() {
 		log.info("Firebase 파일명: {}", SERVICE_ACCOUNT_JSON);
 		try {
-			ClassPathResource resource = new ClassPathResource(SERVICE_ACCOUNT_JSON);
-			InputStream serviceAccount = resource.getInputStream();
+			// ClassPathResource resource = new ClassPathResource(SERVICE_ACCOUNT_JSON);
+			FileInputStream serviceAccount = new FileInputStream("src/main/resources/"+SERVICE_ACCOUNT_JSON);
+			// InputStream serviceAccount = resource.getInputStream();
 			log.info("파일 가져오기 성공!");
 
 			FirebaseOptions options = FirebaseOptions.builder()
