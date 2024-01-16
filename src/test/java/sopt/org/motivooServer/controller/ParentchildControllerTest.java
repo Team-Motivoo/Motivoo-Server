@@ -17,6 +17,7 @@ import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
 import sopt.org.motivooServer.domain.parentchild.controller.ParentChildController;
 import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
 import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
+import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
@@ -185,7 +186,42 @@ public class ParentchildControllerTest extends BaseControllerTest {
 
     }
 
+    @Test
+    @DisplayName("매칭 여부 확인 테스트")
+    void validateMatching() throws Exception {
+        //given
+        MatchingResponse response = new MatchingResponse(true, 1L, 7L);
+        ResponseEntity<ApiResponse<MatchingResponse>> result = ApiResponse
+                .success(MATCHING_SUCCESS, response);
+        //when
+        when(parentChildController.validateMatching(principal)).thenReturn(result);
 
+        //then
+        mockMvc.perform(get("/onboarding/match")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .principal(principal)
+        ).andDo(
+                document("매칭 여부 확인 Example",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag(TAG)
+                                        .description("유저의 부모-자녀 매칭을 확인하는 API")
+                                        .requestFields()
+                                        .responseFields(
+                                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("data").description("응답 데이터"),
+                                                fieldWithPath("data.is_matched").type(BOOLEAN).description("매칭 여부"),
+                                                fieldWithPath("data.user_id").type(LONG).description("유저 자신의 아이디"),
+                                                fieldWithPath("data.opponent_user_id").type(LONG).description("매칭된 상대 유저의 아이디"))
+                                        .build()
+                        )
+                )).andExpect(MockMvcResultMatchers.status().isOk());
+    }
 
 
 }
