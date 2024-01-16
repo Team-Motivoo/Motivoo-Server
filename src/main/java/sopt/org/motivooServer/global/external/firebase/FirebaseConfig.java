@@ -1,7 +1,6 @@
 package sopt.org.motivooServer.global.external.firebase;
 
 import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
-import static sopt.org.motivooServer.global.advice.ErrorType.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,26 +46,12 @@ public class FirebaseConfig {
 			FirebaseOptions options = FirebaseOptions.builder()
 				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
 				.setDatabaseUrl("https://"+FIREBASE_DB+".firebaseio.com")
-				.setDatabaseAuthVariableOverride(auth)
+				.setDatabaseAuthVariableOverride(null)
 				.build();
 
 			FirebaseApp.initializeApp(options);
 
-			DatabaseReference ref = FirebaseDatabase.getInstance()
-				.getReference("/Users");
-			ref.addListenerForSingleValueEvent(new ValueEventListener() {
-				@Override
-				public void onDataChange(DataSnapshot dataSnapshot) {
-					String res = (String)dataSnapshot.getValue();
-					System.out.println(res);
-					log.info("Firebase DB에서 받아온 데이터: {}", res);
-				}
-
-				@Override
-				public void onCancelled(DatabaseError error) {
-
-				}
-			});
+			// getOpponentStepCount();
 
 			log.info("파이어베이스 연결에 성공했습니다.");
 
@@ -75,5 +60,23 @@ public class FirebaseConfig {
 			log.error("파이어베이스 서버와의 연결에 실패했습니다.");
 			throw new BusinessException(FIREBASE_CONNECTION_ERROR);
 		}
+	}
+
+	public void getOpponentStepCount(Long opponentUid, Long opponentStepCount) {
+		DatabaseReference ref = FirebaseDatabase.getInstance()
+			.getReference("/Users");
+
+		ref.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				DataSnapshot res = dataSnapshot.child(opponentUid.toString());
+				log.info("Firebase DB에서 받아온 데이터: {}", res.getValue());
+			}
+
+			@Override
+			public void onCancelled(DatabaseError error) {
+
+			}
+		});
 	}
 }

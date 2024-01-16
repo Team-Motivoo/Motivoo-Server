@@ -29,6 +29,8 @@ public enum CommonExceptionType implements BusinessExceptionType{
 	 * 500 Internal Server Error
 	 */
 	FIREBASE_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파이어베이스와의 연결에 실패했습니다."),
+	FIREBASE_DB_INSERT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파이어베이스 DB에 쓰기를 수행하는 데 에러가 발생했습니다."),
+	FIREBASE_DB_READ_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파이어베이스 DB에 읽기를 수행하는 데 에러가 발생했습니다."),
 
 	;
 
