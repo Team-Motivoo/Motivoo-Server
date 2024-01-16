@@ -56,7 +56,6 @@ public class ParentchildService {
         log.info("user="+user.getNickname()+"유무="+request.isExercise()+"타입="+request.exerciseType()
                 +"횟수="+request.exerciseCount()+"시간="+request.exerciseTime()+"주의="+request.exerciseNote());
 
-
         if(!healthRepository.findByUser(user).isEmpty()) //두번 API 호출하는 것을 막음
             throw new HealthException(EXIST_ONBOARDING_INFO);
 
@@ -107,17 +106,31 @@ public class ParentchildService {
         Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode());
 
         //잘못된 초대 코드를 입력하는 경우
-        if(parentchild == null){
-            return new InviteResponse(userId, false, false);
+        if(parentchild == null)
+            return new InviteResponse(userId, false, false, false);
+
+        //1. 온보딩 정보 입력을 한 적이 있고 2. 내가 발급한 초대 코드인 경우
+        if(!healthRepository.findByUser(user).isEmpty() && user.getParentchild() == parentchild)
+            return new InviteResponse(userId, false, true, true);
+        //1. 온보딩 정보 입력을 한 적이 있고 2. 내가 발급한 초대 코드가 아닌 경우 [매칭 완료]
+        else if(!healthRepository.findByUser(user).isEmpty() && user.getParentchild() != parentchild) {
+            parentchild.matchingSuccess();
+            user.addParentChild(parentchild);
+            return new InviteResponse(userId, true, false, true);
+        }
+        //1. 온보딩 정보 입력을 한 적이 없고 2. 내가 발급한 초대 코드가 아닌 경우 [매칭 완료]
+        else if(healthRepository.findByUser(user).isEmpty() && user.getParentchild() != parentchild) {
+            parentchild.matchingSuccess();
+            user.addParentChild(parentchild);
+            return new InviteResponse(userId, true, false, false);
         }
 
-        if(user.getParentchild() == parentchild) //내가 발급한 코드를 내가 입력한 경우
-            return new InviteResponse(userId, false, true);
-
         checkForOneToOneMatch(parentchild); //이미 매칭이 완료된 경우 예외처리
+
+        //매칭 완료
         parentchild.matchingSuccess();
         user.addParentChild(parentchild);
-        return new InviteResponse(userId, true, false);
+        return new InviteResponse(userId, true, false, false); //[매칭 완료]
 
     }
 

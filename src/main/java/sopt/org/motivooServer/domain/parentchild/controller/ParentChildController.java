@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
 import sopt.org.motivooServer.domain.health.dto.response.CheckOnboardingResponse;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
@@ -21,6 +22,7 @@ import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.getUser
 import static sopt.org.motivooServer.global.response.SuccessType.*;
 
 @Slf4j
+@EnableWebMvc
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ParentChildController {

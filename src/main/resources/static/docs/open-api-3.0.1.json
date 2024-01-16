@@ -264,23 +264,6 @@
   },
   "components" : {
     "schemas" : {
-      "mission-today-912747800" : {
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "number",
-            "description" : "상태 코드"
-          },
-          "success" : {
-            "type" : "boolean",
-            "description" : "응답 성공 여부"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "상태 메세지"
-          }
-        }
-      },
       "api-health279159985" : {
         "type" : "object",
         "properties" : {

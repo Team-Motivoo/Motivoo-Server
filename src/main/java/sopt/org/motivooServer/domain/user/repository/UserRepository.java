@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
+
+import sopt.org.motivooServer.domain.user.entity.SocialPlatform;
 import sopt.org.motivooServer.domain.user.entity.User;
 
 
@@ -41,6 +43,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("UPDATE User u SET u.deleted=true WHERE u.id=?1")
     void updateDelete(Long userId);
+
+    boolean existsBySocialPlatformAndSocialId(SocialPlatform socialPlatform, String socialId);
+
+    List<User> findBySocialPlatformAndSocialId(SocialPlatform socialPlatform, String socialId);
 
     @Query("select u from User u where u.id=?1 and u.deleted=false")
     Optional<User> findById(Long id);
