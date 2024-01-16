@@ -1,9 +1,7 @@
 package sopt.org.motivooServer.global.external.firebase;
 
-import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +18,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import sopt.org.motivooServer.domain.user.entity.User;
-import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.advice.BusinessException;
 
@@ -34,8 +30,7 @@ public class FirebaseService {
 	private final UserRepository userRepository;
 
 	public void insertUserStep() {
-		final FirebaseDatabase database = FirebaseDatabase.getInstance();
-		DatabaseReference ref = database.getReference(COLLECTION_NAME);
+		DatabaseReference ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
 
 		Map<String, Integer> userSteps = new HashMap<>();
 		userRepository.findAllByDeleted(false)
@@ -47,8 +42,7 @@ public class FirebaseService {
 	}
 
 	public void insertUserStepById(Long id) {
-		final FirebaseDatabase database = FirebaseDatabase.getInstance();
-		DatabaseReference ref = database.getReference(COLLECTION_NAME);
+		DatabaseReference ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
 
 		Map<String, Integer> userSteps = new HashMap<>();
 		userSteps.put(id.toString(), 0);
@@ -59,16 +53,13 @@ public class FirebaseService {
 	}
 
 	public void selectAllUserStep() {
-		final FirebaseDatabase database = FirebaseDatabase.getInstance();
-		DatabaseReference ref = database.getReference(COLLECTION_NAME);
-
+		DatabaseReference ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
 		readAllData(ref);
 	}
 
 	public Map<String, Integer> selectUserStep(List<Long> ids) {
 		try {
-			final FirebaseDatabase database = FirebaseDatabase.getInstance();
-			DatabaseReference ref = database.getReference(COLLECTION_NAME);
+			DatabaseReference ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
 
 			return readDataByIds(ids.stream().map(Object::toString)
 				.collect(Collectors.toList()), ref);
@@ -121,5 +112,16 @@ public class FirebaseService {
 				System.out.println("Failed to read value." + databaseError.toException());
 			}
 		});
+	}
+
+	public void deleteUserStep(Long id) {
+		DatabaseReference ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
+
+		Map<String, Integer> userSteps = new HashMap<>();
+		userSteps.put(id.toString(), null);  // null을 전달하면 지정된 위치에서 데이터가 삭제됨
+
+		ref.setValueAsync(userSteps);
+
+		log.info("탈퇴한 유저의 데이터 delete 성공!");
 	}
 }
