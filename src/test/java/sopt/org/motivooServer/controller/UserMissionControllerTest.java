@@ -174,6 +174,7 @@ public class UserMissionControllerTest extends BaseControllerTest{
 							fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
 							fieldWithPath("data").description("응답 데이터"),
 							fieldWithPath("data.is_choice_finished").type(BOOLEAN).description("미션 선정 여부 → false"),
+							fieldWithPath("data.date").type(NULL).description("오늘의 날짜"),
 							fieldWithPath("data.mission_choice_list").type(NULL).description("오늘의 미션 선택지 리스트"),
 							// fieldWithPath("data.mission_choice_list[]").type(OBJECT).description(""),
 							// fieldWithPath("data.mission_choice_list[].mission_id").type(NUMBER).description("미션 번호"),

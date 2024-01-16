@@ -61,4 +61,8 @@ public class Mission extends BaseTimeEntity {
 		this.bodyPart = bodyPart;
 		this.iconUrl = iconUrl;
 	}
+
+	public void updateContentText() {
+		this.content = this.content.replace("걷고 ", "걷고\n");
+	}
 }

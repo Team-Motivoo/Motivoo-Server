@@ -1,6 +1,5 @@
 package sopt.org.motivooServer.domain.mission.dto.response;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
