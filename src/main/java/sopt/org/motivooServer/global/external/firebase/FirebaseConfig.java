@@ -39,9 +39,7 @@ public class FirebaseConfig {
 		try {
 			ClassPathResource resource = new ClassPathResource(SERVICE_ACCOUNT_JSON);
 			InputStream serviceAccount = resource.getInputStream();
-
-			Map<String, Object> auth = new HashMap<String, Object>();
-			auth.put("uid", "motivoo-user");
+			log.info("파일 가져오기 성공!");
 
 			FirebaseOptions options = FirebaseOptions.builder()
 				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
