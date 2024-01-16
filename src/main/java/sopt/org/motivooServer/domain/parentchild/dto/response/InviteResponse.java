@@ -10,7 +10,10 @@ public record InviteResponse (
         boolean isMatched,
 
         @JsonProperty("my_invite_code")
-        boolean myInviteCode
+        boolean myInviteCode,
+
+        @JsonProperty("is_finished_onboarding")
+        boolean isFinishedOnboarding
 ){
 
 }

@@ -16,7 +16,7 @@ import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INV
 @Service
 public class AppleLoginService {
 
-    private final AppleApiClient appleApiClient;
+    private AppleApiClient appleApiClient;
     private final AppleJwtParser appleJwtParser;
     private final PublicKeyGenerator publicKeyGenerator;
     private final AppleClaimsValidator appleClaimsValidator;

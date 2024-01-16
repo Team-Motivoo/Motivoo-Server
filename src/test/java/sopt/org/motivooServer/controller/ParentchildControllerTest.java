@@ -148,7 +148,7 @@ public class ParentchildControllerTest extends BaseControllerTest {
     void validateInviteCode() throws Exception {
         //given
         InviteRequest request = new InviteRequest("aaaaaaaa");
-        InviteResponse response = new InviteResponse(1L, true, false);
+        InviteResponse response = new InviteResponse(1L, true, false, false);
 
         ResponseEntity<ApiResponse<InviteResponse>> result = ApiResponse.success(
                 INPUT_INVITE_CODE_SUCCESS, response);
