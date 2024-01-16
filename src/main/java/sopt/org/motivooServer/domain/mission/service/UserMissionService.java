@@ -8,9 +8,15 @@ import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +44,8 @@ import sopt.org.motivooServer.domain.mission.repository.MissionRepository;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionChoicesRepository;
 import sopt.org.motivooServer.domain.mission.repository.UserMissionRepository;
 import sopt.org.motivooServer.domain.parentchild.exception.ParentchildException;
-import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.domain.user.entity.User;
+import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.external.s3.PreSignedUrlResponse;
@@ -61,7 +67,6 @@ public class UserMissionService {
 
 	private static final int MAX_MISSION_CHOICES = 2;
 
-	// TODO userId를 이용하여 미션 리스트에서 하나 뽑아오기
 	@Transactional
 	public MissionImgUrlResponse getMissionImgUrl(final MissionImgUrlRequest request, final Long userId) {
 		User user = getUserById(userId);
@@ -74,18 +79,59 @@ public class UserMissionService {
 		return MissionImgUrlResponse.of(preSignedUrl.url(), preSignedUrl.fileName());
 	}
 
+	@Transactional
 	public MissionHistoryResponse getUserMissionHistory(final Long userId) {
 		User myUser = getUserById(userId);
 		User opponentUser = getMatchedUserWith(myUser);
 
 		UserMission todayMission = myUser.getCurrentUserMission();
-		checkMissionChoice(todayMission);
+		//checkMissionChoice(todayMission);
 
-		return MissionHistoryResponse.of(myUser, todayMission,
-			userMissionRepository.findUserMissionsByUserOrderByCreatedAt(myUser),
-			userMissionRepository.findUserMissionsByUserOrderByCreatedAt(opponentUser));
+		Map<LocalDate, List<UserMission>> missionsByDate = groupUserMissionsByDate(userId, opponentUser.getId());
+		log.info("missionsByDate size: {}", missionsByDate.size());
+		for (LocalDate localDateTime : missionsByDate.keySet()) {
+			log.info("missionsByDate.get(localDateTime) size: {}", missionsByDate.get(localDateTime).size());
+
+			// log.info("key={}, value={} 🥹{}", localDateTime, missionsByDate.get(localDateTime).get(0).getMission().getContent(),
+			// 	missionsByDate.get(localDateTime).get(1).getMission().getContent());
+		}
+		return MissionHistoryResponse.of(myUser, todayMission, missionsByDate);
 	}
 
+	private Map<LocalDate, List<UserMission>> groupUserMissionsByDate(Long myUserId, Long opponentUserId) {
+		List<User> users = userRepository.findAllByIds(Arrays.asList(myUserId, opponentUserId));  // 둘 중 1명이 탈퇴할 경우를 대비, ID값으로만 조회
+		List<UserMission> emptyUserMissions = new ArrayList<>();
+
+		// 두 유저가 가진 모든 UserMission의 createdAt 날짜 집합
+		Set<LocalDate> userDates = new HashSet<>();
+		users.forEach(user -> {
+			userDates.addAll(user.getUserMissions().stream()
+				.map(userMission -> userMission.getCreatedAt().toLocalDate())
+				.collect(Collectors.toSet()));
+			log.info("userDates.size(): {}", userDates.size());
+		});
+
+		users.forEach(user -> {
+			// 각 유저가 가진 날짜 집합
+			Set<LocalDate> myDates = user.getUserMissions().stream()
+				.map(userMission -> userMission.getCreatedAt().toLocalDate())
+				.collect(Collectors.toSet());
+
+			// userDates 과 myDates를 비교하여 없는 날짜에는 빈 값의 UserMission 생성해주기
+			userDates.forEach(date -> {
+				if (!myDates.contains(date)) {
+					UserMission um = createEmptyUserMission(user, date);
+					emptyUserMissions.add(um);
+				}
+			});
+		});
+		userMissionRepository.saveAll(emptyUserMissions);
+
+		// 그룹화
+		return users.stream()
+			.flatMap(user -> user.getUserMissions().stream())
+			.collect(Collectors.groupingBy(userMission -> userMission.getCreatedAt().toLocalDate()));
+	}
 
 	@Transactional
 	public Long choiceTodayMission(final TodayMissionChoiceRequest request, final Long userId) {
@@ -93,15 +139,11 @@ public class UserMissionService {
 		validateTodayMissionRequest(request.missionId(), user);
 
 		Mission mission = getMissionById(request.missionId());
+		if (validateTodayDateMission(user.getCurrentUserMission())) {
+			throw new MissionException(ALREADY_CHOICE_TODAY_MISSION);
+		}
 
-		UserMission userMission = UserMission.builder()
-			.mission(mission)
-			.missionQuest(missionQuestRepository.findRandomMissionQuest())
-			.user(user)
-			.completedStatus(IN_PROGRESS).build();
-
-		userMissionRepository.save(userMission);
-		user.addUserMission(userMission);
+		UserMission userMission = createTodayUserMission(mission, user);
 		user.clearPreUserMissionChoice();  // 오늘의 미션을 선정했다면, 선택지 리스트는 비워주기
 		return userMission.getId();
 	}
@@ -125,11 +167,35 @@ public class UserMissionService {
 
 		log.info("현재 접속한 유저 - {} X 나와 매칭된 부모자녀 유저 - {}", myUser.getNickname(), opponentUser.getNickname());
 
-		if (myUser.getUserMissions().isEmpty() || opponentUser.getUserMissions().isEmpty()) {
+		boolean myUserMissionsEmpty = myUser.getUserMissions().isEmpty();
+		boolean opponentUserMissionsEmpty = opponentUser.getUserMissions().isEmpty();
+
+		if (myUserMissionsEmpty && opponentUserMissionsEmpty) {
 			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
 		}
 
-		UserMission todayMission = myUser.getCurrentUserMission();
+		if (!opponentUserMissionsEmpty) {
+			UserMission opponentCurrentUserMission = opponentUser.getCurrentUserMission();
+			opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ? opponentCurrentUserMission.getMission().getStepCount() : 0;
+			assert opponentCurrentUserMission != null;
+			isStepCountCompleted(request.opponentStepCount(), opponentCurrentUserMission);
+		}
+
+		if (!myUserMissionsEmpty) {
+			UserMission myCurrentUserMission = myUser.getCurrentUserMission();
+			if (!validateTodayDateMission(myCurrentUserMission)) {
+				return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
+			}
+			myGoalStep = myCurrentUserMission.getMission().getStepCount();
+			boolean stepCountCompleted = isStepCountCompleted(request.myStepCount(), myCurrentUserMission);
+			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted);
+		}
+
+
+		return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
+
+
+	/*	UserMission todayMission = myUser.getCurrentUserMission();
 		UserMission opponentTodayMission = opponentUser.getCurrentUserMission();
 		if (opponentTodayMission != null) {
 			opponentGoalStep = opponentTodayMission.getMission().getStepCount();
@@ -145,7 +211,7 @@ public class UserMissionService {
 
 			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, isStepCountCompleted(currentStepCount, todayMission));
 		}
-		return MissionStepStatusResponse.of(myUser, opponentUser, 0, 0, false);
+		return MissionStepStatusResponse.of(myUser, opponentUser, 0, 0, false);*/
 
 	}
 
@@ -161,50 +227,46 @@ public class UserMissionService {
 	@Transactional  // TODO 여기 최대한 분리해보자
 	public TodayMissionResponse getTodayMission(final Long userId) {
 		User user = getUserById(userId);
+		checkMatchedUserWithdraw(user);
 		log.info("TodayMission이 있을까, 없을까? {}개 있음 ㅋㅋ", user.getUserMissionChoice().size());
 
-		// TODO 상대방이 탈퇴한 경우에 대한 예외처리?
-
 		/**
-		 * UserMissionChoice 리스트 == Empty ?
-		 * - 오늘의 미션을 선정한 경우, 비워주기
-		 * - 아직 오늘의 미션이 선정되지 않은 경우
-		 * - 첫 오늘의 미션을 부여받을 때
-		 */
+		 * 아직 오늘의 미션이 선정되지 않은 경우
+		 * */
+		// 1) 처음 가입한 유저의 경우 or 필터링 로직을 거친 적이 없는 경우 -> 필터 거치기
+		if ((user.getUserMissions().isEmpty() && user.getUserMissionChoice().isEmpty())) {
+			log.info("유저 {}의 UserMissions, UserMissionChoices 리스트가 비어 있음", user.getNickname());
 
-		// 처음 가입한 유저의 경우
-		if (user.getUserMissions().isEmpty() && user.getUserMissionChoice().isEmpty()) {
 			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
 			user.setPreUserMissionChoice(todayMissionChoices);
 			log.info("첫 가입 유저 오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
 			return TodayMissionResponse.of(todayMissionChoices);
 		}
 
-		// 오늘의 미션이 선정된 경우
+		// 2) 필터링 로직을 한 번 이상 거친 경우 -> 저장된 거 가져오기
 		UserMission todayMission = user.getCurrentUserMission();
-		if (todayMission == null || user.getUserMissions().isEmpty()) {
+		if (!validateTodayDateMission(todayMission) && user.getUserMissionChoice().isEmpty()) {
+			log.info("유저 {}의 UserMissions 선택지 리스트가 비어 있음", user.getNickname());
 
-			// 아직 오늘의 미션이 선정되지 않은 경우
-			// 1) 필터링 로직을 거친 적이 없는 경우 -> 필터 거치기
-			// 2) 필터링 로직을 한 번 이상 거친 경우 -> 저장된 거 가져오기
-			if (user.getUserMissionChoice().isEmpty()) {
-				log.info("유저 {}의 UserMissions 선택지 리스트가 비어 있음", user.getNickname());
-
-				List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
-				user.setPreUserMissionChoice(todayMissionChoices);
-				log.info("오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
-				return TodayMissionResponse.of(todayMissionChoices);
-			} else {
-				log.info("오늘의 미션이 세팅된 상태: {}", user.getUserMissionChoice().size());
-				return TodayMissionResponse.of(user.getUserMissionChoice());
-			}
-
-		} else {
-			log.info("오늘의 미션이 선정된 상태: {}", todayMission.getMission().getContent());
-			return TodayMissionResponse.of(todayMission);
+			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
+			user.setPreUserMissionChoice(todayMissionChoices);
+			log.info("유저 오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
+			return TodayMissionResponse.of(todayMissionChoices);
 		}
+
+		if (!validateTodayDateMission(todayMission) && !user.getUserMissionChoice().isEmpty()) {
+			log.info("오늘의 미션 선택지가 세팅된 상태: {}", user.getUserMissionChoice().size());
+			return TodayMissionResponse.of(user.getUserMissionChoice());
+		}
+
+		/**
+		 * 	 오늘의 미션이 선정된 경우
+		 */
+		log.info("오늘의 미션이 선정된 상태: {}", todayMission.getMission().getContent());
+		return TodayMissionResponse.of(todayMission);
 		// throw new MissionException(FAIL_TO_GET_TODAY_MISSION);
 	}
+
 
 	private List<UserMissionChoices> filterTodayUserMission(User user) {
 		final List<Mission> missionChoicesFiltered = new ArrayList<>();
@@ -272,6 +334,40 @@ public class UserMissionService {
 			.toList();
 	}
 
+	@NotNull
+	private UserMission createTodayUserMission(Mission mission, User user) {
+		UserMission userMission = UserMission.builder()
+			.mission(mission)
+			.missionQuest(missionQuestRepository.findRandomMissionQuest())
+			.user(user)
+			.completedStatus(IN_PROGRESS).build();
+
+		userMissionRepository.save(userMission);
+		user.addUserMission(userMission);
+		return userMission;
+	}
+
+	@NotNull
+	private UserMission createEmptyUserMission(User user, LocalDate date) {
+		UserMission um = UserMission.builderForEmpty()
+			.completedStatus(NONE)
+			.user(user)
+			.mission(getEmptyMission())
+			.build();
+
+		user.getUserMissions().add(um);
+		um.updateCreatedAt(date.atStartOfDay());  // 동일한 날짜로 세팅
+		return um;
+	}
+
+	// 매칭된 유저의 탈퇴 여부 검사
+	private void checkMatchedUserWithdraw(User user) {
+		User opponentUser = getMatchedUserWith(user);
+		if (opponentUser.isDeleted()) {
+			throw new UserException(ALREADY_WITHDRAW_USER);
+		}
+	}
+
 	// 오늘의 미션 선정 여부 검사
 	private void checkMissionChoice(UserMission todayMission) {
 		if (!validateTodayDateMission(todayMission)) {
@@ -284,7 +380,6 @@ public class UserMissionService {
 		if (!todayMission.getCreatedAt().toLocalDate().equals(LocalDate.now())) {
 			log.info("오늘 날짜와 동일하지 않은 최근 미션!");
 			return false;
-			// throw new MissionException(NOT_CHOICE_TODAY_MISSION);
 		}
 		return true;
 	}
@@ -315,5 +410,11 @@ public class UserMissionService {
 		return healthRepository.findByUser(user).orElseThrow(
 			() -> new HealthException(HEALTH_NOT_FOUND));
 	}
+
+	// 미션 히스토리 - 상대방의 오늘의 미션 미선정 시
+	private Mission getEmptyMission() {
+		return missionRepository.findMissionsByTarget(UserType.NONE).get(0);
+	}
+
 
 }
