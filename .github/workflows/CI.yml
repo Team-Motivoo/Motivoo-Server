@@ -29,12 +29,14 @@ jobs:
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
         working-directory: ${{ env.working-directory }}
 
-      - name: Firebase JSON 파일 생성
-        run: |
-          cd ./src/main/resources
-          mkdir firebase
-          cd ./firebase
-          echo "${{ secrets.FIREBASE_ADMINSDK }}" > ./motivoo-firebase-adminsdk.json
+      - name: Firebase JSON 파일 EC2 인스턴스로 전송
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.RELEASE_SERVER_IP }}
+          username: ${{ secrets.RELEASE_SERVER_USER }}
+          key: ${{ secrets.RELEASE_SERVER_KEY }}
+          source: "./src/main/resources/firebase/motivoo-firebase-adminsdk.json"
+          target: "/home/ubuntu/Motivoo-Server/src/main/resources/firebase/"
 
       - name: 빌드
         run: |
