@@ -120,16 +120,8 @@ public class UserMissionService {
 			// userDates 과 myDates를 비교하여 없는 날짜에는 빈 값의 UserMission 생성해주기
 			userDates.forEach(date -> {
 				if (!myDates.contains(date)) {
-					UserMission um = UserMission.builderForEmpty()
-						.completedStatus(NONE)
-						.user(user)
-						.mission(getEmptyMission())
-						.build();
-
+					UserMission um = createEmptyUserMission(user, date);
 					emptyUserMissions.add(um);
-					user.getUserMissions().add(um);
-
-					um.updateCreatedAt(date.atStartOfDay());  // 동일한 날짜로 세팅
 				}
 			});
 		});
@@ -147,23 +139,13 @@ public class UserMissionService {
 		validateTodayMissionRequest(request.missionId(), user);
 
 		Mission mission = getMissionById(request.missionId());
+		if (validateTodayDateMission(user.getCurrentUserMission())) {
+			throw new MissionException(ALREADY_CHOICE_TODAY_MISSION);
+		}
 
 		UserMission userMission = createTodayUserMission(mission, user);
 		user.clearPreUserMissionChoice();  // 오늘의 미션을 선정했다면, 선택지 리스트는 비워주기
 		return userMission.getId();
-	}
-
-	@NotNull
-	private UserMission createTodayUserMission(Mission mission, User user) {
-		UserMission userMission = UserMission.builder()
-			.mission(mission)
-			.missionQuest(missionQuestRepository.findRandomMissionQuest())
-			.user(user)
-			.completedStatus(IN_PROGRESS).build();
-
-		userMissionRepository.save(userMission);
-		user.addUserMission(userMission);
-		return userMission;
 	}
 
 	private static void validateTodayMissionRequest(Long missionId, User user) {
@@ -185,11 +167,35 @@ public class UserMissionService {
 
 		log.info("현재 접속한 유저 - {} X 나와 매칭된 부모자녀 유저 - {}", myUser.getNickname(), opponentUser.getNickname());
 
-		if (myUser.getUserMissions().isEmpty() || opponentUser.getUserMissions().isEmpty()) {
+		boolean myUserMissionsEmpty = myUser.getUserMissions().isEmpty();
+		boolean opponentUserMissionsEmpty = opponentUser.getUserMissions().isEmpty();
+
+		if (myUserMissionsEmpty && opponentUserMissionsEmpty) {
 			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
 		}
 
-		UserMission todayMission = myUser.getCurrentUserMission();
+		if (!opponentUserMissionsEmpty) {
+			UserMission opponentCurrentUserMission = opponentUser.getCurrentUserMission();
+			opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ? opponentCurrentUserMission.getMission().getStepCount() : 0;
+			assert opponentCurrentUserMission != null;
+			isStepCountCompleted(request.opponentStepCount(), opponentCurrentUserMission);
+		}
+
+		if (!myUserMissionsEmpty) {
+			UserMission myCurrentUserMission = myUser.getCurrentUserMission();
+			if (!validateTodayDateMission(myCurrentUserMission)) {
+				return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
+			}
+			myGoalStep = myCurrentUserMission.getMission().getStepCount();
+			boolean stepCountCompleted = isStepCountCompleted(request.myStepCount(), myCurrentUserMission);
+			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted);
+		}
+
+
+		return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
+
+
+	/*	UserMission todayMission = myUser.getCurrentUserMission();
 		UserMission opponentTodayMission = opponentUser.getCurrentUserMission();
 		if (opponentTodayMission != null) {
 			opponentGoalStep = opponentTodayMission.getMission().getStepCount();
@@ -205,7 +211,7 @@ public class UserMissionService {
 
 			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, isStepCountCompleted(currentStepCount, todayMission));
 		}
-		return MissionStepStatusResponse.of(myUser, opponentUser, 0, 0, false);
+		return MissionStepStatusResponse.of(myUser, opponentUser, 0, 0, false);*/
 
 	}
 
@@ -228,8 +234,8 @@ public class UserMissionService {
 		 * 아직 오늘의 미션이 선정되지 않은 경우
 		 * */
 		// 1) 처음 가입한 유저의 경우 or 필터링 로직을 거친 적이 없는 경우 -> 필터 거치기
-		if (user.getUserMissions().isEmpty() || user.getUserMissionChoice().isEmpty()) {
-			log.info("유저 {}의 UserMissions 선택지 리스트가 비어 있음", user.getNickname());
+		if ((user.getUserMissions().isEmpty() && user.getUserMissionChoice().isEmpty())) {
+			log.info("유저 {}의 UserMissions, UserMissionChoices 리스트가 비어 있음", user.getNickname());
 
 			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
 			user.setPreUserMissionChoice(todayMissionChoices);
@@ -239,7 +245,16 @@ public class UserMissionService {
 
 		// 2) 필터링 로직을 한 번 이상 거친 경우 -> 저장된 거 가져오기
 		UserMission todayMission = user.getCurrentUserMission();
-		if (!validateTodayDateMission(todayMission) || !user.getUserMissionChoice().isEmpty()) {
+		if (!validateTodayDateMission(todayMission) && user.getUserMissionChoice().isEmpty()) {
+			log.info("유저 {}의 UserMissions 선택지 리스트가 비어 있음", user.getNickname());
+
+			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
+			user.setPreUserMissionChoice(todayMissionChoices);
+			log.info("유저 오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
+			return TodayMissionResponse.of(todayMissionChoices);
+		}
+
+		if (!validateTodayDateMission(todayMission) && !user.getUserMissionChoice().isEmpty()) {
 			log.info("오늘의 미션 선택지가 세팅된 상태: {}", user.getUserMissionChoice().size());
 			return TodayMissionResponse.of(user.getUserMissionChoice());
 		}
@@ -317,6 +332,32 @@ public class UserMissionService {
 				.user(user).build())
 			.map(userMissionChoicesRepository::save)
 			.toList();
+	}
+
+	@NotNull
+	private UserMission createTodayUserMission(Mission mission, User user) {
+		UserMission userMission = UserMission.builder()
+			.mission(mission)
+			.missionQuest(missionQuestRepository.findRandomMissionQuest())
+			.user(user)
+			.completedStatus(IN_PROGRESS).build();
+
+		userMissionRepository.save(userMission);
+		user.addUserMission(userMission);
+		return userMission;
+	}
+
+	@NotNull
+	private UserMission createEmptyUserMission(User user, LocalDate date) {
+		UserMission um = UserMission.builderForEmpty()
+			.completedStatus(NONE)
+			.user(user)
+			.mission(getEmptyMission())
+			.build();
+
+		user.getUserMissions().add(um);
+		um.updateCreatedAt(date.atStartOfDay());  // 동일한 날짜로 세팅
+		return um;
 	}
 
 	// 매칭된 유저의 탈퇴 여부 검사
