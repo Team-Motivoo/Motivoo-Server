@@ -120,6 +120,9 @@ dependencies {
 	// Feign
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.7'
 
+	// Firebase
+	implementation "com.google.firebase:firebase-admin:9.1.1"
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 }

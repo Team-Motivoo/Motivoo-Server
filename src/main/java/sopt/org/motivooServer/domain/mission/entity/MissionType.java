@@ -19,7 +19,8 @@ public enum MissionType {
 	BEGINNER("초보"),
 	BEGIN_INTER("초보&중수"),
 	INTER_ADVANCE("중수&고수"),
-	ALL("초보&중수&고수")
+	ALL("초보&중수&고수"),
+	NONE("없음")
 
 	;
 

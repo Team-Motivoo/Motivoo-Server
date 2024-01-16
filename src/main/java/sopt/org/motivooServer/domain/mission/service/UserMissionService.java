@@ -28,7 +28,6 @@ import sopt.org.motivooServer.domain.health.entity.HealthNote;
 import sopt.org.motivooServer.domain.health.exception.HealthException;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
-import sopt.org.motivooServer.domain.mission.dto.request.MissionStepStatusRequest;
 import sopt.org.motivooServer.domain.mission.dto.request.TodayMissionChoiceRequest;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
@@ -48,6 +47,7 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
+import sopt.org.motivooServer.global.external.firebase.FirebaseService;
 import sopt.org.motivooServer.global.external.s3.PreSignedUrlResponse;
 import sopt.org.motivooServer.global.external.s3.S3BucketDirectory;
 import sopt.org.motivooServer.global.external.s3.S3Service;
@@ -64,12 +64,15 @@ public class UserMissionService {
 	private final MissionQuestRepository missionQuestRepository;
 	private final HealthRepository healthRepository;
 	private final S3Service s3Service;
+	private final FirebaseService firebaseService;
 
 	private static final int MAX_MISSION_CHOICES = 2;
 
 	@Transactional
 	public MissionImgUrlResponse getMissionImgUrl(final MissionImgUrlRequest request, final Long userId) {
 		User user = getUserById(userId);
+		checkedUserMissionEmpty(user);
+
 		UserMission todayMission = user.getCurrentUserMission();
 		checkMissionChoice(todayMission);
 
@@ -83,6 +86,7 @@ public class UserMissionService {
 	public MissionHistoryResponse getUserMissionHistory(final Long userId) {
 		User myUser = getUserById(userId);
 		User opponentUser = getMatchedUserWith(myUser);
+		checkedUserMissionEmpty(myUser);
 
 		UserMission todayMission = myUser.getCurrentUserMission();
 		//checkMissionChoice(todayMission);
@@ -139,8 +143,10 @@ public class UserMissionService {
 		validateTodayMissionRequest(request.missionId(), user);
 
 		Mission mission = getMissionById(request.missionId());
-		if (validateTodayDateMission(user.getCurrentUserMission())) {
-			throw new MissionException(ALREADY_CHOICE_TODAY_MISSION);
+		if (!user.getUserMissions().isEmpty()) {
+			if (validateTodayDateMission(user.getCurrentUserMission())) {
+				throw new MissionException(ALREADY_CHOICE_TODAY_MISSION);
+			}
 		}
 
 		UserMission userMission = createTodayUserMission(mission, user);
@@ -158,9 +164,13 @@ public class UserMissionService {
 	}
 
 	@Transactional
-	public MissionStepStatusResponse getMissionCompleted(final MissionStepStatusRequest request, final Long userId) {
+	public MissionStepStatusResponse getMissionCompleted(final Long userId) {
 		User myUser = getUserById(userId);
 		User opponentUser = getMatchedUserWith(myUser);
+
+
+		Map<String, Integer> userNowStepCounts = firebaseService.selectUserStep(List.of(myUser.getId(), opponentUser.getId()));
+		log.info("userNowStepCount Map - size: {}, 1번: {}", userNowStepCounts.size(), userNowStepCounts.get(userId.toString()));
 
 		int myGoalStep = 0;
 		int opponentGoalStep = 0;
@@ -178,7 +188,7 @@ public class UserMissionService {
 			UserMission opponentCurrentUserMission = opponentUser.getCurrentUserMission();
 			opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ? opponentCurrentUserMission.getMission().getStepCount() : 0;
 			assert opponentCurrentUserMission != null;
-			isStepCountCompleted(request.opponentStepCount(), opponentCurrentUserMission);
+			isStepCountCompleted(userNowStepCounts.get(opponentUser.getId().toString()), opponentCurrentUserMission);
 		}
 
 		if (!myUserMissionsEmpty) {
@@ -187,7 +197,7 @@ public class UserMissionService {
 				return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
 			}
 			myGoalStep = myCurrentUserMission.getMission().getStepCount();
-			boolean stepCountCompleted = isStepCountCompleted(request.myStepCount(), myCurrentUserMission);
+			boolean stepCountCompleted = isStepCountCompleted(userNowStepCounts.get(myUser.getId().toString()), myCurrentUserMission);
 			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted);
 		}
 
@@ -228,7 +238,7 @@ public class UserMissionService {
 	public TodayMissionResponse getTodayMission(final Long userId) {
 		User user = getUserById(userId);
 		checkMatchedUserWithdraw(user);
-		log.info("TodayMission이 있을까, 없을까? {}개 있음 ㅋㅋ", user.getUserMissionChoice().size());
+		log.info("TodayMissionChoices이 있을까, 없을까? {}개 있음 ㅋㅋ", user.getUserMissionChoice().size());
 
 		/**
 		 * 아직 오늘의 미션이 선정되지 않은 경우
@@ -239,8 +249,12 @@ public class UserMissionService {
 
 			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
 			user.setPreUserMissionChoice(todayMissionChoices);
-			log.info("첫 가입 유저 오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
+			log.info("첫 가입 유저 오늘의 미션 선택지 세팅 완료! : {}", todayMissionChoices.size());
 			return TodayMissionResponse.of(todayMissionChoices);
+		}
+
+		if (!user.getUserMissionChoice().isEmpty()) {
+			return TodayMissionResponse.of(user.getUserMissionChoice());
 		}
 
 		// 2) 필터링 로직을 한 번 이상 거친 경우 -> 저장된 거 가져오기
@@ -250,7 +264,7 @@ public class UserMissionService {
 
 			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
 			user.setPreUserMissionChoice(todayMissionChoices);
-			log.info("유저 오늘의 미션 세팅 완료! : {}", todayMissionChoices.size());
+			log.info("유저 오늘의 미션 선택지 세팅 완료! : {}", todayMissionChoices.size());
 			return TodayMissionResponse.of(todayMissionChoices);
 		}
 
@@ -303,12 +317,10 @@ public class UserMissionService {
 			missionChoices.add(userMissionChoicesRepository.save(missionChoice));
 		}
 
-		if (missionChoices.isEmpty() || missionChoices.size() == 1) {
-			throw new MissionException(NOT_FILTERED_TODAY_MISSION);
-		}
-		user.setPreUserMissionChoice(missionChoices);
-		log.info("user.getUserMissionChoice().size()={}", user.getUserMissionChoice().size());
-		log.info("랜덤 선정된 오늘의 미션 선택지 - 1. {} 2. {}", user.getUserMissionChoice().get(0).getMission().getId(), user.getUserMissionChoice().get(1).getMission().getId());
+		// user.setPreUserMissionChoice(missionChoices);
+		// if (missionChoices.isEmpty() || missionChoices.size() == 1) {
+		// 	throw new MissionException(NOT_FILTERED_TODAY_MISSION);
+		// }
 		return missionChoices;
 	}
 
@@ -365,6 +377,13 @@ public class UserMissionService {
 		User opponentUser = getMatchedUserWith(user);
 		if (opponentUser.isDeleted()) {
 			throw new UserException(ALREADY_WITHDRAW_USER);
+		}
+	}
+
+	// 오늘의 미션 리스트 비어있는지 체크
+	private static void checkedUserMissionEmpty(User user) {
+		if (user.getUserMissions().isEmpty()) {
+			throw new MissionException(EMPTY_USER_MISSIONS);
 		}
 	}
 

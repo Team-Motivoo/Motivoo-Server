@@ -77,13 +77,12 @@ public class GlobalExceptionHandler {
 	 */
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(final Exception e, final HttpServletRequest request) throws
+    public ResponseEntity<ApiResponse<Exception>> handleException(final Exception e, final HttpServletRequest request) throws
 		IOException {
         slackService.sendAlert(e, request);
 
         log.error("🔔🚨 Slack에 전송된 Error Log: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorResponse.of(INTERNAL_SERVER_ERROR));
+        return ApiResponse.fail(INTERNAL_SERVER_ERROR, e);
     }
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

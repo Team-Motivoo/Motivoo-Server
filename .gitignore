@@ -10,6 +10,7 @@ application.yml
 application-test.yml
 
 firebase-ignore.json
+motivoo-firebase-adminsdk.json
 
 **.adoc
 **.http
