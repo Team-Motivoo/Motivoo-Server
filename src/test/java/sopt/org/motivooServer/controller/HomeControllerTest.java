@@ -79,7 +79,7 @@ public class HomeControllerTest extends BaseControllerTest{
 							fieldWithPath("message").type(STRING).description("상태 메세지"),
 							fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
 							fieldWithPath("data").description("응답 데이터"),
-							fieldWithPath("data.user_type").type(STRING).description("유저의 타입(PARENT|CHILD)"),
+							fieldWithPath("data.user_type").type(STRING).description("유저의 타입(부모|자녀)"),
 							fieldWithPath("data.user_id").type(NUMBER).description("유저 자신의 아이디"),
 							fieldWithPath("data.user_goal_step_count").type(NUMBER).description("유저 오늘의 미션 목표 걸음 수 "),
 							fieldWithPath("data.opponent_user_id").type(NUMBER).description("매칭된 상대 유저의 아이디"),

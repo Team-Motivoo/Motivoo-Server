@@ -26,17 +26,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static java.sql.JDBCType.BOOLEAN;
-import static java.util.TimeZone.LONG;
-import static javax.management.openmbean.SimpleType.STRING;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
 import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentRequest;
 import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentResponse;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+
+import javax.management.openmbean.SimpleType;
 
 @Slf4j
 @DisplayName("ParentchildController 테스트")
@@ -93,14 +93,14 @@ public class ParentchildControllerTest extends BaseControllerTest {
                                                 fieldWithPath("exercise_type").type(STRING).description("운동 유형(고강도|중강도|저강도"),
                                                 fieldWithPath("exercise_count").type(STRING).description("운동 일수"),
                                                 fieldWithPath("exercise_time").type(STRING).description("운동 시간"),
-                                                fieldWithPath("exercise_note").type(JsonFieldType.ARRAY).description("운동 유의사항")
+                                                fieldWithPath("exercise_note[]").type(ARRAY).description("운동 유의사항")
                                         )
                                         .responseFields(
                                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
-                                                fieldWithPath("message").type(JsonFieldType.STRING).description("상태 메세지"),
-                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
                                                 fieldWithPath("data").description("응답 데이터"),
-                                                fieldWithPath("data.user_id").type(LONG).description("유저 아이디"),
+                                                fieldWithPath("data.user_id").type(NUMBER).description("유저 아이디"),
                                                 fieldWithPath("data.invite_code").type(STRING).description("초대 코드"),
                                                 fieldWithPath("data.exercise_level").type(STRING).description("유저 분류(초보|중수|고수")
                                                 ).build()
@@ -134,8 +134,8 @@ public class ParentchildControllerTest extends BaseControllerTest {
                                         .requestFields()
                                         .responseFields(
                                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
-                                                fieldWithPath("message").type(JsonFieldType.STRING).description("상태 메세지"),
-                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
                                                 fieldWithPath("data").description("응답 데이터"),
                                                 fieldWithPath("data.is_finished_onboarding").type(BOOLEAN).description("유저의 타입(PARENT|CHILD)"))
                                         .build()
@@ -212,12 +212,12 @@ public class ParentchildControllerTest extends BaseControllerTest {
                                         .requestFields()
                                         .responseFields(
                                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
-                                                fieldWithPath("message").type(JsonFieldType.STRING).description("상태 메세지"),
-                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
                                                 fieldWithPath("data").description("응답 데이터"),
                                                 fieldWithPath("data.is_matched").type(BOOLEAN).description("매칭 여부"),
-                                                fieldWithPath("data.user_id").type(LONG).description("유저 자신의 아이디"),
-                                                fieldWithPath("data.opponent_user_id").type(LONG).description("매칭된 상대 유저의 아이디"))
+                                                fieldWithPath("data.user_id").type(NUMBER).description("유저 자신의 아이디"),
+                                                fieldWithPath("data.opponent_user_id").type(NUMBER).description("매칭된 상대 유저의 아이디"))
                                         .build()
                         )
                 )).andExpect(MockMvcResultMatchers.status().isOk());
