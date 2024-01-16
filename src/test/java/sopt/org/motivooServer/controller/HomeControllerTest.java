@@ -73,10 +73,7 @@ public class HomeControllerTest extends BaseControllerTest{
 					ResourceSnippetParameters.builder()
 						.tag(TAG)
 						.description("홈 화면 조회 시 걸음 수 요청값에 대한 미션 상태 업데이트 결과 및 부모-자녀 유저의 목표 걸음 수 반환")
-						.requestFields(
-							fieldWithPath("my_step_count").type(NUMBER).description("자신의 걸음 수"),
-							fieldWithPath("opponent_step_count").type(NUMBER).description("상대 측(부모/자녀)의 걸음 수")
-						)
+						.requestFields()
 						.responseFields(
 							fieldWithPath("code").type(NUMBER).description("상태 코드"),
 							fieldWithPath("message").type(STRING).description("상태 메세지"),
