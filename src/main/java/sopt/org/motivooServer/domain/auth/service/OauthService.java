@@ -105,15 +105,27 @@ public class OauthService {
 
         String providerId = oAuth2UserInfo.getProviderId();
         String nickName = oAuth2UserInfo.getNickName();
-        User userEntity = userRepository.findBySocialId(providerId);
 
-        if (userEntity != null) {
-            updateRefreshToken(userEntity, refreshToken);
-            return userEntity;
+        List<User> userEntity = userRepository.findBySocialId(providerId);
+
+        //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
+        if(userEntity==null || is_withdrawn(userEntity)){
+            return saveUser(nickName, providerId, socialPlatform, tokenRequest, refreshToken);
+
         }
 
-        return saveUser(nickName, providerId, socialPlatform, tokenRequest, refreshToken);
+        //로그인
+        updateRefreshToken(userEntity.get(0), refreshToken);
+        return userEntity.get(0);
+    }
 
+    boolean is_withdrawn(List<User> users){
+        for(User user:users){
+            if(!user.isDeleted()){
+                return false;
+            }
+        }
+        return true;
     }
 
     private OAuth2UserInfo getOAuth2UserInfo(String providerName, Map<String, Object> userAttributes) {
