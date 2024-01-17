@@ -19,7 +19,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
@@ -31,7 +30,6 @@ import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 @Slf4j
-@WithMockUser(roles = "USER")
 @DisplayName("UserController 테스트")
 @WebMvcTest(UserController.class)
 public class UserControllerTest extends BaseControllerTest {

@@ -46,7 +46,7 @@ public class OauthController {
 
     @DeleteMapping("/withdraw")
     public ResponseEntity<ApiResponse<Object>> signout(Principal principal,
-                                                       @Valid @RequestBody OauthTokenRequest tokenRequest) {
+        @Valid @RequestBody OauthTokenRequest tokenRequest) {
         Long userId = Long.parseLong(principal.getName());
         userService.deleteSocialAccount(tokenRequest.tokenType(), userId, tokenRequest.accessToken());
 
