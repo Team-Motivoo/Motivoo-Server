@@ -54,16 +54,4 @@ public class SecurityConfig {
 				.build();
 	}
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-					.allowedOrigins("*")
-					.allowedOriginPatterns("*")
-					.allowedMethods("*");
-			}
-		};
-	}
 }
