@@ -31,7 +31,7 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
-
+import sopt.org.motivooServer.global.external.firebase.FirebaseService;
 
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INVALID_USER_TYPE;
 
@@ -44,6 +44,8 @@ public class ParentchildService {
     private final UserRepository userRepository;
     private final ParentchildRepository parentchildRepository;
     private final CalculateScore calculateScore;
+    private final FirebaseService firebaseService;
+
     private static final int RANDOM_STR_LEN = 8;
     private static final int MATCHING_SUCCESS = 2;
 
@@ -72,6 +74,9 @@ public class ParentchildService {
                         .build();
         log.info("health user="+health.getId());
         healthRepository.save(health);
+
+        // 온보딩을 마친 유저의 걸음 수 데이터 DB에 추가
+        firebaseService.insertUserStepById(userId);
 
         double exerciseScore = calculateScore.calculate(request.isExercise(), ExerciseType.of(request.exerciseType()),
                 ExerciseFrequency.of(request.exerciseCount()), ExerciseTime.of(request.exerciseTime()));

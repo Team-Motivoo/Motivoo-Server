@@ -9,6 +9,7 @@ DOCKER_PS_OUTPUT=$(docker ps | grep $SERVER_NAME)
 RUNNING_CONTAINER_NAME=$(echo "$DOCKER_PS_OUTPUT" | awk '{print $NF}')
 
 IS_REDIS_ACTIVATE=$(docker ps | grep redis)
+IS_GREEN_ACTIVATE=$(docker ps | grep green)
 
 WEB_HEALTH_CHECK_URL=/actuator/health
 
@@ -47,9 +48,7 @@ if [ ${#AVAILABLE_PORT[@]} -eq 0 ]; then
 fi
 
 # Green Up
-if [ $RUNNING_CONTAINER_NAME == "blue" ]; then
-  echo "[$NOW_TIME] 현재 구동중인 Port: Blue(:8080)"
-
+if [ -z $IS_GREEN_ACTIVATE ]; then
   echo "[$NOW_TIME] ###### 스위칭 ######"
   echo "[$NOW_TIME] ###### BLUE -> GREEN ######"
   CURRENT_SERVER_PORT=8081
@@ -93,7 +92,6 @@ if [ $RUNNING_CONTAINER_NAME == "blue" ]; then
 
 # Blue Up
 else
-  echo "[$NOW_TIME] 현재 구동중인 Port: Green(:8081)"
 
   echo "[$NOW_TIME] ###### 스위칭 ######"
   echo "[$NOW_TIME] ###### GREEN -> BLUE ######"

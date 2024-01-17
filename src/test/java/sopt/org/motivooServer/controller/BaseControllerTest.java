@@ -23,6 +23,8 @@ import sopt.org.motivooServer.domain.auth.config.CustomJwtAuthenticationEntryPoi
 import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
 import sopt.org.motivooServer.domain.auth.config.RedisConfig;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
+import sopt.org.motivooServer.global.external.firebase.FirebaseConfig;
+import sopt.org.motivooServer.global.external.firebase.FirebaseService;
 import sopt.org.motivooServer.global.external.s3.config.AWSConfig;
 import sopt.org.motivooServer.global.external.s3.S3Service;
 import sopt.org.motivooServer.global.external.slack.SlackService;
@@ -63,6 +65,12 @@ public abstract class BaseControllerTest {
 
 	@MockBean
 	private S3Service s3Service;
+
+	@MockBean
+	private FirebaseConfig firebaseConfig;
+
+	@MockBean
+	private FirebaseService firebaseService;
 
 	@BeforeEach
 	void setUp(final RestDocumentationContextProvider restDocumentation) {

@@ -1,16 +1,32 @@
 package sopt.org.motivooServer.controller;
 
-import com.epages.restdocs.apispec.ResourceSnippetParameters;
-import lombok.extern.slf4j.Slf4j;
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
+import static com.epages.restdocs.apispec.ResourceDocumentation.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static sopt.org.motivooServer.global.response.SuccessType.*;
+import static sopt.org.motivooServer.util.ApiDocumentUtil.*;
+
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.restdocs.mockmvc.*;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+
+import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
 import sopt.org.motivooServer.domain.health.dto.response.CheckOnboardingResponse;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
@@ -21,23 +37,9 @@ import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static java.sql.JDBCType.BOOLEAN;
-import static javax.management.openmbean.SimpleType.STRING;
-import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static sopt.org.motivooServer.global.response.SuccessType.*;
-import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentRequest;
-import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentResponse;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
 @Slf4j
+@WithMockUser(roles = "PARENTCHILD")
 @DisplayName("ParentchildController 테스트")
 @WebMvcTest(ParentchildControllerTest.class)
 public class ParentchildControllerTest extends BaseControllerTest {
@@ -92,12 +94,12 @@ public class ParentchildControllerTest extends BaseControllerTest {
                                                 fieldWithPath("exercise_type").type(STRING).description("운동 유형(고강도|중강도|저강도"),
                                                 fieldWithPath("exercise_count").type(STRING).description("운동 일수"),
                                                 fieldWithPath("exercise_time").type(STRING).description("운동 시간"),
-                                                fieldWithPath("exercise_note[]").type(JsonFieldType.ARRAY).description("운동 유의사항")
+                                                fieldWithPath("exercise_note[]").type(ARRAY).description("운동 유의사항")
                                         )
                                         .responseFields(
                                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
-                                                fieldWithPath("message").type(JsonFieldType.STRING).description("상태 메세지"),
-                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
                                                 fieldWithPath("data").description("응답 데이터"),
                                                 fieldWithPath("data.user_id").type(NUMBER).description("유저 아이디"),
                                                 fieldWithPath("data.invite_code").type(STRING).description("초대 코드"),
@@ -213,8 +215,8 @@ public class ParentchildControllerTest extends BaseControllerTest {
                                         .requestFields()
                                         .responseFields(
                                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
-                                                fieldWithPath("message").type(JsonFieldType.STRING).description("상태 메세지"),
-                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
                                                 fieldWithPath("data").description("응답 데이터"),
                                                 fieldWithPath("data.is_matched").type(BOOLEAN).description("매칭 여부"),
                                                 fieldWithPath("data.user_id").type(NUMBER).description("유저 자신의 아이디"),

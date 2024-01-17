@@ -99,7 +99,7 @@ dependencies {
 	testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'io.rest-assured:rest-assured'
-	swaggerUI 'org.webjars:swagger-ui:4.11.1'
+//	swaggerUI 'org.webjars:swagger-ui:4.11.1'
 
 	// AWS sdk
 	implementation("software.amazon.awssdk:bom:2.21.0")
@@ -119,6 +119,9 @@ dependencies {
 
 	// Feign
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.7'
+
+	// Firebase
+	implementation "com.google.firebase:firebase-admin:9.1.1"
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -146,16 +149,16 @@ tasks.withType(GenerateSwaggerUI) {
 	}
 
 	// local 확인용으로 json 정적파일 복사
-//	delete file('src/main/resources/static/docs')
-//	copy {
-//		from "build/resources/main/static/docs"
-//		into "src/main/resources/static/docs/"
-//	}
+	delete file('src/main/resources/static/docs')
+	copy {
+		from "build/resources/main/static/docs"
+		into "src/main/resources/static/docs/"
+	}
 }
 
 // openAPI 작성 자동화 => 패키징 전에 openapi3 태스크를 먼저 실행하도록 유발
 bootJar {
-//	dependsOn(':openapi3')
+	dependsOn(':openapi3')
 //	dependsOn generateSwaggerUISample
 //	from("${generateSwaggerUISample.outputDir}") {
 //		into 'static/docs'
