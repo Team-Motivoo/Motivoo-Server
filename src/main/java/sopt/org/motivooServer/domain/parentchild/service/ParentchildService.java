@@ -77,11 +77,11 @@ public class ParentchildService {
         healthRepository.save(health);
 
         // 온보딩을 마친 유저의 걸음 수 데이터 DB에 추가
-        try {
+        /*try {
             firebaseService.insertUserStepById(userId);
         } catch (CannotCreateTransactionException e) {
             log.error("온보딩 입력 완료 후 FB에 데이터 추가 - 트랜잭션 처리 실패!");
-        }
+        }*/
 
         double exerciseScore = calculateScore.calculate(request.isExercise(), ExerciseType.of(request.exerciseType()),
                 ExerciseFrequency.of(request.exerciseCount()), ExerciseTime.of(request.exerciseTime()));
