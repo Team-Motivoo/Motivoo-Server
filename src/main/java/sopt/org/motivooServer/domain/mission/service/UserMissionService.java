@@ -36,6 +36,7 @@ import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
+import sopt.org.motivooServer.domain.mission.entity.MissionQuest;
 import sopt.org.motivooServer.domain.mission.entity.MissionType;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.mission.entity.UserMissionChoices;
@@ -360,15 +361,25 @@ public class UserMissionService {
 
 	@NotNull
 	private UserMission createTodayUserMission(Mission mission, User user) {
+		MissionQuest missionQuest = getRandomMissionQuest();
+
 		UserMission userMission = UserMission.builder()
 			.mission(mission)
-			.missionQuest(missionQuestRepository.findRandomMissionQuest())
+			.missionQuest(missionQuest)
 			.user(user)
 			.completedStatus(IN_PROGRESS).build();
 
 		userMissionRepository.save(userMission);
 		user.addUserMission(userMission);
 		return userMission;
+	}
+
+	private MissionQuest getRandomMissionQuest() {
+		MissionQuest missionQuest = missionQuestRepository.findRandomMissionQuest();
+		if (missionQuest == null) {
+			throw new MissionException(MISSION_QUEST_NOT_FOUND);
+		}
+		return missionQuest;
 	}
 
 	@NotNull
