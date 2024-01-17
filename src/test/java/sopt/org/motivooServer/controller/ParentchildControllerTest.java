@@ -40,7 +40,7 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 
 @Slf4j
 @DisplayName("ParentchildController 테스트")
-@WebMvcTest(ParentchildControllerTest.class)
+@WebMvcTest(ParentChildController.class)
 public class ParentchildControllerTest extends BaseControllerTest {
 
     private final String TAG = "parentchild";
