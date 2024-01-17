@@ -3,7 +3,6 @@ package sopt.org.motivooServer.domain.auth.service;
 import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.*;
 
 import feign.FeignException;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
