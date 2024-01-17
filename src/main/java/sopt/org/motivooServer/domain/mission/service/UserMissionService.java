@@ -5,6 +5,7 @@ import static sopt.org.motivooServer.domain.mission.entity.CompletedStatus.*;
 import static sopt.org.motivooServer.domain.mission.exception.MissionExceptionType.*;
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
+import static sopt.org.motivooServer.global.external.s3.S3BucketDirectory.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -81,6 +82,8 @@ public class UserMissionService {
 
 		PreSignedUrlResponse preSignedUrl = s3Service.getUploadPreSignedUrl(
 			S3BucketDirectory.of(request.imgPrefix()));
+
+		String imgUrl = s3Service.getURL(MISSION_PREFIX.value() + preSignedUrl.fileName());
 		todayMission.updateImgUrl(s3Service.getImgByFileName(request.imgPrefix(), preSignedUrl.fileName()));
 		return MissionImgUrlResponse.of(preSignedUrl.url(), preSignedUrl.fileName());
 	}
@@ -194,7 +197,7 @@ public class UserMissionService {
 		boolean opponentUserMissionsEmpty = opponentUser.getUserMissions().isEmpty();
 
 		if (myUserMissionsEmpty && opponentUserMissionsEmpty) {
-			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
+			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
 		}
 
 		if (!opponentUserMissionsEmpty) {
@@ -207,15 +210,15 @@ public class UserMissionService {
 		if (!myUserMissionsEmpty) {
 			UserMission myCurrentUserMission = myUser.getCurrentUserMission();
 			if (!validateTodayDateMission(myCurrentUserMission)) {
-				return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
+				return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
 			}
 			myGoalStep = myCurrentUserMission.getMission().getStepCount();
 			boolean stepCountCompleted = isStepCountCompleted(myStep, myCurrentUserMission);
-			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted);
+			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted, myCurrentUserMission.getImgUrl() != null);
 		}
 
 
-		return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
+		return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
 
 
 	/*	UserMission todayMission = myUser.getCurrentUserMission();
@@ -388,6 +391,7 @@ public class UserMissionService {
 			.completedStatus(NONE)
 			.user(user)
 			.mission(getEmptyMission())
+			.missionQuest(getRandomMissionQuest())
 			.build();
 
 		user.getUserMissions().add(um);
