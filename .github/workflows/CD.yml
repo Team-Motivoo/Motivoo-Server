@@ -36,15 +36,10 @@ jobs:
           echo "${{ secrets.APPLICATION_TEST }}" > ./application.yml
         working-directory: ${{ env.working-directory }}
 
-      - name: 빌드
-        run: |
-          chmod +x gradlew
-          ./gradlew build
-        working-directory: ${{ env.working-directory }}
-        shell: bash
 
       - name: Firebase JSON 파일 생성
         run: |
+          echo $(ls -al; pwd)
           cd ./src/main/resources
           
           mkdir ./firebase
@@ -54,6 +49,13 @@ jobs:
           aws s3 cp --region ap-northeast-2 s3://${{ secrets.S3_BUCKET_PATH }}/motivoo-firebase-adminsdk.json .
           echo $(ls -al; pwd)
 
+        shell: bash
+
+      - name: 빌드
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+        working-directory: ${{ env.working-directory }}
         shell: bash
 
       - name: Docker 빌드 환경 설정
