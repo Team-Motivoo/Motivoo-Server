@@ -1,6 +1,5 @@
 package sopt.org.motivooServer.domain.auth.controller;
 
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
