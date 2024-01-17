@@ -85,4 +85,8 @@ public class UserMission extends BaseTimeEntity {
 		this.completedStatus = completedStatus;
 	}
 
+	public void updateMissionFromEmpty(final Mission mission) {
+		this.mission = mission;
+	}
+
 }

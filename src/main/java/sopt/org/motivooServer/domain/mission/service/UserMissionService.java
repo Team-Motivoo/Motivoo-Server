@@ -152,8 +152,15 @@ public class UserMissionService {
 
 		Mission mission = getMissionById(request.missionId());
 		if (!user.getUserMissions().isEmpty()) {
-			if (validateTodayDateMission(user.getCurrentUserMission())) {
-				throw new MissionException(ALREADY_CHOICE_TODAY_MISSION);
+			UserMission currentMission = user.getCurrentUserMission();
+
+			if (validateTodayDateMission(currentMission)) {
+				if (currentMission.getMission().getTarget().equals(UserType.NONE)) {
+					currentMission.updateMissionFromEmpty(mission);
+					currentMission.updateCompletedStatus(IN_PROGRESS);
+				} else {
+					throw new MissionException(ALREADY_CHOICE_TODAY_MISSION);
+				}
 			}
 		}
 
