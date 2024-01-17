@@ -28,6 +28,7 @@ import sopt.org.motivooServer.domain.health.entity.HealthNote;
 import sopt.org.motivooServer.domain.health.exception.HealthException;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
 import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
+import sopt.org.motivooServer.domain.mission.dto.request.MissionStepStatusRequest;
 import sopt.org.motivooServer.domain.mission.dto.request.TodayMissionChoiceRequest;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
@@ -166,13 +167,12 @@ public class UserMissionService {
 	}
 
 	@Transactional
-	public MissionStepStatusResponse getMissionCompleted(final Long userId) {
+	public MissionStepStatusResponse getMissionCompleted(final MissionStepStatusRequest request, final Long userId) {
 		User myUser = getUserById(userId);
 		User opponentUser = getMatchedUserWith(myUser);
 
-
-		Map<String, Integer> userNowStepCounts = firebaseService.selectUserStep(List.of(myUser.getId(), opponentUser.getId()));
-		log.info("userNowStepCount Map - size: {}, 1번: {}", userNowStepCounts.size(), userNowStepCounts.get(userId.toString()));
+		// Map<String, Integer> userNowStepCounts = firebaseService.selectUserStep(List.of(myUser.getId(), opponentUser.getId()));
+		// log.info("userNowStepCount Map - size: {}, 1번: {}", userNowStepCounts.size(), userNowStepCounts.get(userId.toString()));
 
 		int myGoalStep = 0;
 		int opponentGoalStep = 0;
@@ -190,7 +190,7 @@ public class UserMissionService {
 			UserMission opponentCurrentUserMission = opponentUser.getCurrentUserMission();
 			opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ? opponentCurrentUserMission.getMission().getStepCount() : 0;
 			assert opponentCurrentUserMission != null;
-			isStepCountCompleted(userNowStepCounts.get(opponentUser.getId().toString()), opponentCurrentUserMission);
+			isStepCountCompleted(request.opponentStepCount(), opponentCurrentUserMission);
 		}
 
 		if (!myUserMissionsEmpty) {
@@ -199,7 +199,7 @@ public class UserMissionService {
 				return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
 			}
 			myGoalStep = myCurrentUserMission.getMission().getStepCount();
-			boolean stepCountCompleted = isStepCountCompleted(userNowStepCounts.get(myUser.getId().toString()), myCurrentUserMission);
+			boolean stepCountCompleted = isStepCountCompleted(request.myStepCount(), myCurrentUserMission);
 			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted);
 		}
 
