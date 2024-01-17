@@ -155,12 +155,7 @@ public class UserMissionService {
 			UserMission currentMission = user.getCurrentUserMission();
 
 			if (validateTodayDateMission(currentMission)) {
-				if (currentMission.getMission().getTarget().equals(UserType.NONE)) {
-					currentMission.updateMissionFromEmpty(mission);
-					currentMission.updateCompletedStatus(IN_PROGRESS);
-				} else {
-					throw new MissionException(ALREADY_CHOICE_TODAY_MISSION);
-				}
+				currentMission.updateMissionFromEmpty(mission);
 			}
 		}
 
