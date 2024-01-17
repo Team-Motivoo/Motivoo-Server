@@ -114,6 +114,12 @@ public class ParentchildService {
         if(parentchild == null)
             return new InviteResponse(userId, false, false, false);
 
+        //부모-부모이거나 자녀-자녀인 경우
+        User oppositeUser = userRepository.findUserByParentchild(parentchild);
+        log.info("나의 타입="+user.getType()+"상대방의 타입="+oppositeUser.getType());
+        if(user.getType() == oppositeUser.getType())
+            throw new ParentchildException(INVALID_PARENTCHILD_RELATION);
+
         //1. 온보딩 정보 입력을 한 적이 있고 2. 내가 발급한 초대 코드인 경우
         if(!healthRepository.findByUser(user).isEmpty() && user.getParentchild() == parentchild)
             return new InviteResponse(userId, false, true, true);
@@ -164,7 +170,7 @@ public class ParentchildService {
             //초대 코드만 생성하고 아직 매칭에 성공하지 못한 경우
             throw new ParentchildException(MATCHING_NOT_FOUND);
         }
-        //부모-자식 관계까 없는 경우
+        //부모-자식 관계가 없는 경우
         throw new ParentchildException(PARENTCHILD_NOT_FOUND);
     }
 
