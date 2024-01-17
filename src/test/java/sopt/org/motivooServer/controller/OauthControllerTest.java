@@ -2,13 +2,11 @@ package sopt.org.motivooServer.controller;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
 import static com.epages.restdocs.apispec.ResourceDocumentation.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
-import static sopt.org.motivooServer.util.ApiDocumentUtil.*;
 
 import java.security.Principal;
 
@@ -19,8 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
