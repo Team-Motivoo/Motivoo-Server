@@ -35,6 +35,7 @@ import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
 import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
+import sopt.org.motivooServer.fixture.UserFixture;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 
@@ -63,12 +64,12 @@ public class ParentchildControllerTest extends BaseControllerTest {
         ResponseEntity<ApiResponse<OnboardingResponse>> result = ApiResponse
                 .success(ONBOARDING_SUCCESS,response);
 
-        List<String> exerciseNote = new ArrayList<>();
-        exerciseNote.add("허리");
-        exerciseNote.add("목");
+//        List<String> exerciseNote = new ArrayList<>();
+//        exerciseNote.add("허리");
+//        exerciseNote.add("목");
 
         //when
-        OnboardingRequest request = new OnboardingRequest("자녀", 25, true, "고강도 운동", "3일 - 5일 이내", "30분 미만", exerciseNote);
+        OnboardingRequest request = UserFixture.createOnboardingRequest();
         log.info("유저 정보="+request.age()+" "+request.exerciseNote().get(0));
         when(parentChildController.onboardInput(request, principal)).thenReturn(result);
 

@@ -39,6 +39,7 @@ public class ParentChildController {
     @GetMapping("/user/onboarding")
     public ResponseEntity<ApiResponse<CheckOnboardingResponse>> checkOnboardingInfo(Principal principal){
         Long userId = getUserFromPrincipal(principal);
+        System.out.println("유저 아이디="+userId);
         return ApiResponse.success(CHECK_ONBOARDING_INFO_SUCCESS, parentchildService.checkOnboardingInfo(userId));
     }
 
