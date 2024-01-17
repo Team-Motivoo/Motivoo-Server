@@ -29,7 +29,7 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 
 @Slf4j
 @DisplayName("HomeController 테스트")
-@WebMvcTest(HomeControllerTest.class)
+@WebMvcTest(HomeController.class)
 public class HomeControllerTest extends BaseControllerTest{
 
 	private static final String DEFAULT_URL = "/home";
