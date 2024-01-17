@@ -86,7 +86,9 @@ public class UserMissionService {
 	public MissionHistoryResponse getUserMissionHistory(final Long userId) {
 		User myUser = getUserById(userId);
 		User opponentUser = getMatchedUserWith(myUser);
-		checkedUserMissionEmpty(myUser);
+		if (myUser.getUserMissions().isEmpty()) {
+			return MissionHistoryResponse.of(myUser);
+		}
 
 		UserMission todayMission = myUser.getCurrentUserMission();
 		//checkMissionChoice(todayMission);

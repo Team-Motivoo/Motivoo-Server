@@ -10,13 +10,6 @@
   }, {
     "url" : "http://localhost:8080"
   } ],
-  "security": [
-    {
-      "jwtAuth": [
-
-      ]
-    }
-  ],
   "tags" : [ ],
   "paths" : {
     "/api/health" : {
@@ -50,27 +43,13 @@
         "summary" : "홈 화면 조회 시 걸음 수 요청값에 대한 미션 상태 업데이트 결과 및 부모-자녀 유저의 목표 걸음 수 반환",
         "description" : "홈 화면 조회 시 걸음 수 요청값에 대한 미션 상태 업데이트 결과 및 부모-자녀 유저의 목표 걸음 수 반환",
         "operationId" : "홈 화면 미션 달성 상태 조회 API 성공 Example",
-        "requestBody" : {
-          "content" : {
-            "application/json;charset=UTF-8" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/home1356191784"
-              },
-              "examples" : {
-                "홈 화면 미션 달성 상태 조회 API 성공 Example" : {
-                  "value" : "{\n  \"my_step_count\" : 14000,\n  \"opponent_step_count\" : 3000\n}"
-                }
-              }
-            }
-          }
-        },
         "responses" : {
           "200" : {
             "description" : "200",
             "content" : {
               "application/json;charset=UTF-8" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/home-1151977564"
+                  "$ref" : "#/components/schemas/home931507728"
                 },
                 "examples" : {
                   "홈 화면 미션 달성 상태 조회 API 성공 Example" : {
@@ -99,7 +78,7 @@
                 },
                 "examples" : {
                   "운동 모아보기 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"이전 운동 미션 히스토리를 조회하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_type\" : \"자녀\",\n    \"today_mission\" : {\n      \"mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\"\n    },\n    \"mission_history\" : [ {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 16일 화요일\"\n    }, {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 16일 화요일\"\n    } ]\n  }\n}"
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"이전 운동 미션 히스토리를 조회하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_type\" : \"자녀\",\n    \"today_mission\" : {\n      \"mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\"\n    },\n    \"mission_history\" : [ {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 17일 수요일\"\n    }, {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 17일 수요일\"\n    } ]\n  }\n}"
                   }
                 }
               }
@@ -211,6 +190,31 @@
         }
       }
     },
+    "/onboarding/match" : {
+      "get" : {
+        "tags" : [ "parentchild" ],
+        "summary" : "유저의 부모-자녀 매칭을 확인하는 API",
+        "description" : "유저의 부모-자녀 매칭을 확인하는 API",
+        "operationId" : "매칭 여부 확인 Example",
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/onboarding-match1062754841"
+                },
+                "examples" : {
+                  "매칭 여부 확인 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"매칭에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"is_matched\" : true,\n    \"user_id\" : 1,\n    \"opponent_user_id\" : 7\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/exercise" : {
       "get" : {
         "tags" : [ "유저" ],
@@ -228,6 +232,43 @@
                 "examples" : {
                   "마이페이지 운동정보 조회 API 성공 Example" : {
                     "value" : "{\n  \"code\" : 200,\n  \"message\" : \"마이페이지 건강 정보 조회에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"is_exercise\" : true,\n    \"exercise_type\" : \"고강도\",\n    \"exercise_frequency\" : \"3일\",\n    \"exercise_time\" : \"2~3시간\",\n    \"health_notes\" : [ \"목\", \"어깨\" ]\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "parentchild" ],
+        "summary" : "온보딩시 유저와 운동 관련 정보를 입력하는 API",
+        "description" : "온보딩시 유저와 운동 관련 정보를 입력하는 API",
+        "operationId" : "온보딩 정보 입력 API 성공 Example",
+        "requestBody" : {
+          "content" : {
+            "application/json;charset=UTF-8" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/user-exercise-1849716859"
+              },
+              "examples" : {
+                "온보딩 정보 입력 API 성공 Example" : {
+                  "value" : "{\n  \"is_exercise\" : true,\n  \"exercise_type\" : \"고강도 운동\",\n  \"exercise_count\" : \"3일 - 5일 이내\",\n  \"exercise_time\" : \"30분 미만\",\n  \"exercise_note\" : [ \"허리\", \"목\" ],\n  \"type\" : \"자녀\",\n  \"age\" : 25\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "201",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/user-exercise-344984784"
+                },
+                "examples" : {
+                  "온보딩 정보 입력 API 성공 Example" : {
+                    "value" : "{\n  \"code\" : 201,\n  \"message\" : \"온보딩 질문 입력에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_id\" : 1,\n    \"invite_code\" : \"aaaaaaaa\",\n    \"exercise_level\" : \"고수\"\n  }\n}"
                   }
                 }
               }
@@ -260,32 +301,36 @@
           }
         }
       }
+    },
+    "/user/onboarding" : {
+      "get" : {
+        "tags" : [ "parentchild" ],
+        "summary" : "이전에 온보딩 정보를 입력한 이력이 있는지 여부를 알려주는 API",
+        "description" : "이전에 온보딩 정보를 입력한 이력이 있는지 여부를 알려주는 API",
+        "operationId" : "온보딩 정보 입력 확인 Example",
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/user-onboarding-256642812"
+                },
+                "examples" : {
+                  "온보딩 정보 입력 확인 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"운동정보 완료 여부 확인에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"is_finished_onboarding\" : true\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components" : {
     "schemas" : {
-      "api-health279159985" : {
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "number",
-            "description" : "상태 코드"
-          },
-          "data" : {
-            "type" : "string",
-            "description" : "응답 데이터"
-          },
-          "success" : {
-            "type" : "boolean",
-            "description" : "응답 성공 여부"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "상태 메세지"
-          }
-        }
-      },
-      "mission1210499860" : {
+      "onboarding-match1062754841" : {
         "type" : "object",
         "properties" : {
           "code" : {
@@ -295,112 +340,13 @@
           "data" : {
             "type" : "object",
             "properties" : {
-              "user_type" : {
-                "type" : "string",
-                "description" : "유저의 타입(PARENT|CHILD)"
-              },
-              "mission_history" : {
-                "type" : "array",
-                "description" : "미션 히스토리",
-                "items" : {
-                  "type" : "object",
-                  "properties" : {
-                    "date" : {
-                      "type" : "string",
-                      "description" : "미션 일자"
-                    },
-                    "opponent_mission_content" : {
-                      "type" : "string",
-                      "description" : "상대측의 미션 내용"
-                    },
-                    "my_mission_img_url" : {
-                      "type" : "string",
-                      "description" : "나의 미션 인증 이미지 url "
-                    },
-                    "opponent_mission_status" : {
-                      "type" : "string",
-                      "description" : "상대측의 미션 달성 상태 (진행중 | 성공 | 실패)"
-                    },
-                    "my_mission_status" : {
-                      "type" : "string",
-                      "description" : "나의 미션 달성 상태 (진행중 | 성공 | 실패)"
-                    },
-                    "my_mission_content" : {
-                      "type" : "string",
-                      "description" : "나의 미션 내용"
-                    },
-                    "opponent_mission_img_url" : {
-                      "type" : "string",
-                      "description" : "상대측의 미션 인증 이미지 url"
-                    }
-                  }
-                }
-              },
-              "today_mission" : {
-                "type" : "object",
-                "properties" : {
-                  "mission_content" : {
-                    "type" : "string",
-                    "description" : "오늘의 미션 내용"
-                  }
-                },
-                "description" : "오늘의 미션"
-              }
-            },
-            "description" : "응답 데이터"
-          },
-          "success" : {
-            "type" : "boolean",
-            "description" : "응답 성공 여부"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "상태 메세지"
-          }
-        }
-      },
-      "mission-image-891843899" : {
-        "type" : "object",
-        "properties" : {
-          "img_prefix" : {
-            "type" : "string",
-            "description" : "운동 인증 사진 디렉터리"
-          }
-        }
-      },
-      "home-1151977564" : {
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "number",
-            "description" : "상태 코드"
-          },
-          "data" : {
-            "type" : "object",
-            "properties" : {
-              "is_opponent_user_withdraw" : {
+              "is_matched" : {
                 "type" : "boolean",
-                "description" : "상대 유저의 탈퇴 여부"
-              },
-              "opponent_user_goal_step_count" : {
-                "type" : "number",
-                "description" : "상대 유저 오늘의 미션 목표 걸음 수"
-              },
-              "user_type" : {
-                "type" : "string",
-                "description" : "유저의 타입(PARENT|CHILD)"
-              },
-              "user_goal_step_count" : {
-                "type" : "number",
-                "description" : "유저 오늘의 미션 목표 걸음 수 "
+                "description" : "매칭 여부"
               },
               "user_id" : {
                 "type" : "number",
                 "description" : "유저 자신의 아이디"
-              },
-              "is_step_count_completed" : {
-                "type" : "boolean",
-                "description" : "걸음 수 달성 여부 → 운동 인증하기 버튼 활성화"
               },
               "opponent_user_id" : {
                 "type" : "number",
@@ -553,28 +499,6 @@
           }
         }
       },
-      "mission-today-43304617" : {
-        "type" : "object",
-        "properties" : {
-          "mission_id" : {
-            "type" : "number",
-            "description" : "선택한 미션 번호"
-          }
-        }
-      },
-      "home1356191784" : {
-        "type" : "object",
-        "properties" : {
-          "opponent_step_count" : {
-            "type" : "number",
-            "description" : "상대 측(부모/자녀)의 걸음 수"
-          },
-          "my_step_count" : {
-            "type" : "number",
-            "description" : "자신의 걸음 수"
-          }
-        }
-      },
       "user-me1088240176" : {
         "type" : "object",
         "properties" : {
@@ -609,13 +533,293 @@
             "description" : "상태 메세지"
           }
         }
-      }
-    },
-    "securitySchemes": {
-      "jwtAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+      },
+      "mission-today-912747800" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "api-health279159985" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "string",
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "mission-image-891843899" : {
+        "type" : "object",
+        "properties" : {
+          "img_prefix" : {
+            "type" : "string",
+            "description" : "운동 인증 사진 디렉터리"
+          }
+        }
+      },
+      "mission1210499860" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "user_type" : {
+                "type" : "string",
+                "description" : "유저의 타입(PARENT|CHILD)"
+              },
+              "mission_history" : {
+                "type" : "array",
+                "description" : "미션 히스토리",
+                "items" : {
+                  "type" : "object",
+                  "properties" : {
+                    "date" : {
+                      "type" : "string",
+                      "description" : "미션 일자"
+                    },
+                    "opponent_mission_content" : {
+                      "type" : "string",
+                      "description" : "상대측의 미션 내용"
+                    },
+                    "my_mission_img_url" : {
+                      "type" : "string",
+                      "description" : "나의 미션 인증 이미지 url "
+                    },
+                    "opponent_mission_status" : {
+                      "type" : "string",
+                      "description" : "상대측의 미션 달성 상태 (진행중 | 성공 | 실패)"
+                    },
+                    "my_mission_status" : {
+                      "type" : "string",
+                      "description" : "나의 미션 달성 상태 (진행중 | 성공 | 실패)"
+                    },
+                    "my_mission_content" : {
+                      "type" : "string",
+                      "description" : "나의 미션 내용"
+                    },
+                    "opponent_mission_img_url" : {
+                      "type" : "string",
+                      "description" : "상대측의 미션 인증 이미지 url"
+                    }
+                  }
+                }
+              },
+              "today_mission" : {
+                "type" : "object",
+                "properties" : {
+                  "mission_content" : {
+                    "type" : "string",
+                    "description" : "오늘의 미션 내용"
+                  }
+                },
+                "description" : "오늘의 미션"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "home931507728" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "is_opponent_user_withdraw" : {
+                "type" : "boolean",
+                "description" : "상대 유저의 탈퇴 여부"
+              },
+              "opponent_user_goal_step_count" : {
+                "type" : "number",
+                "description" : "상대 유저 오늘의 미션 목표 걸음 수"
+              },
+              "user_type" : {
+                "type" : "string",
+                "description" : "유저의 타입(부모|자녀)"
+              },
+              "user_goal_step_count" : {
+                "type" : "number",
+                "description" : "유저 오늘의 미션 목표 걸음 수 "
+              },
+              "user_id" : {
+                "type" : "number",
+                "description" : "유저 자신의 아이디"
+              },
+              "is_step_count_completed" : {
+                "type" : "boolean",
+                "description" : "걸음 수 달성 여부 → 운동 인증하기 버튼 활성화"
+              },
+              "opponent_user_id" : {
+                "type" : "number",
+                "description" : "매칭된 상대 유저의 아이디"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "user-onboarding-256642812" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "is_finished_onboarding" : {
+                "type" : "boolean",
+                "description" : "유저의 타입(PARENT|CHILD)"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "user-exercise-1849716859" : {
+        "type" : "object",
+        "properties" : {
+          "exercise_note" : {
+            "type" : "array",
+            "description" : "운동 유의사항",
+            "items" : {
+              "oneOf" : [ {
+                "type" : "object"
+              }, {
+                "type" : "boolean"
+              }, {
+                "type" : "string"
+              }, {
+                "type" : "number"
+              } ]
+            }
+          },
+          "exercise_count" : {
+            "type" : "string",
+            "description" : "운동 일수"
+          },
+          "exercise_time" : {
+            "type" : "string",
+            "description" : "운동 시간"
+          },
+          "is_exercise" : {
+            "type" : "boolean",
+            "description" : "운동 유무"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "유저 타입(자녀|부모"
+          },
+          "exercise_type" : {
+            "type" : "string",
+            "description" : "운동 유형(고강도|중강도|저강도"
+          },
+          "age" : {
+            "type" : "number",
+            "description" : "나이"
+          }
+        }
+      },
+      "mission-today-43304617" : {
+        "type" : "object",
+        "properties" : {
+          "mission_id" : {
+            "type" : "number",
+            "description" : "선택한 미션 번호"
+          }
+        }
+      },
+      "user-exercise-344984784" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "exercise_level" : {
+                "type" : "string",
+                "description" : "유저 분류(초보|중수|고수"
+              },
+              "user_id" : {
+                "type" : "number",
+                "description" : "유저 아이디"
+              },
+              "invite_code" : {
+                "type" : "string",
+                "description" : "초대 코드"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
       }
     }
   }
