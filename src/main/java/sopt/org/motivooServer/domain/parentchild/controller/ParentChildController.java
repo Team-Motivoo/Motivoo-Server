@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
@@ -27,7 +26,7 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 public class ParentChildController {
     private final ParentchildService parentchildService;
     @PostMapping("/user/exercise")
@@ -45,7 +44,7 @@ public class ParentChildController {
 
     @PatchMapping("/parentchild/match")
     public ResponseEntity<ApiResponse<InviteResponse>> validateInviteCode(@Valid @RequestBody final InviteRequest request,
-                                                                          Principal principal){
+        Principal principal){
         Long userId = getUserFromPrincipal(principal);
         return ApiResponse.success(INPUT_INVITE_CODE_SUCCESS, parentchildService.validateInviteCode(userId, request));
     }
