@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
+import sopt.org.motivooServer.domain.mission.entity.Mission;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.user.entity.User;
 
@@ -32,6 +33,11 @@ public record MissionHistoryResponse(
 			.userType(user.getType().getValue())
 			.todayMission(TodayUserMissionDto.ofHistory(todayMission))
 			.missionHistory(parentchildMissions).build();
+	}
+
+	public static MissionHistoryResponse of(User user) {
+		return MissionHistoryResponse.builder()
+			.userType(user.getType().getValue()).build();
 	}
 
 	public static MissionHistoryResponse of(User user, UserMission todayMission, List<UserMission> myMissions, List<UserMission> opponentMissions) {

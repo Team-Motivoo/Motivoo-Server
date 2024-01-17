@@ -1,12 +1,21 @@
 package sopt.org.motivooServer.domain.parentchild.controller;
 
+import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.*;
+import static sopt.org.motivooServer.global.response.SuccessType.*;
+
+import java.security.Principal;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
 import sopt.org.motivooServer.domain.health.dto.response.CheckOnboardingResponse;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
@@ -16,13 +25,7 @@ import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivooServer.domain.parentchild.service.ParentchildService;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
-import java.security.Principal;
-
-import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.getUserFromPrincipal;
-import static sopt.org.motivooServer.global.response.SuccessType.*;
-
 @Slf4j
-@EnableWebMvc
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ParentChildController {
