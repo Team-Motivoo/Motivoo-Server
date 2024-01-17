@@ -32,7 +32,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 public class OauthService {
     private static final String BEARER_TYPE = "Bearer";
     private final InMemoryClientRegistrationRepository inMemoryRepository;
