@@ -33,7 +33,7 @@ public class OauthController {
     @PostMapping("/oauth/reissue")
     public ResponseEntity<ApiResponse<OauthTokenResponse>> reissue(
             @RequestHeader("Authorization") String refreshToken,
-            @RequestBody final RefreshRequest request) {
+            @RequestBody RefreshRequest request) {
         return ApiResponse.success(REISSUE_SUCCESS, tokenProvider.reissue(request.userId(), refreshToken));
     }
 
@@ -45,10 +45,10 @@ public class OauthController {
     }
 
     @DeleteMapping("/withdraw")
-    public ResponseEntity<ApiResponse<Object>> signout(Principal principal,
-                                                       @Valid @RequestBody OauthTokenRequest tokenRequest) {
+    public ResponseEntity<ApiResponse<Object>> signout(Principal principal) {
         Long userId = Long.parseLong(principal.getName());
-        userService.deleteSocialAccount(tokenRequest.tokenType(), userId, tokenRequest.accessToken());
+
+        userService.deleteSocialAccount(userId);
 
         return ApiResponse.success(SIGNOUT_SUCCESS);
     }

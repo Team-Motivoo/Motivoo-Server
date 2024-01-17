@@ -1,7 +1,6 @@
 package sopt.org.motivooServer.domain.user.service;
 
 import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.*;
-import static sopt.org.motivooServer.domain.user.entity.SocialPlatform.KAKAO;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.client.RestTemplate;
+import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivooServer.domain.health.entity.Health;
 import sopt.org.motivooServer.domain.health.exception.HealthException;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
-import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.domain.user.dto.response.MyHealthInfoResponse;
 import sopt.org.motivooServer.domain.user.dto.response.MyPageInfoResponse;
 import sopt.org.motivooServer.domain.user.entity.SocialPlatform;
@@ -31,6 +30,7 @@ import java.time.LocalDateTime;
 public class UserService {
 	private final UserRepository userRepository;
 	private final HealthRepository healthRepository;
+	private final TokenRedisRepository tokenRedisRepository;
 
 	public MyPageInfoResponse getMyInfo(final Long userId) {
 		User user = getUserById(userId);
@@ -51,23 +51,29 @@ public class UserService {
 	}
 
 	@Transactional
-	public void deleteSocialAccount(String socialPlatform, Long userId, String accessToken){
-		switch (socialPlatform){
+	public void deleteSocialAccount(Long userId){
+		deleteKakaoAccount(userId);
+
+		//TODO 애플 로그인 구현 후 리팩토링
+//		switch (){
 //			case "apple" ->
-			case "kakao" -> deleteKakaoAccount(userId, accessToken);
-		}
+//			case "kakao" -> deleteKakaoAccount(userId, accessToken);
+//		}
 	}
 
 	@Transactional
-	public void deleteKakaoAccount(Long userId, String accessToken){
+	public void deleteKakaoAccount(Long userId){
 		User user = getUserById(userId);
+		user.udpateDeleted(); //회원 탈퇴 deleted false -> true
+		user.updateDeleteAt(); //회원 탈퇴날짜 갱신
 
-		userRepository.updateDelete(userId); //회원 탈퇴 deleted false -> true
-		userRepository.updateDeleteAt(LocalDateTime.now().plusDays(30), user.getId()); //회원 탈퇴날짜 갱신
+		System.out.println("유저 정보=" + user.isDeleted()+" " +user.getDeletedAt());
+		String accessToken = userRepository.findSocialAccessTokenById(user.getId());
+		String refreshToken = userRepository.findRefreshTokenById(user.getId());
+		System.out.println("토큰 정보=" + accessToken+" "+refreshToken);
+		user.updateRefreshToken(null);
 
-		log.info("영구 탈퇴 날짜="+user.getDeletedAt());
-
-		sendRevokeRequest(null, KAKAO, accessToken); //카카오 연결 해제
+		//sendRevokeRequest(null, KAKAO, "FHdk_lLY2GObLpez2qGCdmqDlMBwwDk7FXgKPXTZAAABjRVYY2X6Fwx8Dt1GgQ"); //카카오 연결 해제
 	}
 
 	private void sendRevokeRequest(String data, SocialPlatform socialPlatform, String accessToken) {

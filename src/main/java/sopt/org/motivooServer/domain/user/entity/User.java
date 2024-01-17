@@ -115,6 +115,14 @@ public class User extends BaseTimeEntity {
 		this.refreshToken = refreshToken;
 	}
 
+	public void udpateDeleted(){
+		this.deleted = true;
+	}
+
+	public void updateDeleteAt(){
+		this.deletedAt = LocalDateTime.now().plusDays(30);
+	}
+
 	public void updateOnboardingInfo(UserType type, Integer age) {
 		this.type = type;
 		this.age = age;
