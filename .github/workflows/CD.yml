@@ -39,7 +39,6 @@ jobs:
 
       - name: Firebase JSON 파일 생성
         run: |
-          echo $(ls -al; pwd)
           cd ./src/main/resources
           
           mkdir ./firebase

@@ -5,8 +5,6 @@ import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -39,9 +37,8 @@ public class FirebaseConfig {
 	public void init() {
 		log.info("Firebase 파일명: {}", SERVICE_ACCOUNT_JSON);
 		try {
-			// ClassPathResource resource = new ClassPathResource(SERVICE_ACCOUNT_JSON);
-			FileInputStream serviceAccount = new FileInputStream("src/main/resources/"+SERVICE_ACCOUNT_JSON);
-			// InputStream serviceAccount = resource.getInputStream();
+			ClassPathResource resource = new ClassPathResource(SERVICE_ACCOUNT_JSON);
+			InputStream serviceAccount = resource.getInputStream();
 			log.info("파일 가져오기 성공!");
 
 			FirebaseOptions options = FirebaseOptions.builder()
@@ -58,23 +55,5 @@ public class FirebaseConfig {
 			log.error("파이어베이스 서버와의 연결에 실패했습니다.");
 			throw new BusinessException(FIREBASE_CONNECTION_ERROR);
 		}
-	}
-
-	public void getOpponentStepCount(Long opponentUid, Long opponentStepCount) {
-		DatabaseReference ref = FirebaseDatabase.getInstance()
-			.getReference("/Users");
-
-		ref.addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
-				DataSnapshot res = dataSnapshot.child(opponentUid.toString());
-				log.info("Firebase DB에서 받아온 데이터: {}", res.getValue());
-			}
-
-			@Override
-			public void onCancelled(DatabaseError error) {
-
-			}
-		});
 	}
 }
