@@ -21,7 +21,6 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
 
 @Slf4j
 @Service

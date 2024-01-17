@@ -27,15 +27,12 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.auth.controller.OauthController;
 import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
-import sopt.org.motivooServer.domain.auth.dto.request.RefreshRequest;
 import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
-import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
-import java.security.Principal;
 
-import static sopt.org.motivooServer.global.response.SuccessType.*;
+
 import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentRequest;
 import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentResponse;
 
