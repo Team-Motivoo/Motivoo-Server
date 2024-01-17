@@ -71,7 +71,7 @@ public class UserService {
 	}
 
 	private void sendRevokeRequest(String data, SocialPlatform socialPlatform, String accessToken) {
-		String appleRevokeUrl = "https://appleid.apple.com/auth/revoke"; //TODO 추후 애플 로그인 구현 후
+		// String appleRevokeUrl = "https://appleid.apple.com/auth/revoke"; //TODO 추후 애플 로그인 구현 후
 		String kakaoRevokeUrl = "https://kapi.kakao.com/v1/user/unlink";
 
 		RestTemplate restTemplate = new RestTemplate();
@@ -83,7 +83,7 @@ public class UserService {
 		HttpEntity<String> entity = new HttpEntity<>(data, headers);
 
 		switch (socialPlatform) {
-			case APPLE -> revokeUrl = appleRevokeUrl;
+			// case APPLE -> revokeUrl = appleRevokeUrl;
 			case KAKAO -> {
 				revokeUrl = kakaoRevokeUrl;
 				headers.setBearerAuth(accessToken);

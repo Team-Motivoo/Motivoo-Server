@@ -158,7 +158,7 @@ tasks.withType(GenerateSwaggerUI) {
 
 // openAPI 작성 자동화 => 패키징 전에 openapi3 태스크를 먼저 실행하도록 유발
 bootJar {
-//	dependsOn(':openapi3')
+	dependsOn(':openapi3')
 	dependsOn generateSwaggerUISample
 	from("${generateSwaggerUISample.outputDir}") {
 		into 'static/docs'
