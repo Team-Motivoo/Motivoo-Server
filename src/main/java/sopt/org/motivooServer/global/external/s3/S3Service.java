@@ -4,6 +4,7 @@ import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
 import static sopt.org.motivooServer.global.external.s3.S3ExceptionType.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 import sopt.org.motivooServer.global.advice.BusinessException;
@@ -100,6 +103,26 @@ public class S3Service {
 					.key(key).build());
 		} catch (RuntimeException e) {
 			throw new BusinessException(FAIL_TO_DELETE_IMAGE);
+		}
+	}
+
+	// imageKey 기반으로 실제 S3 URL 도출
+	public String getURL(final String imageKey) {
+		try {
+			GetUrlRequest request = GetUrlRequest.builder()
+				.bucket(bucketName)
+				.key(imageKey)
+				.build();
+
+			URL url = s3Client.utilities().getUrl(request);
+
+			String urlWithKey = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/" + imageKey;
+			if (urlWithKey.equals(url.toString())) {
+				return url.toString();
+			}
+			throw new RuntimeException("S3에서 이미지를 불러오는 데에 실패했습니다.");
+		} catch (S3Exception e) {
+			throw new RuntimeException(e.getMessage());
 		}
 	}
 
