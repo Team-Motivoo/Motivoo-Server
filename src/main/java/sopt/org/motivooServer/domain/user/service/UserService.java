@@ -21,6 +21,8 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
+import java.util.List;
+
 
 @Slf4j
 @Service
@@ -45,7 +47,7 @@ public class UserService {
 
 	private User getUserById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(
-			() -> new UserException(USER_NOT_FOUND)
+				() -> new UserException(USER_NOT_FOUND)
 		);
 	}
 
@@ -62,16 +64,30 @@ public class UserService {
 
 	@Transactional
 	public void deleteKakaoAccount(Long userId){
-		User user = getUserById(userId);
-		user.udpateDeleted(); //회원 탈퇴 deleted false -> true
-		user.updateDeleteAt(); //회원 탈퇴날짜 갱신
+		User user = userRepository.findUserById(userId);
+		//탈퇴하려고 하는데 가입한 이력이 없는 경우 -> 30일이 지나서 영구탈퇴
+		if(user==null)
+			throw new UserException(ALREADY_WITHDRAW_USER);
 
-		System.out.println("유저 정보=" + user.isDeleted()+" " +user.getDeletedAt());
-		String accessToken = userRepository.findSocialAccessTokenById(user.getId());
-		String refreshToken = userRepository.findRefreshTokenById(user.getId());
-		System.out.println("토큰 정보=" + accessToken+" "+refreshToken);
-		user.updateRefreshToken(null);
+		String socialId = user.getSocialId();
+		System.out.println("socialId= "+socialId);
+		List<User> users = userRepository.findBySocialId(socialId);
+		boolean is_withdrawn = users.stream()
+				.filter(u -> !u.isDeleted())
+				.peek(u -> {
+					u.udpateDeleted();
+					u.updateDeleteAt();
+					System.out.println("유저 정보=" + u.isDeleted() + " " + u.getDeletedAt());
+					String accessToken = userRepository.findSocialAccessTokenById(u.getId());
+					String refreshToken = userRepository.findRefreshTokenById(u.getId());
+					u.updateRefreshToken(null);
+				})
+				.findFirst()
+				.isPresent();
 
+		//이미 탈퇴한 경우
+		if(!is_withdrawn)
+			throw new UserException(ALREADY_WITHDRAW_USER);
 		//sendRevokeRequest(null, KAKAO, "FHdk_lLY2GObLpez2qGCdmqDlMBwwDk7FXgKPXTZAAABjRVYY2X6Fwx8Dt1GgQ"); //카카오 연결 해제
 	}
 
