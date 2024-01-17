@@ -27,7 +27,11 @@ public record MissionHistoryResponse(
 		List<ParentchildMissionDto> parentchildMissions = new ArrayList<>(missionGroupsByDate.size());
 
 		for (Map.Entry<LocalDate, List<UserMission>> entry : missionGroupsByDate.entrySet()) {
-			parentchildMissions.add(ParentchildMissionDto.of(entry.getValue().get(0), entry.getValue().get(1)));
+			if (user.equals(entry.getValue().get(0).getUser())) {
+				parentchildMissions.add(ParentchildMissionDto.of(entry.getValue().get(0), entry.getValue().get(1)));
+			} else {
+				parentchildMissions.add(ParentchildMissionDto.of(entry.getValue().get(1), entry.getValue().get(0)));
+			}
 		}
 		return MissionHistoryResponse.builder()
 			.userType(user.getType().getValue())
