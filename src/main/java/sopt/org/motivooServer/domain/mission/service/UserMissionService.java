@@ -172,9 +172,14 @@ public class UserMissionService {
 		User myUser = getUserById(userId);
 		User opponentUser = getMatchedUserWith(myUser);
 
+		int myStep = request.myStepCount();
+		int opponentStep = request.opponentStepCount();
+
 		try {
 			Map<String, Integer> userNowStepCounts = firebaseService.selectUserStep(List.of(myUser.getId(), opponentUser.getId()));
 			log.info("userNowStepCount Map - size: {}, 1번: {}", userNowStepCounts.size(), userNowStepCounts.get(userId.toString()));
+			myStep = userNowStepCounts.get(myUser.getId().toString());
+			opponentStep = userNowStepCounts.get(opponentUser.getId().toString());
 		} catch (CannotCreateTransactionException | NullPointerException e) {
 			log.error("트랜잭션 처리 실패! - 유저 미션 달성 상태 업데이트를 위한 FB 조회");
 		}
@@ -195,7 +200,7 @@ public class UserMissionService {
 			UserMission opponentCurrentUserMission = opponentUser.getCurrentUserMission();
 			opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ? opponentCurrentUserMission.getMission().getStepCount() : 0;
 			assert opponentCurrentUserMission != null;
-			isStepCountCompleted(request.opponentStepCount(), opponentCurrentUserMission);
+			isStepCountCompleted(opponentStep, opponentCurrentUserMission);
 		}
 
 		if (!myUserMissionsEmpty) {
@@ -204,7 +209,7 @@ public class UserMissionService {
 				return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false);
 			}
 			myGoalStep = myCurrentUserMission.getMission().getStepCount();
-			boolean stepCountCompleted = isStepCountCompleted(request.myStepCount(), myCurrentUserMission);
+			boolean stepCountCompleted = isStepCountCompleted(myStep, myCurrentUserMission);
 			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted);
 		}
 
