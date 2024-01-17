@@ -82,8 +82,7 @@ public class OauthService {
 
         String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(loginUser.getId()));
         OauthTokenResponse tokenDto = new OauthTokenResponse(accessToken, refreshToken);
-        loginUser.updateRefreshToken(tokenDto.refreshToke());
-
+        loginUser.updateRefreshToken(tokenDto.refreshToken());
 
         log.info("JWT Access Token: ", loginUser.getNickname(), tokenDto.accessToken());
         return getLoginResponse(loginUser, accessToken, refreshToken);

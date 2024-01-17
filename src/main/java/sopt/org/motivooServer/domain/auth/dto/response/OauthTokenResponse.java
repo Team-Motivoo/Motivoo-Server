@@ -7,6 +7,6 @@ public record OauthTokenResponse (
     String accessToken,
 
     @JsonProperty("refresh_token")
-    String refreshToke
+    String refreshToken
 ){
 }
