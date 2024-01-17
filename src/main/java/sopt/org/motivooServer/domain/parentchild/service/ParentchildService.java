@@ -4,6 +4,7 @@ package sopt.org.motivooServer.domain.parentchild.service;
 import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.EXIST_ONBOARDING_INFO;
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 
+import java.util.List;
 import java.util.Random;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,7 +95,6 @@ public class ParentchildService {
                                   .isMatched(false)
                                   .build();
 
-
         //초대 하는 입장
         user.addParentChild(parentchild);
 
@@ -115,10 +115,15 @@ public class ParentchildService {
             return new InviteResponse(userId, false, false, false);
 
         //부모-부모이거나 자녀-자녀인 경우
-        User oppositeUser = userRepository.findUserByParentchild(parentchild);
-        log.info("나의 타입="+user.getType()+"상대방의 타입="+oppositeUser.getType());
-        if(user.getType() == oppositeUser.getType())
+        List<User> oppositeUser = userRepository.findByParentchild(parentchild);
+
+        //상대방이 이미 매칭이 완료된 경우 예외처리
+        checkForOneToOneMatch(oppositeUser);
+        log.info("나의 타입="+user.getType()+"상대방의 타입="+oppositeUser.get(0).getType());
+        if(user.getType() == oppositeUser.get(0).getType())
             throw new ParentchildException(INVALID_PARENTCHILD_RELATION);
+
+        log.info("초대 코드 보낸 사람의 매칭 유무="+parentchild.isMatched());
 
         //1. 온보딩 정보 입력을 한 적이 있고 2. 내가 발급한 초대 코드인 경우
         if(!healthRepository.findByUser(user).isEmpty() && user.getParentchild() == parentchild)
@@ -136,13 +141,10 @@ public class ParentchildService {
             return new InviteResponse(userId, true, false, false);
         }
 
-        checkForOneToOneMatch(parentchild); //이미 매칭이 완료된 경우 예외처리
-
         //매칭 완료
         parentchild.matchingSuccess();
         user.addParentChild(parentchild);
         return new InviteResponse(userId, true, false, false); //[매칭 완료]
-
     }
 
     public CheckOnboardingResponse checkOnboardingInfo(Long userId){
@@ -174,8 +176,8 @@ public class ParentchildService {
         throw new ParentchildException(PARENTCHILD_NOT_FOUND);
     }
 
-    public void checkForOneToOneMatch(Parentchild parentchild){
-        if(parentchild.isMatched()){
+    public void checkForOneToOneMatch(List<User> users){
+        if(users.size()!=1){
             throw new ParentchildException(MATCH_ALREADY_COMPLETED);
         }
     }

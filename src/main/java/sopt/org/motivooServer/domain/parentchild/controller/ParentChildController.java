@@ -27,7 +27,7 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 public class ParentChildController {
     private final ParentchildService parentchildService;
     @PostMapping("/user/exercise")
