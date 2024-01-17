@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -30,13 +31,15 @@ import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
 import sopt.org.motivooServer.domain.health.dto.response.CheckOnboardingResponse;
 import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
 import sopt.org.motivooServer.domain.parentchild.controller.ParentChildController;
+import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
+import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 
 @Slf4j
-@WithMockUser(roles = "USER")
+@WithMockUser(roles = "PARENTCHILD")
 @DisplayName("ParentchildController 테스트")
 @WebMvcTest(ParentchildControllerTest.class)
 public class ParentchildControllerTest extends BaseControllerTest {
@@ -132,8 +135,8 @@ public class ParentchildControllerTest extends BaseControllerTest {
                                         .requestFields()
                                         .responseFields(
                                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
-                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
-                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
                                                 fieldWithPath("data").description("응답 데이터"),
                                                 fieldWithPath("data.is_finished_onboarding").type(BOOLEAN).description("유저의 타입(PARENT|CHILD)"))
                                         .build()
@@ -175,7 +178,7 @@ public class ParentchildControllerTest extends BaseControllerTest {
                                                 fieldWithPath("message").type(JsonFieldType.STRING).description("상태 메세지"),
                                                 fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
                                                 fieldWithPath("data").description("응답 데이터"),
-                                                fieldWithPath("data.user_id").type(LONG).description("유저 아이디"),
+                                                fieldWithPath("data.user_id").type(NUMBER).description("유저 아이디"),
                                                 fieldWithPath("data.is_matched").type(BOOLEAN).description("매칭 여부"),
                                                 fieldWithPath("data.my_invite_code").type(BOOLEAN).description("내가 발급한 코드인지 판별"),
                                                 fieldWithPath("data.is_finished_onboarding").type(BOOLEAN).description("온보딩 정보했는지 여부"))
