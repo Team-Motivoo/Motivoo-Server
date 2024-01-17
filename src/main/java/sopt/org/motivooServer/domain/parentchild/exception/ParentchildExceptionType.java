@@ -13,6 +13,7 @@ public enum ParentchildExceptionType implements BusinessExceptionType {
 	 * 400 Bad Request
 	 */
 	NOT_EXIST_PARENTCHILD_USER(HttpStatus.BAD_REQUEST, "해당 유저와 매칭된 부모-자녀 유저가 없습니다."),
+	INVALID_PARENTCHILD_RELATION(HttpStatus.BAD_REQUEST, "올바르지 않은 부모-자식 관계입니다."),
 
 	/**
 	 * 404 Not Found
