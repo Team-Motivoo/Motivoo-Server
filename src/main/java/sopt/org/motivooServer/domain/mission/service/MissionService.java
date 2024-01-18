@@ -3,6 +3,8 @@ package sopt.org.motivooServer.domain.mission.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,8 +16,11 @@ import sopt.org.motivooServer.domain.mission.repository.MissionRepository;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MissionService {
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	private final MissionRepository missionRepository;
+	private static final String DEFAULT_ICON = "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/icon/icon_mission_body.png";
 
 	@Transactional
 	public void updateMissionContentText() {
@@ -25,5 +30,12 @@ public class MissionService {
 			.collect(Collectors.toList());
 
 		missionRepository.saveAll(missions);
+	}
+
+	@Transactional
+	public void updateMissionDefaultIcon(){
+		missionRepository.updateIcon(DEFAULT_ICON);
+		entityManager.flush();
+		entityManager.clear();
 	}
 }
