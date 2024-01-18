@@ -51,7 +51,7 @@ public class ParentChildController {
     }
 
     @GetMapping("/onboarding/match")
-    public ResponseEntity<ApiResponse<MatchingResponse>> validateMatching(Principal principal){
+    public ResponseEntity<ApiResponse<MatchingResponse>> validateMatching(Principal principal) {
         Long userId = getUserFromPrincipal(principal);
         return ApiResponse.success(MATCHING_SUCCESS, parentchildService.checkMatching(userId));
     }

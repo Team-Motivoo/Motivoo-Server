@@ -35,7 +35,7 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 public class UserControllerTest extends BaseControllerTest {
 
 	protected static final String DEFAULT_URL = "/user";
-	private final String TAG = "유저";
+	private final String TAG = "마이페이지";
 
 	@MockBean
 	UserController userController;

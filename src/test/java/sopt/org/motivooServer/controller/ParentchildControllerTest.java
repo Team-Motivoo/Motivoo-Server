@@ -11,8 +11,6 @@ import static sopt.org.motivooServer.global.response.SuccessType.*;
 import static sopt.org.motivooServer.util.ApiDocumentUtil.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +32,10 @@ import sopt.org.motivooServer.domain.parentchild.controller.ParentChildControlle
 import sopt.org.motivooServer.domain.parentchild.dto.request.InviteRequest;
 import sopt.org.motivooServer.domain.parentchild.dto.response.InviteResponse;
 import sopt.org.motivooServer.domain.parentchild.dto.response.MatchingResponse;
+import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
-import sopt.org.motivooServer.fixture.UserFixture;
+import sopt.org.motivooServer.fixture.HealthFixture;
+import sopt.org.motivooServer.fixture.ParentchildFixture;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 
@@ -44,7 +44,7 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 @WebMvcTest(ParentChildController.class)
 public class ParentchildControllerTest extends BaseControllerTest {
 
-    private final String TAG = "parentchild";
+    private static final String TAG = "온보딩";
 
     @MockBean
     ParentChildController parentChildController;
@@ -60,7 +60,8 @@ public class ParentchildControllerTest extends BaseControllerTest {
     void onboardingInputTest() throws Exception {
 
         //given
-        OnboardingResponse response = new OnboardingResponse(1L, "aaaaaaaa", "고수");
+        OnboardingRequest request = HealthFixture.createOnboardingRequest();
+        OnboardingResponse response = HealthFixture.createOnboardingResponse();
         ResponseEntity<ApiResponse<OnboardingResponse>> result = ApiResponse
                 .success(ONBOARDING_SUCCESS,response);
 
@@ -69,7 +70,6 @@ public class ParentchildControllerTest extends BaseControllerTest {
 //        exerciseNote.add("목");
 
         //when
-        OnboardingRequest request = UserFixture.createOnboardingRequest();
         log.info("유저 정보="+request.age()+" "+request.exerciseNote().get(0));
         when(parentChildController.onboardInput(request, principal)).thenReturn(result);
 
@@ -148,8 +148,9 @@ public class ParentchildControllerTest extends BaseControllerTest {
     @DisplayName("초대 코드 입력(매칭) 테스트")
     void validateInviteCode() throws Exception {
         //given
-        InviteRequest request = new InviteRequest("aaaaaaaa");
-        InviteResponse response = new InviteResponse(1L, false, false, false);
+        Parentchild parentchild = ParentchildFixture.createParentchild();
+        InviteRequest request = new InviteRequest(parentchild.getInviteCode());
+        InviteResponse response = new InviteResponse(1L, parentchild.isMatched(), false, false);
 
         ResponseEntity<ApiResponse<InviteResponse>> result = ApiResponse.success(
                 INPUT_INVITE_CODE_SUCCESS, response);

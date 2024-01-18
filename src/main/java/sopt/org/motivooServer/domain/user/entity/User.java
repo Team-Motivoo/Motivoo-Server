@@ -24,6 +24,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
@@ -36,7 +37,7 @@ import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 @Getter
 @Entity
 @Table(name = "`user`")
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
