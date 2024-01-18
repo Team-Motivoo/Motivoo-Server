@@ -34,6 +34,7 @@ public class S3Service {
 
 	private static final Long PRE_SIGNED_URL_EXPIRE_MINUTE = 1L;  // 만료시간 1분
 	private static final String IMAGE_EXTENSION = ".jpg";
+	private static final String AWS_DOMAIN = "amazonaws.com/";
 
 	private final String bucketName;
 
@@ -107,22 +108,32 @@ public class S3Service {
 	}
 
 	// imageKey 기반으로 실제 S3 URL 도출
-	public String getURL(final String imageKey) {
+	public String getURL(final String url) {
+
+		int index = url.indexOf(AWS_DOMAIN);
+		String imageKey = "";
+		if (index != -1) {
+			imageKey = url.substring(index + AWS_DOMAIN.length());
+			log.info("imageKey substring으로 가져옴: {}", imageKey);
+		} else {
+			log.error("imageKey substring으로 가져오기 실패");
+		}
+
 		try {
 			GetUrlRequest request = GetUrlRequest.builder()
 				.bucket(bucketName)
 				.key(imageKey)
 				.build();
 
-			URL url = s3Client.utilities().getUrl(request);
+			URL imageUrl = s3Client.utilities().getUrl(request);
 
 			String urlWithKey = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/" + imageKey;
-			if (urlWithKey.equals(url.toString())) {
-				return url.toString();
+			if (urlWithKey.equals(imageUrl.toString())) {
+				return imageUrl.toString();
 			}
-			throw new RuntimeException("S3에서 이미지를 불러오는 데에 실패했습니다.");
+			throw new BusinessException(S3_BUCKET_GET_IMAGE_ERROR);
 		} catch (S3Exception e) {
-			throw new RuntimeException(e.getMessage());
+			throw new BusinessException(e.getMessage(), S3_BUCKET_GET_IMAGE_ERROR);
 		}
 	}
 

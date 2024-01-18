@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,6 @@ import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
-import sopt.org.motivooServer.domain.mission.entity.CompletedStatus;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
 import sopt.org.motivooServer.domain.mission.entity.MissionQuest;
 import sopt.org.motivooServer.domain.mission.entity.MissionType;
@@ -52,6 +50,7 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
+import sopt.org.motivooServer.global.advice.BusinessException;
 import sopt.org.motivooServer.global.external.firebase.FirebaseService;
 import sopt.org.motivooServer.global.external.s3.PreSignedUrlResponse;
 import sopt.org.motivooServer.global.external.s3.S3BucketDirectory;
@@ -81,12 +80,12 @@ public class UserMissionService {
 
 		UserMission todayMission = user.getCurrentUserMission();
 		checkMissionChoice(todayMission);
-		checkMissionStepComplete(todayMission);
+		// checkMissionStepComplete(todayMission);
 
 		PreSignedUrlResponse preSignedUrl = s3Service.getUploadPreSignedUrl(
 			S3BucketDirectory.of(request.imgPrefix()));
 
-		String imgUrl = s3Service.getURL(MISSION_PREFIX.value() + preSignedUrl.fileName());
+
 		todayMission.updateImgUrl(s3Service.getImgByFileName(request.imgPrefix(), preSignedUrl.fileName()));
 		todayMission.updateCompletedStatus(SUCCESS);
 		return MissionImgUrlResponse.of(preSignedUrl.url(), preSignedUrl.fileName());
@@ -109,14 +108,27 @@ public class UserMissionService {
 		for (LocalDate localDateTime : missionsByDate.keySet()) {
 			log.info("missionsByDate.get(localDateTime) size: {}", missionsByDate.get(localDateTime).size());
 
+			missionsByDate.get(localDateTime).stream()
+				.filter(um -> um.getImgUrl() != null)
+				.forEach(um -> {
+					try {
+						String imgUrl = s3Service.getURL(MISSION_PREFIX.value() + um.getImgUrl());
+						log.info("S3에서 받아온 이미지 URL: {}", imgUrl);
+						um.updateImgUrl(imgUrl);
+					} catch (BusinessException e) {
+						log.error(e.getMessage());
+						um.updateImgUrl(null);
+					}
+				});
+
 			if (!localDateTime.equals(LocalDate.now())) {
 				missionsByDate.get(localDateTime).stream()
 					.filter(um -> um.getImgUrl() == null && !um.getMission().getTarget().equals(UserType.NONE))
 					.forEach(um -> um.updateCompletedStatus(FAIL));
 			} else {
 				missionsByDate.get(localDateTime).stream()
-					.filter(um -> um.getImgUrl() == null && !um.getMission().getTarget().equals(UserType.NONE))
-					.forEach(um -> um.updateCompletedStatus(IN_PROGRESS));
+					.filter(um -> um.getImgUrl() != null && !um.getMission().getTarget().equals(UserType.NONE))
+					.forEach(um -> um.updateCompletedStatus(SUCCESS));
 			}
 
 			missionsByDate.get(localDateTime).stream()
