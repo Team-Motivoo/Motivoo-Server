@@ -56,7 +56,7 @@ public class UserControllerTest extends BaseControllerTest {
 		MyPageInfoResponse response = MyPageInfoResponse.builder()
 			.userNickname("모티뿡뿡이")
 			.userAge(20)
-			.userType("CHILD").build();
+			.userType("자녀").build();
 		ResponseEntity<ApiResponse<MyPageInfoResponse>> result = ApiResponse
 			.success(GET_MYINFO_SUCCESS, response);
 
@@ -84,7 +84,7 @@ public class UserControllerTest extends BaseControllerTest {
 							fieldWithPath("data").type(OBJECT).description("응답 데이터"),
 							fieldWithPath("data.user_nickname").type(STRING).description("유저 닉네임"),
 							fieldWithPath("data.user_age").type(NUMBER).description("유저 나이"),
-							fieldWithPath("data.user_type").type(STRING).description("유저 타입 (부모/자식)"))
+							fieldWithPath("data.user_type").type(STRING).description("유저 타입 (부모/자녀)"))
 						.build()
 				)
 			)).andExpect(status().isOk());

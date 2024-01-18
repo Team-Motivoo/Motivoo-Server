@@ -17,6 +17,7 @@ public record MyPageInfoResponse(
 	public static MyPageInfoResponse of(User user) {
 		return MyPageInfoResponse.builder()
 			.userNickname(user.getNickname())
-			.userAge(user.getAge()).build();
+			.userAge(user.getAge())
+			.userType(user.getType().getValue()).build();
 	}
 }
