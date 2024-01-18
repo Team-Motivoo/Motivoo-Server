@@ -36,6 +36,7 @@ import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
+import sopt.org.motivooServer.domain.mission.entity.CompletedStatus;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
 import sopt.org.motivooServer.domain.mission.entity.MissionQuest;
 import sopt.org.motivooServer.domain.mission.entity.MissionType;
@@ -80,6 +81,7 @@ public class UserMissionService {
 
 		UserMission todayMission = user.getCurrentUserMission();
 		checkMissionChoice(todayMission);
+		checkMissionStepComplete(todayMission);
 
 		PreSignedUrlResponse preSignedUrl = s3Service.getUploadPreSignedUrl(
 			S3BucketDirectory.of(request.imgPrefix()));
@@ -88,6 +90,7 @@ public class UserMissionService {
 		todayMission.updateImgUrl(s3Service.getImgByFileName(request.imgPrefix(), preSignedUrl.fileName()));
 		return MissionImgUrlResponse.of(preSignedUrl.url(), preSignedUrl.fileName());
 	}
+
 
 	@Transactional
 	public MissionHistoryResponse getUserMissionHistory(final Long userId) {
@@ -159,6 +162,7 @@ public class UserMissionService {
 
 			if (validateTodayDateMission(currentMission)) {
 				currentMission.updateMissionFromEmpty(mission);
+				return currentMission.getId();
 			}
 		}
 
@@ -280,6 +284,7 @@ public class UserMissionService {
 
 		// 2) 필터링 로직을 한 번 이상 거친 경우 -> 저장된 거 가져오기
 		UserMission todayMission = user.getCurrentUserMission();
+
 		if (!validateTodayDateMission(todayMission) && user.getUserMissionChoice().isEmpty()) {
 			log.info("유저 {}의 UserMissions 선택지 리스트가 비어 있음", user.getNickname());
 
@@ -292,6 +297,14 @@ public class UserMissionService {
 		if (!validateTodayDateMission(todayMission) && !user.getUserMissionChoice().isEmpty()) {
 			log.info("오늘의 미션 선택지가 세팅된 상태: {}", user.getUserMissionChoice().size());
 			return TodayMissionResponse.of(user.getUserMissionChoice());
+		}
+
+		// 상대 측에서 미션 히스토리를 먼저 조회한 경우
+		if (user.getUserMissionChoice().isEmpty() && todayMission.getMission().getTarget().equals(UserType.NONE)) {
+			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
+			user.setPreUserMissionChoice(todayMissionChoices);
+			log.info("유저 오늘의 미션 선택지 세팅 완료! : {}", todayMissionChoices.size());
+			return TodayMissionResponse.of(todayMissionChoices);
 		}
 
 		/**
@@ -423,6 +436,13 @@ public class UserMissionService {
 	private void checkMissionChoice(UserMission todayMission) {
 		if (!validateTodayDateMission(todayMission)) {
 			throw new MissionException(NOT_CHOICE_TODAY_MISSION);
+		}
+	}
+
+	// 오늘의 미션 걸음 수 달성 상태 확인
+	private void checkMissionStepComplete(UserMission todayMission) {
+		if (!todayMission.getCompletedStatus().equals(SUCCESS)) {
+			throw new MissionException(NOT_COMPLETE_MISSION_STEPS_SUCCESS);
 		}
 	}
 
