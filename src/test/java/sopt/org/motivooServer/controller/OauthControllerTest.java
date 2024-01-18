@@ -21,16 +21,18 @@ import org.springframework.http.ResponseEntity;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import sopt.org.motivooServer.domain.auth.controller.OauthController;
 import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
 import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
+import sopt.org.motivooServer.fixture.UserFixture;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 @Slf4j
 @DisplayName("OauthController 테스트")
 @WebMvcTest(OauthController.class)
-public class OauthControllerTest extends BaseControllerTest{
+public class OauthControllerTest extends BaseControllerTest {
     private final String TAG = "oauth";
 
     @MockBean
@@ -47,18 +49,12 @@ public class OauthControllerTest extends BaseControllerTest{
     void loginTest() throws Exception {
 
         //given
-        LoginResponse response = LoginResponse.builder()
-                .id("1")
-                .nickname("모티뿌")
-                .accessToken("eyJ0eXAiOiJKV1QiLCJhbG")
-                .tokenType("Bearer")
-                .refreshToken("eyJ0eXAiOiJKV1QiLCJhbG")
-                .build();
+        LoginResponse response = UserFixture.createLoginResponse();
         ResponseEntity<ApiResponse<LoginResponse>> result = ApiResponse
                 .success(LOGIN_SUCCESS, response);
 
         //when
-        OauthTokenRequest request = new OauthTokenRequest("eyJ0eXAiOiJKV1QiLCJhbG", "kakao");
+        OauthTokenRequest request = UserFixture.createOauthTokenRequest();
         when(oauthController.login(request)).thenReturn(result);
 
         //then
@@ -187,7 +183,6 @@ public class OauthControllerTest extends BaseControllerTest{
     void withdrawTest() throws Exception {
 
         //given
-        OauthTokenRequest request = new OauthTokenRequest("TJ-tINCO5zPBhmFudnfm-Sjn4H3jtOe8G3IKKiWRAAABjPxmAbhDz1szkZmFRA","kakao");
         ResponseEntity<ApiResponse<Object>> result = ApiResponse
                 .success(SIGNOUT_SUCCESS);
 
@@ -198,7 +193,6 @@ public class OauthControllerTest extends BaseControllerTest{
         mockMvc.perform(delete("/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
                 .principal(principal)
         ).andDo(
                 document("회원탈퇴 API 성공 Example",
@@ -208,10 +202,7 @@ public class OauthControllerTest extends BaseControllerTest{
                                 ResourceSnippetParameters.builder()
                                         .tag(TAG)
                                         .description("회원 탈퇴 API")
-                                        .requestFields(
-                                                fieldWithPath("social_access_token").type(STRING).description("access token"),
-                                                fieldWithPath("token_type").type(STRING).description("소셜 플랫폼(kakao|apple)")
-                                        )
+                                        .requestFields()
                                         .responseFields(
                                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
                                                 fieldWithPath("message").type(STRING).description("상태 메세지"),

@@ -1,7 +1,12 @@
 package sopt.org.motivooServer.fixture;
 
+import java.util.List;
+
 import lombok.val;
+import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
+import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
+import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
 import sopt.org.motivooServer.domain.health.entity.Health;
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 import sopt.org.motivooServer.domain.user.entity.SocialPlatform;
@@ -70,15 +75,25 @@ public class UserFixture {
 		return user;
 	}
 
-	public static User createUserV4(){
+	/*public static User createUserV4(){
 		val health = HealthFixture.createHealthInfo();
 		val user = health.getUser();
 		user.addParentChild(ParentchildFixture.createParentchild());
 		return user;
+	}*/
+
+	public static OauthTokenRequest createOauthTokenRequest() {
+		return new OauthTokenRequest(SOCIAL_ACCESS_TOKEN, "kakao");
 	}
 
-	public static OnboardingRequest createOnboardingRequest(){
-		val health = HealthFixture.createHealthInfo();
-		return OnboardingRequest.of(health.getUser(), health);
+	public static LoginResponse createLoginResponse() {
+		val user = createUserV3();
+		return LoginResponse.builder()
+			.id(user.getSocialId())
+			.nickname(user.getNickname())
+			.accessToken(user.getSocialAccessToken())
+			.refreshToken(user.getRefreshToken())
+			.tokenType("Bearer").build();
 	}
+
 }
