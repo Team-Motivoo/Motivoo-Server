@@ -1,6 +1,7 @@
 package sopt.org.motivooServer.domain.parentchild.service;
 
 
+import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.EXCEED_HEALTH_NOTES_RANGE;
 import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.EXIST_ONBOARDING_INFO;
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 
@@ -74,6 +75,11 @@ public class ParentchildService {
                         .exerciseLevel(ExerciseLevel.BEGINNER)
                         .build();
         log.info("health user="+health.getId());
+
+        //운동 특이사항 최대 3개까지 선택 가능
+        if(health.getHealthNotes().size()>3)
+            throw new HealthException(EXCEED_HEALTH_NOTES_RANGE);
+
         healthRepository.save(health);
 
         // 온보딩을 마친 유저의 걸음 수 데이터 DB에 추가

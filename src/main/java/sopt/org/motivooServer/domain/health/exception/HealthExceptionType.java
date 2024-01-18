@@ -20,6 +20,7 @@ public enum HealthExceptionType implements BusinessExceptionType {
 	INVALID_EXERCISE_LEVEL(HttpStatus.BAD_REQUEST, "유효하지 않는 유저 분류입니다."),
 
 	NULL_VALUE_IS_EXERCISE(HttpStatus.BAD_REQUEST, "운동 여부는 Null 값이어서는 안 됩니다."),
+	EXCEED_HEALTH_NOTES_RANGE(HttpStatus.BAD_REQUEST, "운동 특이 사항은 3개까지 선택 가능합니다."),
 
 	/**
 	 * 404 Not Found
