@@ -35,7 +35,6 @@ import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.external.firebase.FirebaseService;
 
-import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.ALREADY_WITHDRAW_USER;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INVALID_USER_TYPE;
 
 @Slf4j

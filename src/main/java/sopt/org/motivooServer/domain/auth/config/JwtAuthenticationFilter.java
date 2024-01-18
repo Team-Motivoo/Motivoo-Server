@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.domain.auth.config;
+    package sopt.org.motivooServer.domain.auth.config;
 
 import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
 
