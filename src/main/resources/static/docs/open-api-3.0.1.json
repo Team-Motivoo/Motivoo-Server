@@ -46,7 +46,7 @@
     },
     "/home" : {
       "patch" : {
-        "tags" : [ "유저미션" ],
+        "tags" : [ "홈 화면" ],
         "summary" : "홈 화면 조회 시 걸음 수 요청값에 대한 미션 상태 업데이트 결과 및 부모-자녀 유저의 목표 걸음 수 반환",
         "description" : "홈 화면 조회 시 걸음 수 요청값에 대한 미션 상태 업데이트 결과 및 부모-자녀 유저의 목표 걸음 수 반환",
         "operationId" : "홈 화면 미션 달성 상태 조회 API 성공 Example",
@@ -70,11 +70,11 @@
             "content" : {
               "application/json;charset=UTF-8" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/home-1151977564"
+                  "$ref" : "#/components/schemas/home77277078"
                 },
                 "examples" : {
                   "홈 화면 미션 달성 상태 조회 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_type\" : \"CHILD\",\n    \"user_id\" : 2,\n    \"user_goal_step_count\" : 10000,\n    \"opponent_user_id\" : 3,\n    \"opponent_user_goal_step_count\" : 20000,\n    \"is_step_count_completed\" : false,\n    \"is_opponent_user_withdraw\" : false\n  }\n}"
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_type\" : \"CHILD\",\n    \"user_id\" : 2,\n    \"user_goal_step_count\" : 10000,\n    \"opponent_user_id\" : 3,\n    \"opponent_user_goal_step_count\" : 20000,\n    \"is_step_count_completed\" : false,\n    \"is_opponent_user_withdraw\" : false,\n    \"is_mission_img_completed\" : false\n  }\n}"
                   }
                 }
               }
@@ -85,7 +85,7 @@
     },
     "/mission" : {
       "get" : {
-        "tags" : [ "유저미션" ],
+        "tags" : [ "홈 화면" ],
         "summary" : "지난 30일 간의 운동 인증을 모아보는 API",
         "description" : "지난 30일 간의 운동 인증을 모아보는 API",
         "operationId" : "운동 모아보기 API 성공 Example",
@@ -99,7 +99,7 @@
                 },
                 "examples" : {
                   "운동 모아보기 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"이전 운동 미션 히스토리를 조회하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_type\" : \"자녀\",\n    \"today_mission\" : {\n      \"mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\"\n    },\n    \"mission_history\" : [ {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 16일 화요일\"\n    }, {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 16일 화요일\"\n    } ]\n  }\n}"
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"이전 운동 미션 히스토리를 조회하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_type\" : \"자녀\",\n    \"today_mission\" : {\n      \"mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\"\n    },\n    \"mission_history\" : [ {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 18일 목요일\"\n    }, {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 18일 목요일\"\n    } ]\n  }\n}"
                   }
                 }
               }
@@ -110,7 +110,7 @@
     },
     "/mission/image" : {
       "patch" : {
-        "tags" : [ "유저미션" ],
+        "tags" : [ "홈 화면" ],
         "summary" : "미션 인증 사진 업로드를 위한 PreSigned Url 반환",
         "description" : "미션 인증 사진 업로드를 위한 PreSigned Url 반환",
         "operationId" : "미션 인증 사진 등록 API 성공 Example",
@@ -149,7 +149,7 @@
     },
     "/mission/today" : {
       "post" : {
-        "tags" : [ "유저미션" ],
+        "tags" : [ "홈 화면" ],
         "summary" : "2가지 운동 미션 중 오늘의 미션을 선택하는 API",
         "description" : "2가지 운동 미션 중 오늘의 미션을 선택하는 API",
         "operationId" : "오늘의 미션 선정 API 성공 Example",
@@ -173,7 +173,7 @@
             "content" : {
               "application/json;charset=UTF-8" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/mission-today-912747800"
+                  "$ref" : "#/components/schemas/withdraw-912747800"
                 },
                 "examples" : {
                   "오늘의 미션 선정 API 성공 Example" : {
@@ -188,7 +188,7 @@
     },
     "/mission/today/choice" : {
       "post" : {
-        "tags" : [ "유저미션" ],
+        "tags" : [ "홈 화면" ],
         "summary" : "2가지 미션 선택지 또는 그 중 선정한 오늘의 미션을 조회하는 API",
         "description" : "2가지 미션 선택지 또는 그 중 선정한 오늘의 미션을 조회하는 API",
         "operationId" : "오늘의 미션 조회 API 성공 Example #1",
@@ -211,9 +211,112 @@
         }
       }
     },
+    "/oauth/login" : {
+      "post" : {
+        "tags" : [ "유저" ],
+        "summary" : "소셜 로그인 API",
+        "description" : "소셜 로그인 API",
+        "operationId" : "로그인 API 성공 Example",
+        "requestBody" : {
+          "content" : {
+            "application/json;charset=UTF-8" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/oauth-login-627686091"
+              },
+              "examples" : {
+                "로그인 API 성공 Example" : {
+                  "value" : "{\n  \"social_access_token\" : \"Dfsfnoidnfa\",\n  \"token_type\" : \"kakao\"\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/oauth-login1259304733"
+                },
+                "examples" : {
+                  "로그인 API 성공 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"로그인에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"token_type\" : \"Bearer\",\n    \"access_token\" : \"Dfsfnoidnfa\",\n    \"refresh_token\" : \"sdffsfsfdsfd\",\n    \"id\" : \"1222222\",\n    \"nickname\" : \"모티부\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/onboarding/match" : {
+      "get" : {
+        "tags" : [ "온보딩" ],
+        "summary" : "유저의 부모-자녀 매칭을 확인하는 API",
+        "description" : "유저의 부모-자녀 매칭을 확인하는 API",
+        "operationId" : "매칭 여부 확인 Example",
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/onboarding-match1062754841"
+                },
+                "examples" : {
+                  "매칭 여부 확인 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"매칭에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"is_matched\" : true,\n    \"user_id\" : 1,\n    \"opponent_user_id\" : 7\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parentchild/match" : {
+      "patch" : {
+        "tags" : [ "온보딩" ],
+        "summary" : "초대 코드 입력 후 부모-자식 관계 매칭하는 API",
+        "description" : "초대 코드 입력 후 부모-자식 관계 매칭하는 API",
+        "operationId" : "초대 코드 입력 API 성공 Example",
+        "requestBody" : {
+          "content" : {
+            "application/json;charset=UTF-8" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/parentchild-match-1296963677"
+              },
+              "examples" : {
+                "초대 코드 입력 API 성공 Example" : {
+                  "value" : "{\n  \"invite_code\" : \"abcdef12\"\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/parentchild-match991713363"
+                },
+                "examples" : {
+                  "초대 코드 입력 API 성공 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"초대코드 입력에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_id\" : 1,\n    \"is_matched\" : true,\n    \"my_invite_code\" : false,\n    \"is_finished_onboarding\" : false\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/exercise" : {
       "get" : {
-        "tags" : [ "유저" ],
+        "tags" : [ "마이페이지" ],
         "summary" : "마이페이지 운동정보 조회",
         "description" : "마이페이지 운동정보 조회",
         "operationId" : "마이페이지 운동정보 조회 API 성공 Example",
@@ -234,11 +337,48 @@
             }
           }
         }
+      },
+      "post" : {
+        "tags" : [ "온보딩" ],
+        "summary" : "온보딩시 유저와 운동 관련 정보를 입력하는 API",
+        "description" : "온보딩시 유저와 운동 관련 정보를 입력하는 API",
+        "operationId" : "온보딩 정보 입력 API 성공 Example",
+        "requestBody" : {
+          "content" : {
+            "application/json;charset=UTF-8" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/user-exercise-1849716859"
+              },
+              "examples" : {
+                "온보딩 정보 입력 API 성공 Example" : {
+                  "value" : "{\n  \"is_exercise\" : true,\n  \"exercise_type\" : \"고강도 운동\",\n  \"exercise_count\" : \"5회 이상\",\n  \"exercise_time\" : \"2시간 이상\",\n  \"exercise_note\" : [ \"목\" ],\n  \"type\" : \"자녀\",\n  \"age\" : 20\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "201",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/user-exercise-344984784"
+                },
+                "examples" : {
+                  "온보딩 정보 입력 API 성공 Example" : {
+                    "value" : "{\n  \"code\" : 201,\n  \"message\" : \"온보딩 질문 입력에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_id\" : 1,\n    \"invite_code\" : \"abcdef12\",\n    \"exercise_level\" : \"고수\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/user/me" : {
       "get" : {
-        "tags" : [ "유저" ],
+        "tags" : [ "마이페이지" ],
         "summary" : "마이페이지 내 정보 조회",
         "description" : "마이페이지 내 정보 조회",
         "operationId" : "마이페이지 내 정보 조회 API 성공 Example",
@@ -260,49 +400,61 @@
           }
         }
       }
+    },
+    "/user/onboarding" : {
+      "get" : {
+        "tags" : [ "온보딩" ],
+        "summary" : "이전에 온보딩 정보를 입력한 이력이 있는지 여부를 알려주는 API",
+        "description" : "이전에 온보딩 정보를 입력한 이력이 있는지 여부를 알려주는 API",
+        "operationId" : "온보딩 정보 입력 확인 Example",
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/user-onboarding-256642812"
+                },
+                "examples" : {
+                  "온보딩 정보 입력 확인 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"운동정보 완료 여부 확인에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"is_finished_onboarding\" : true\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/withdraw" : {
+      "delete" : {
+        "tags" : [ "유저" ],
+        "summary" : "회원 탈퇴 API",
+        "description" : "회원 탈퇴 API",
+        "operationId" : "회원탈퇴 API 성공 Example",
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/withdraw-912747800"
+                },
+                "examples" : {
+                  "회원탈퇴 API 성공 Example" : {
+                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"회원탈퇴에 성공했습니다.\",\n  \"success\" : true\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components" : {
     "schemas" : {
-      "mission-today-912747800" : {
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "number",
-            "description" : "상태 코드"
-          },
-          "success" : {
-            "type" : "boolean",
-            "description" : "응답 성공 여부"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "상태 메세지"
-          }
-        }
-      },
-      "api-health279159985" : {
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "number",
-            "description" : "상태 코드"
-          },
-          "data" : {
-            "type" : "string",
-            "description" : "응답 데이터"
-          },
-          "success" : {
-            "type" : "boolean",
-            "description" : "응답 성공 여부"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "상태 메세지"
-          }
-        }
-      },
-      "mission1210499860" : {
+      "onboarding-match1062754841" : {
         "type" : "object",
         "properties" : {
           "code" : {
@@ -312,112 +464,13 @@
           "data" : {
             "type" : "object",
             "properties" : {
-              "user_type" : {
-                "type" : "string",
-                "description" : "유저의 타입(PARENT|CHILD)"
-              },
-              "mission_history" : {
-                "type" : "array",
-                "description" : "미션 히스토리",
-                "items" : {
-                  "type" : "object",
-                  "properties" : {
-                    "date" : {
-                      "type" : "string",
-                      "description" : "미션 일자"
-                    },
-                    "opponent_mission_content" : {
-                      "type" : "string",
-                      "description" : "상대측의 미션 내용"
-                    },
-                    "my_mission_img_url" : {
-                      "type" : "string",
-                      "description" : "나의 미션 인증 이미지 url "
-                    },
-                    "opponent_mission_status" : {
-                      "type" : "string",
-                      "description" : "상대측의 미션 달성 상태 (진행중 | 성공 | 실패)"
-                    },
-                    "my_mission_status" : {
-                      "type" : "string",
-                      "description" : "나의 미션 달성 상태 (진행중 | 성공 | 실패)"
-                    },
-                    "my_mission_content" : {
-                      "type" : "string",
-                      "description" : "나의 미션 내용"
-                    },
-                    "opponent_mission_img_url" : {
-                      "type" : "string",
-                      "description" : "상대측의 미션 인증 이미지 url"
-                    }
-                  }
-                }
-              },
-              "today_mission" : {
-                "type" : "object",
-                "properties" : {
-                  "mission_content" : {
-                    "type" : "string",
-                    "description" : "오늘의 미션 내용"
-                  }
-                },
-                "description" : "오늘의 미션"
-              }
-            },
-            "description" : "응답 데이터"
-          },
-          "success" : {
-            "type" : "boolean",
-            "description" : "응답 성공 여부"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "상태 메세지"
-          }
-        }
-      },
-      "mission-image-891843899" : {
-        "type" : "object",
-        "properties" : {
-          "img_prefix" : {
-            "type" : "string",
-            "description" : "운동 인증 사진 디렉터리"
-          }
-        }
-      },
-      "home-1151977564" : {
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "number",
-            "description" : "상태 코드"
-          },
-          "data" : {
-            "type" : "object",
-            "properties" : {
-              "is_opponent_user_withdraw" : {
+              "is_matched" : {
                 "type" : "boolean",
-                "description" : "상대 유저의 탈퇴 여부"
-              },
-              "opponent_user_goal_step_count" : {
-                "type" : "number",
-                "description" : "상대 유저 오늘의 미션 목표 걸음 수"
-              },
-              "user_type" : {
-                "type" : "string",
-                "description" : "유저의 타입(PARENT|CHILD)"
-              },
-              "user_goal_step_count" : {
-                "type" : "number",
-                "description" : "유저 오늘의 미션 목표 걸음 수 "
+                "description" : "매칭 여부"
               },
               "user_id" : {
                 "type" : "number",
                 "description" : "유저 자신의 아이디"
-              },
-              "is_step_count_completed" : {
-                "type" : "boolean",
-                "description" : "걸음 수 달성 여부 → 운동 인증하기 버튼 활성화"
               },
               "opponent_user_id" : {
                 "type" : "number",
@@ -433,6 +486,19 @@
           "message" : {
             "type" : "string",
             "description" : "상태 메세지"
+          }
+        }
+      },
+      "oauth-login-627686091" : {
+        "type" : "object",
+        "properties" : {
+          "social_access_token" : {
+            "type" : "string",
+            "description" : "access token"
+          },
+          "token_type" : {
+            "type" : "string",
+            "description" : "소셜 플랫폼(kakao|apple)"
           }
         }
       },
@@ -570,25 +636,58 @@
           }
         }
       },
-      "mission-today-43304617" : {
+      "home77277078" : {
         "type" : "object",
         "properties" : {
-          "mission_id" : {
+          "code" : {
             "type" : "number",
-            "description" : "선택한 미션 번호"
-          }
-        }
-      },
-      "home1356191784" : {
-        "type" : "object",
-        "properties" : {
-          "opponent_step_count" : {
-            "type" : "number",
-            "description" : "상대 측(부모/자녀)의 걸음 수"
+            "description" : "상태 코드"
           },
-          "my_step_count" : {
-            "type" : "number",
-            "description" : "자신의 걸음 수"
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "is_mission_img_completed" : {
+                "type" : "boolean",
+                "description" : "미션 사진 인증 완료 여부"
+              },
+              "is_opponent_user_withdraw" : {
+                "type" : "boolean",
+                "description" : "상대 유저의 탈퇴 여부"
+              },
+              "opponent_user_goal_step_count" : {
+                "type" : "number",
+                "description" : "상대 유저 오늘의 미션 목표 걸음 수"
+              },
+              "user_type" : {
+                "type" : "string",
+                "description" : "유저의 타입(부모|자녀)"
+              },
+              "user_goal_step_count" : {
+                "type" : "number",
+                "description" : "유저 오늘의 미션 목표 걸음 수 "
+              },
+              "user_id" : {
+                "type" : "number",
+                "description" : "유저 자신의 아이디"
+              },
+              "is_step_count_completed" : {
+                "type" : "boolean",
+                "description" : "걸음 수 달성 여부 → 운동 인증하기 버튼 활성화"
+              },
+              "opponent_user_id" : {
+                "type" : "number",
+                "description" : "매칭된 상대 유저의 아이디"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
           }
         }
       },
@@ -613,6 +712,346 @@
               "user_age" : {
                 "type" : "number",
                 "description" : "유저 나이"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "parentchild-match991713363" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "my_invite_code" : {
+                "type" : "boolean",
+                "description" : "내가 발급한 코드인지 판별"
+              },
+              "is_matched" : {
+                "type" : "boolean",
+                "description" : "매칭 여부"
+              },
+              "user_id" : {
+                "type" : "number",
+                "description" : "유저 아이디"
+              },
+              "is_finished_onboarding" : {
+                "type" : "boolean",
+                "description" : "온보딩 정보했는지 여부"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "withdraw-912747800" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "parentchild-match-1296963677" : {
+        "type" : "object",
+        "properties" : {
+          "invite_code" : {
+            "type" : "string",
+            "description" : "제공받은 초대 코드"
+          }
+        }
+      },
+      "oauth-login1259304733" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "access_token" : {
+                "type" : "string",
+                "description" : "access token"
+              },
+              "refresh_token" : {
+                "type" : "string",
+                "description" : "refresh token"
+              },
+              "nickname" : {
+                "type" : "string",
+                "description" : "유저 닉네임"
+              },
+              "id" : {
+                "type" : "string",
+                "description" : "유저 아이디"
+              },
+              "token_type" : {
+                "type" : "string",
+                "description" : "토큰 타입(Bearer)"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "mission1210499860" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "user_type" : {
+                "type" : "string",
+                "description" : "유저의 타입(PARENT|CHILD)"
+              },
+              "mission_history" : {
+                "type" : "array",
+                "description" : "미션 히스토리",
+                "items" : {
+                  "type" : "object",
+                  "properties" : {
+                    "date" : {
+                      "type" : "string",
+                      "description" : "미션 일자"
+                    },
+                    "opponent_mission_content" : {
+                      "type" : "string",
+                      "description" : "상대측의 미션 내용"
+                    },
+                    "my_mission_img_url" : {
+                      "type" : "string",
+                      "description" : "나의 미션 인증 이미지 url "
+                    },
+                    "opponent_mission_status" : {
+                      "type" : "string",
+                      "description" : "상대측의 미션 달성 상태 (진행중 | 성공 | 실패)"
+                    },
+                    "my_mission_status" : {
+                      "type" : "string",
+                      "description" : "나의 미션 달성 상태 (진행중 | 성공 | 실패)"
+                    },
+                    "my_mission_content" : {
+                      "type" : "string",
+                      "description" : "나의 미션 내용"
+                    },
+                    "opponent_mission_img_url" : {
+                      "type" : "string",
+                      "description" : "상대측의 미션 인증 이미지 url"
+                    }
+                  }
+                }
+              },
+              "today_mission" : {
+                "type" : "object",
+                "properties" : {
+                  "mission_content" : {
+                    "type" : "string",
+                    "description" : "오늘의 미션 내용"
+                  }
+                },
+                "description" : "오늘의 미션"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "api-health279159985" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "string",
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "mission-image-891843899" : {
+        "type" : "object",
+        "properties" : {
+          "img_prefix" : {
+            "type" : "string",
+            "description" : "운동 인증 사진 디렉터리"
+          }
+        }
+      },
+      "user-onboarding-256642812" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "is_finished_onboarding" : {
+                "type" : "boolean",
+                "description" : "유저의 타입(PARENT|CHILD)"
+              }
+            },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "user-exercise-1849716859" : {
+        "type" : "object",
+        "properties" : {
+          "exercise_note" : {
+            "type" : "array",
+            "description" : "운동 유의사항",
+            "items" : {
+              "oneOf" : [ {
+                "type" : "object"
+              }, {
+                "type" : "boolean"
+              }, {
+                "type" : "string"
+              }, {
+                "type" : "number"
+              } ]
+            }
+          },
+          "exercise_count" : {
+            "type" : "string",
+            "description" : "운동 일수"
+          },
+          "exercise_time" : {
+            "type" : "string",
+            "description" : "운동 시간"
+          },
+          "is_exercise" : {
+            "type" : "boolean",
+            "description" : "운동 유무"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "유저 타입(자녀|부모"
+          },
+          "exercise_type" : {
+            "type" : "string",
+            "description" : "운동 유형(고강도|중강도|저강도"
+          },
+          "age" : {
+            "type" : "number",
+            "description" : "나이"
+          }
+        }
+      },
+      "mission-today-43304617" : {
+        "type" : "object",
+        "properties" : {
+          "mission_id" : {
+            "type" : "number",
+            "description" : "선택한 미션 번호"
+          }
+        }
+      },
+      "home1356191784" : {
+        "type" : "object",
+        "properties" : {
+          "opponent_step_count" : {
+            "type" : "number",
+            "description" : "상대 측(부모/자녀)의 걸음 수"
+          },
+          "my_step_count" : {
+            "type" : "number",
+            "description" : "자신의 걸음 수"
+          }
+        }
+      },
+      "user-exercise-344984784" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "exercise_level" : {
+                "type" : "string",
+                "description" : "유저 분류(초보|중수|고수"
+              },
+              "user_id" : {
+                "type" : "number",
+                "description" : "유저 아이디"
+              },
+              "invite_code" : {
+                "type" : "string",
+                "description" : "초대 코드"
               }
             },
             "description" : "응답 데이터"

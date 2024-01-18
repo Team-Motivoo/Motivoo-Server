@@ -18,10 +18,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import sopt.org.motivooServer.domain.auth.controller.OauthController;
 import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
 import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
@@ -33,7 +33,7 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 @DisplayName("OauthController 테스트")
 @WebMvcTest(OauthController.class)
 public class OauthControllerTest extends BaseControllerTest {
-    private final String TAG = "oauth";
+    private static final String TAG = "유저";
 
     @MockBean
     private OauthController oauthController;

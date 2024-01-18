@@ -44,7 +44,7 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 @WebMvcTest(ParentChildController.class)
 public class ParentchildControllerTest extends BaseControllerTest {
 
-    private final String TAG = "parentchild";
+    private static final String TAG = "온보딩";
 
     @MockBean
     ParentChildController parentChildController;

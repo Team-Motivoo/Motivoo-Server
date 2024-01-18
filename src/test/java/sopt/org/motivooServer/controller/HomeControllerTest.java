@@ -33,7 +33,7 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 public class HomeControllerTest extends BaseControllerTest{
 
 	private static final String DEFAULT_URL = "/home";
-	private static final String TAG = "유저미션";
+	private static final String TAG = "홈 화면";
 
 	@MockBean
 	private HomeController homeController;

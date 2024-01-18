@@ -38,7 +38,7 @@ import sopt.org.motivooServer.global.response.ApiResponse;
 public class UserMissionControllerTest extends BaseControllerTest{
 
 	private static final String DEFAULT_URL = "/mission";
-	private static final String TAG = "유저미션";
+	private static final String TAG = "홈 화면";
 
 	@MockBean
 	private UserMissionController userMissionController;
