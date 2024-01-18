@@ -50,6 +50,7 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
+import sopt.org.motivooServer.global.advice.BusinessException;
 import sopt.org.motivooServer.global.external.firebase.FirebaseService;
 import sopt.org.motivooServer.global.external.s3.PreSignedUrlResponse;
 import sopt.org.motivooServer.global.external.s3.S3BucketDirectory;
@@ -84,7 +85,7 @@ public class UserMissionService {
 		PreSignedUrlResponse preSignedUrl = s3Service.getUploadPreSignedUrl(
 			S3BucketDirectory.of(request.imgPrefix()));
 
-		String imgUrl = s3Service.getURL(MISSION_PREFIX.value() + preSignedUrl.fileName());
+
 		todayMission.updateImgUrl(s3Service.getImgByFileName(request.imgPrefix(), preSignedUrl.fileName()));
 		todayMission.updateCompletedStatus(SUCCESS);
 		return MissionImgUrlResponse.of(preSignedUrl.url(), preSignedUrl.fileName());
@@ -106,6 +107,19 @@ public class UserMissionService {
 		log.info("missionsByDate size: {}", missionsByDate.size());
 		for (LocalDate localDateTime : missionsByDate.keySet()) {
 			log.info("missionsByDate.get(localDateTime) size: {}", missionsByDate.get(localDateTime).size());
+
+			missionsByDate.get(localDateTime).stream()
+				.filter(um -> um.getImgUrl() != null)
+				.forEach(um -> {
+					try {
+						String imgUrl = s3Service.getURL(MISSION_PREFIX.value() + um.getImgUrl());
+						log.info("S3에서 받아온 이미지 URL: {}", imgUrl);
+						um.updateImgUrl(imgUrl);
+					} catch (BusinessException e) {
+						log.error(e.getMessage());
+						um.updateImgUrl(null);
+					}
+				});
 
 			if (!localDateTime.equals(LocalDate.now())) {
 				missionsByDate.get(localDateTime).stream()
