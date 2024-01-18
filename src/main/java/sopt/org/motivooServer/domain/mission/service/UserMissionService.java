@@ -88,6 +88,7 @@ public class UserMissionService {
 
 		String imgUrl = s3Service.getURL(MISSION_PREFIX.value() + preSignedUrl.fileName());
 		todayMission.updateImgUrl(s3Service.getImgByFileName(request.imgPrefix(), preSignedUrl.fileName()));
+		todayMission.updateCompletedStatus(SUCCESS);
 		return MissionImgUrlResponse.of(preSignedUrl.url(), preSignedUrl.fileName());
 	}
 
@@ -108,9 +109,20 @@ public class UserMissionService {
 		for (LocalDate localDateTime : missionsByDate.keySet()) {
 			log.info("missionsByDate.get(localDateTime) size: {}", missionsByDate.get(localDateTime).size());
 
+			if (!localDateTime.equals(LocalDate.now())) {
+				missionsByDate.get(localDateTime).stream()
+					.filter(um -> um.getImgUrl() == null && !um.getMission().getTarget().equals(UserType.NONE))
+					.forEach(um -> um.updateCompletedStatus(FAIL));
+			} else {
+				missionsByDate.get(localDateTime).stream()
+					.filter(um -> um.getImgUrl() == null && !um.getMission().getTarget().equals(UserType.NONE))
+					.forEach(um -> um.updateCompletedStatus(IN_PROGRESS));
+			}
+
 			missionsByDate.get(localDateTime).stream()
 				.filter(um -> um.getMission().getTarget().equals(UserType.NONE))
 				.forEach(um -> um.updateCompletedStatus(NONE));
+
 			// log.info("key={}, value={} 🥹{}", localDateTime, missionsByDate.get(localDateTime).get(0).getMission().getContent(),
 			// 	missionsByDate.get(localDateTime).get(1).getMission().getContent());
 		}
@@ -216,7 +228,7 @@ public class UserMissionService {
 			UserMission opponentCurrentUserMission = opponentUser.getCurrentUserMission();
 			opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ? opponentCurrentUserMission.getMission().getStepCount() : 0;
 			assert opponentCurrentUserMission != null;
-			isStepCountCompleted(opponentStep, opponentCurrentUserMission);
+			// isStepCountCompleted(opponentStep, opponentCurrentUserMission);
 		}
 
 		if (!myUserMissionsEmpty) {
@@ -225,10 +237,10 @@ public class UserMissionService {
 				return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
 			}
 			myGoalStep = myCurrentUserMission.getMission().getStepCount();
-			boolean stepCountCompleted = isStepCountCompleted(myStep, myCurrentUserMission);
+			boolean stepCountCompleted = myStep >= myCurrentUserMission.getMission().getStepCount();
+
 			return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted, myCurrentUserMission.getImgUrl() != null);
 		}
-
 
 		return MissionStepStatusResponse.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
 
