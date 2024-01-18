@@ -76,6 +76,7 @@ public class UserMissionService {
 	public MissionImgUrlResponse getMissionImgUrl(final MissionImgUrlRequest request, final Long userId) {
 		User user = getUserById(userId);
 		checkedUserMissionEmpty(user);
+		checkMatchedUserWithdraw(user);
 
 		UserMission todayMission = user.getCurrentUserMission();
 		checkMissionChoice(todayMission);
@@ -148,6 +149,8 @@ public class UserMissionService {
 	@Transactional
 	public Long choiceTodayMission(final TodayMissionChoiceRequest request, final Long userId) {
 		User user = getUserById(userId);
+		checkMatchedUserWithdraw(user);
+
 		validateTodayMissionRequest(request.missionId(), user);
 
 		Mission mission = getMissionById(request.missionId());
