@@ -69,7 +69,7 @@ public class UserMissionScheduler {
 				}
 			}
 
-			if (userMission.getCompletedStatus() != CompletedStatus.SUCCESS) {
+			if (userMission.getCompletedStatus() != CompletedStatus.SUCCESS || userMission.getImgUrl() == null) {
 				try {
 					log.info("성공이 아니니 실패여라..");
 					userMission.updateCompletedStatus(CompletedStatus.FAIL);
