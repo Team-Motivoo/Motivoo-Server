@@ -305,6 +305,12 @@ public class UserMissionService {
 			return TodayMissionResponse.of(todayMissionChoices);
 		}
 
+		if (!user.getUserMissions().isEmpty()) {
+			UserMission todayMission = user.getCurrentUserMission();
+			if (validateTodayDateMission(todayMission)) {
+				return TodayMissionResponse.of(todayMission);
+			}
+		}
 		if (!user.getUserMissionChoice().isEmpty()) {
 			return TodayMissionResponse.of(user.getUserMissionChoice());
 		}
