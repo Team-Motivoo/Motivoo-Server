@@ -23,6 +23,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.web.bind.annotation.RequestHeader;
 import sopt.org.motivooServer.domain.auth.controller.OauthController;
 import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
 import sopt.org.motivooServer.domain.auth.dto.request.RefreshRequest;
@@ -102,12 +103,15 @@ public class OauthControllerTest extends BaseControllerTest {
         ResponseEntity<ApiResponse<OauthTokenResponse>> result = ApiResponse
                 .success(
                         REISSUE_SUCCESS, response);
-        System.out.println("결과값="+result.getBody().getData());
+
+        // 헤더에 담길 토큰 값을 직접 설정
+        String refreshToken = "eyasdfsfsdfds";
+
         // when
-        when(oauthController.reissue(response.getRefreshToken(),request)).thenReturn(result);
+        when(oauthController.reissue(refreshToken, request)).thenReturn(result);
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/oauth/reissue")
-                        .header("Authorization", "eyasdfsfsdfds")
+                        .header("Authorization", refreshToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                 )
@@ -119,21 +123,21 @@ public class OauthControllerTest extends BaseControllerTest {
                                         .tag(TAG)
                                         .description("토큰 재발급 API")
                                         .requestHeaders(
-                                                headerWithName("Authorization").description(
-                                                        "Authorization token6"))
-                                .requestFields(
-                                    fieldWithPath("user_id").type(NUMBER).description("유저 아이디"))
-//                                .responseFields(
-//                                    fieldWithPath("code").type(NUMBER).description("상태 코드"),
-//                                    fieldWithPath("message").type(STRING).description("상태 메세지"),
-//                                    fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
-//                                    fieldWithPath("data").description("응답 데이터"),
-//                                    fieldWithPath("data.access_token").type(STRING).description("access token"),
-//                                    fieldWithPath("data.refresh_token").type(STRING).description("refresh token"))
-                        .build())
+                                                headerWithName("Authorization").description("Authorization token6"))
+                                        .requestFields(
+                                                fieldWithPath("user_id").type(NUMBER).description("유저 아이디"))
+                                        .responseFields(
+                                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
+                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("data").description("응답 데이터"),
+                                                fieldWithPath("data.access_token").type(STRING).description("access token"),
+                                                fieldWithPath("data.refresh_token").type(STRING).description("refresh token"))
+                                        .build())
                 )).andExpect(status().isOk());
 
     }
+
 
 
     @Test
@@ -142,14 +146,16 @@ public class OauthControllerTest extends BaseControllerTest {
         //given
         ResponseEntity<ApiResponse<Object>> result = ApiResponse.success(
                 LOGOUT_SUCCESS);
+
+        // 헤더에 담길 토큰 값을 직접 설정
+        String accessToken = "eyasdfsfsdfds";
+
         //when
-        when(oauthController.logout("access token")).thenReturn(result);
+        when(oauthController.logout(accessToken)).thenReturn(result);
 
         //then
         mockMvc.perform(post("/oauth/logout")
-                .header("Authorization", "Bearer access token")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", accessToken)
         ).andDo(
                 document("로그아웃 API 성공 Example",
                         getDocumentRequest(),
@@ -161,11 +167,11 @@ public class OauthControllerTest extends BaseControllerTest {
                                         .requestHeaders(headerWithName("Authorization")
                                                 .description("access token")
                                         )
-//                                        .responseFields(
-//                                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
-//                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
-//                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부")
-//                                        )
+                                        .responseFields(
+                                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
+                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부")
+                                        )
                                         .build()
                         )
                 )).andExpect(status().isOk());

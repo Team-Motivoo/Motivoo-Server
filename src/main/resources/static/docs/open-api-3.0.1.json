@@ -10,13 +10,6 @@
   }, {
     "url" : "http://localhost:8080"
   } ],
-  "security": [
-    {
-      "jwtAuth": [
-
-      ]
-    }
-  ],
   "tags" : [ ],
   "paths" : {
     "/api/health" : {
@@ -35,7 +28,7 @@
                 },
                 "examples" : {
                   "healthCheck" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"헬스체크용 API 호출에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : \"test success!\"\n}"
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"헬스체크용 API 호출에 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : \"test success!\"\r\n}"
                   }
                 }
               }
@@ -58,7 +51,7 @@
               },
               "examples" : {
                 "홈 화면 미션 달성 상태 조회 API 성공 Example" : {
-                  "value" : "{\n  \"my_step_count\" : 14000,\n  \"opponent_step_count\" : 3000\n}"
+                  "value" : "{\r\n  \"my_step_count\" : 14000,\r\n  \"opponent_step_count\" : 3000\r\n}"
                 }
               }
             }
@@ -74,7 +67,7 @@
                 },
                 "examples" : {
                   "홈 화면 미션 달성 상태 조회 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_type\" : \"CHILD\",\n    \"user_id\" : 2,\n    \"user_goal_step_count\" : 10000,\n    \"opponent_user_id\" : 3,\n    \"opponent_user_goal_step_count\" : 20000,\n    \"is_step_count_completed\" : false,\n    \"is_opponent_user_withdraw\" : false,\n    \"is_mission_img_completed\" : false\n  }\n}"
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"user_type\" : \"CHILD\",\r\n    \"user_id\" : 2,\r\n    \"user_goal_step_count\" : 10000,\r\n    \"opponent_user_id\" : 3,\r\n    \"opponent_user_goal_step_count\" : 20000,\r\n    \"is_step_count_completed\" : false,\r\n    \"is_opponent_user_withdraw\" : false,\r\n    \"is_mission_img_completed\" : false\r\n  }\r\n}"
                   }
                 }
               }
@@ -99,7 +92,7 @@
                 },
                 "examples" : {
                   "운동 모아보기 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"이전 운동 미션 히스토리를 조회하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_type\" : \"자녀\",\n    \"today_mission\" : {\n      \"mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\"\n    },\n    \"mission_history\" : [ {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 18일 목요일\"\n    }, {\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"my_mission_img_url\" : \"s3 img url\",\n      \"my_mission_status\" : \"없음\",\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"opponent_mission_img_url\" : \"s3 img url\",\n      \"opponent_mission_status\" : \"없음\",\n      \"date\" : \"2024년 1월 18일 목요일\"\n    } ]\n  }\n}"
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"이전 운동 미션 히스토리를 조회하는 데 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"user_type\" : \"자녀\",\r\n    \"today_mission\" : {\r\n      \"mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\"\r\n    },\r\n    \"mission_history\" : [ {\r\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\r\n      \"my_mission_img_url\" : \"s3 img url\",\r\n      \"my_mission_status\" : \"없음\",\r\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\r\n      \"opponent_mission_img_url\" : \"s3 img url\",\r\n      \"opponent_mission_status\" : \"없음\",\r\n      \"date\" : \"2024년 1월 19일 금요일\"\r\n    }, {\r\n      \"my_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\r\n      \"my_mission_img_url\" : \"s3 img url\",\r\n      \"my_mission_status\" : \"없음\",\r\n      \"opponent_mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\r\n      \"opponent_mission_img_url\" : \"s3 img url\",\r\n      \"opponent_mission_status\" : \"없음\",\r\n      \"date\" : \"2024년 1월 19일 금요일\"\r\n    } ]\r\n  }\r\n}"
                   }
                 }
               }
@@ -122,7 +115,7 @@
               },
               "examples" : {
                 "미션 인증 사진 등록 API 성공 Example" : {
-                  "value" : "{\n  \"img_prefix\" : \"mission/\"\n}"
+                  "value" : "{\r\n  \"img_prefix\" : \"mission/\"\r\n}"
                 }
               }
             }
@@ -138,7 +131,7 @@
                 },
                 "examples" : {
                   "미션 인증 사진 등록 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"img_presigned_url\" : \"https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/39e545f4-9ad8-4c05-a8cb-960d0787e776.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240109T051832Z&X-Amz-SignedHeaders=host&X-Amz-Expires=60&X-Amz-Credential=AKIASRIQXMUZKAKLJQGJ%2F20240109%2Fap-northeast-2%2Fs3%2Faws4_request&X-Amz-Signature=0c98a5efeaea9bbf607becaaeb511495b68e83b9897b193ef542fa4a8c352dd4\",\n    \"file_name\" : \"39e545f4-9ad8-4c05-a8cb-960d0787e776.jpg\"\n  }\n}"
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"img_presigned_url\" : \"https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/39e545f4-9ad8-4c05-a8cb-960d0787e776.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240109T051832Z&X-Amz-SignedHeaders=host&X-Amz-Expires=60&X-Amz-Credential=AKIASRIQXMUZKAKLJQGJ%2F20240109%2Fap-northeast-2%2Fs3%2Faws4_request&X-Amz-Signature=0c98a5efeaea9bbf607becaaeb511495b68e83b9897b193ef542fa4a8c352dd4\",\r\n    \"file_name\" : \"39e545f4-9ad8-4c05-a8cb-960d0787e776.jpg\"\r\n  }\r\n}"
                   }
                 }
               }
@@ -161,7 +154,7 @@
               },
               "examples" : {
                 "오늘의 미션 선정 API 성공 Example" : {
-                  "value" : "{\n  \"mission_id\" : 5\n}"
+                  "value" : "{\r\n  \"mission_id\" : 5\r\n}"
                 }
               }
             }
@@ -173,11 +166,11 @@
             "content" : {
               "application/json;charset=UTF-8" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/withdraw-912747800"
+                  "$ref" : "#/components/schemas/mission-today-912747800"
                 },
                 "examples" : {
                   "오늘의 미션 선정 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 201,\n  \"message\" : \"오늘의 미션 선정에 성공했습니다.\",\n  \"success\" : true\n}"
+                    "value" : "{\r\n  \"code\" : 201,\r\n  \"message\" : \"오늘의 미션 선정에 성공했습니다.\",\r\n  \"success\" : true\r\n}"
                   }
                 }
               }
@@ -202,7 +195,7 @@
                 },
                 "examples" : {
                   "오늘의 미션 조회 API 성공 Example #1" : {
-                    "value" : "{\n  \"code\" : 201,\n  \"message\" : \"오늘의 미션을 조회하는 데 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"is_choice_finished\" : true,\n    \"mission_choice_list\" : null,\n    \"today_mission\" : {\n      \"mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\n      \"mission_description\" : \"Notion 링크\",\n      \"mission_step_count\" : 10000,\n      \"mission_quest\" : \"손가락 하트 만들어서 찍기 \"\n    },\n    \"date\" : null\n  }\n}"
+                    "value" : "{\r\n  \"code\" : 201,\r\n  \"message\" : \"오늘의 미션을 조회하는 데 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"is_choice_finished\" : true,\r\n    \"mission_choice_list\" : null,\r\n    \"today_mission\" : {\r\n      \"mission_content\" : \"10000걸음 걷고 벽스쿼트 45초 하기\",\r\n      \"mission_description\" : \"Notion 링크\",\r\n      \"mission_step_count\" : 10000,\r\n      \"mission_quest\" : \"손가락 하트 만들어서 찍기 \"\r\n    },\r\n    \"date\" : null\r\n  }\r\n}"
                   }
                 }
               }
@@ -225,7 +218,7 @@
               },
               "examples" : {
                 "로그인 API 성공 Example" : {
-                  "value" : "{\n  \"social_access_token\" : \"Dfsfnoidnfa\",\n  \"token_type\" : \"kakao\"\n}"
+                  "value" : "{\r\n  \"social_access_token\" : \"Dfsfnoidnfa\",\r\n  \"token_type\" : \"kakao\"\r\n}"
                 }
               }
             }
@@ -241,7 +234,91 @@
                 },
                 "examples" : {
                   "로그인 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"로그인에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"token_type\" : \"Bearer\",\n    \"access_token\" : \"Dfsfnoidnfa\",\n    \"refresh_token\" : \"sdffsfsfdsfd\",\n    \"id\" : \"1222222\",\n    \"nickname\" : \"모티부\"\n  }\n}"
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"로그인에 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"token_type\" : \"Bearer\",\r\n    \"access_token\" : \"Dfsfnoidnfa\",\r\n    \"refresh_token\" : \"sdffsfsfdsfd\",\r\n    \"id\" : \"1222222\",\r\n    \"nickname\" : \"모티부\"\r\n  }\r\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/logout" : {
+      "post" : {
+        "tags" : [ "유저" ],
+        "summary" : "소셜 로그인 로그아웃 API",
+        "description" : "소셜 로그인 로그아웃 API",
+        "operationId" : "로그아웃 API 성공 Example",
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "access token",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "eyasdfsfsdfds"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/mission-today-912747800"
+                },
+                "examples" : {
+                  "로그아웃 API 성공 Example" : {
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"로그아웃에 성공했습니다.\",\r\n  \"success\" : true\r\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/reissue" : {
+      "post" : {
+        "tags" : [ "유저" ],
+        "summary" : "토큰 재발급 API",
+        "description" : "토큰 재발급 API",
+        "operationId" : "토큰 재발급 API 성공 Example",
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Authorization token6",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "eyasdfsfsdfds"
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json;charset=UTF-8" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/oauth-reissue89409441"
+              },
+              "examples" : {
+                "토큰 재발급 API 성공 Example" : {
+                  "value" : "{\r\n  \"user_id\" : 1\r\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/oauth-reissue12297033"
+                },
+                "examples" : {
+                  "토큰 재발급 API 성공 Example" : {
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"토큰 재발급에 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"access_token\" : \"eyJ0eXAiOiJKV1QiLCJhbrG\",\r\n    \"refresh_token\" : \"eyJ0eXAiOiJKV1QcLCJdhbG\"\r\n  }\r\n}"
                   }
                 }
               }
@@ -266,7 +343,7 @@
                 },
                 "examples" : {
                   "매칭 여부 확인 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"매칭에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"is_matched\" : true,\n    \"user_id\" : 1,\n    \"opponent_user_id\" : 7\n  }\n}"
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"매칭에 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"is_matched\" : true,\r\n    \"user_id\" : 1,\r\n    \"opponent_user_id\" : 7\r\n  }\r\n}"
                   }
                 }
               }
@@ -289,7 +366,7 @@
               },
               "examples" : {
                 "초대 코드 입력 API 성공 Example" : {
-                  "value" : "{\n  \"invite_code\" : \"abcdef12\"\n}"
+                  "value" : "{\r\n  \"invite_code\" : \"abcdef12\"\r\n}"
                 }
               }
             }
@@ -305,7 +382,7 @@
                 },
                 "examples" : {
                   "초대 코드 입력 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"초대코드 입력에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_id\" : 1,\n    \"is_matched\" : true,\n    \"my_invite_code\" : false,\n    \"is_finished_onboarding\" : false\n  }\n}"
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"초대코드 입력에 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"user_id\" : 1,\r\n    \"is_matched\" : true,\r\n    \"my_invite_code\" : false,\r\n    \"is_finished_onboarding\" : false\r\n  }\r\n}"
                   }
                 }
               }
@@ -330,7 +407,7 @@
                 },
                 "examples" : {
                   "마이페이지 운동정보 조회 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"마이페이지 건강 정보 조회에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"is_exercise\" : true,\n    \"exercise_type\" : \"고강도\",\n    \"exercise_frequency\" : \"3일\",\n    \"exercise_time\" : \"2~3시간\",\n    \"health_notes\" : [ \"목\", \"어깨\" ]\n  }\n}"
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"마이페이지 건강 정보 조회에 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"is_exercise\" : true,\r\n    \"exercise_type\" : \"고강도\",\r\n    \"exercise_frequency\" : \"3일\",\r\n    \"exercise_time\" : \"2~3시간\",\r\n    \"health_notes\" : [ \"목\", \"어깨\" ]\r\n  }\r\n}"
                   }
                 }
               }
@@ -351,7 +428,7 @@
               },
               "examples" : {
                 "온보딩 정보 입력 API 성공 Example" : {
-                  "value" : "{\n  \"is_exercise\" : true,\n  \"exercise_type\" : \"고강도 운동\",\n  \"exercise_count\" : \"5회 이상\",\n  \"exercise_time\" : \"2시간 이상\",\n  \"exercise_note\" : [ \"목\" ],\n  \"type\" : \"자녀\",\n  \"age\" : 20\n}"
+                  "value" : "{\r\n  \"is_exercise\" : true,\r\n  \"exercise_type\" : \"고강도 운동\",\r\n  \"exercise_count\" : \"5회 이상\",\r\n  \"exercise_time\" : \"2시간 이상\",\r\n  \"exercise_note\" : [ \"목\" ],\r\n  \"type\" : \"자녀\",\r\n  \"age\" : 20\r\n}"
                 }
               }
             }
@@ -367,7 +444,7 @@
                 },
                 "examples" : {
                   "온보딩 정보 입력 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 201,\n  \"message\" : \"온보딩 질문 입력에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_id\" : 1,\n    \"invite_code\" : \"abcdef12\",\n    \"exercise_level\" : \"고수\"\n  }\n}"
+                    "value" : "{\r\n  \"code\" : 201,\r\n  \"message\" : \"온보딩 질문 입력에 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"user_id\" : 1,\r\n    \"invite_code\" : \"abcdef12\",\r\n    \"exercise_level\" : \"고수\"\r\n  }\r\n}"
                   }
                 }
               }
@@ -388,11 +465,11 @@
             "content" : {
               "application/json;charset=UTF-8" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/user-me1088240176"
+                  "$ref" : "#/components/schemas/user-me468017739"
                 },
                 "examples" : {
                   "마이페이지 내 정보 조회 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"마이페이지 나의 정보 조회에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"user_nickname\" : \"모티뿡뿡이\",\n    \"user_age\" : 20,\n    \"user_type\" : \"CHILD\"\n  }\n}"
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"마이페이지 나의 정보 조회에 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"user_nickname\" : \"모티뿡뿡이\",\r\n    \"user_age\" : 20,\r\n    \"user_type\" : \"자녀\"\r\n  }\r\n}"
                   }
                 }
               }
@@ -417,7 +494,7 @@
                 },
                 "examples" : {
                   "온보딩 정보 입력 확인 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"운동정보 완료 여부 확인에 성공했습니다.\",\n  \"success\" : true,\n  \"data\" : {\n    \"is_finished_onboarding\" : true\n  }\n}"
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"운동정보 완료 여부 확인에 성공했습니다.\",\r\n  \"success\" : true,\r\n  \"data\" : {\r\n    \"is_finished_onboarding\" : true\r\n  }\r\n}"
                   }
                 }
               }
@@ -438,11 +515,11 @@
             "content" : {
               "application/json;charset=UTF-8" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/withdraw-912747800"
+                  "$ref" : "#/components/schemas/mission-today-912747800"
                 },
                 "examples" : {
                   "회원탈퇴 API 성공 Example" : {
-                    "value" : "{\n  \"code\" : 200,\n  \"message\" : \"회원탈퇴에 성공했습니다.\",\n  \"success\" : true\n}"
+                    "value" : "{\r\n  \"code\" : 200,\r\n  \"message\" : \"회원탈퇴에 성공했습니다.\",\r\n  \"success\" : true\r\n}"
                   }
                 }
               }
@@ -691,7 +768,7 @@
           }
         }
       },
-      "user-me1088240176" : {
+      "user-me468017739" : {
         "type" : "object",
         "properties" : {
           "code" : {
@@ -703,7 +780,7 @@
             "properties" : {
               "user_type" : {
                 "type" : "string",
-                "description" : "유저 타입 (부모/자식)"
+                "description" : "유저 타입 (부모/자녀)"
               },
               "user_nickname" : {
                 "type" : "string",
@@ -765,7 +842,7 @@
           }
         }
       },
-      "withdraw-912747800" : {
+      "mission-today-912747800" : {
         "type" : "object",
         "properties" : {
           "code" : {
@@ -779,15 +856,6 @@
           "message" : {
             "type" : "string",
             "description" : "상태 메세지"
-          }
-        }
-      },
-      "parentchild-match-1296963677" : {
-        "type" : "object",
-        "properties" : {
-          "invite_code" : {
-            "type" : "string",
-            "description" : "제공받은 초대 코드"
           }
         }
       },
@@ -822,6 +890,27 @@
                 "description" : "토큰 타입(Bearer)"
               }
             },
+            "description" : "응답 데이터"
+          },
+          "success" : {
+            "type" : "boolean",
+            "description" : "응답 성공 여부"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "상태 메세지"
+          }
+        }
+      },
+      "api-health279159985" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "number",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "string",
             "description" : "응답 데이터"
           },
           "success" : {
@@ -908,7 +997,25 @@
           }
         }
       },
-      "api-health279159985" : {
+      "mission-image-891843899" : {
+        "type" : "object",
+        "properties" : {
+          "img_prefix" : {
+            "type" : "string",
+            "description" : "운동 인증 사진 디렉터리"
+          }
+        }
+      },
+      "parentchild-match-1296963677" : {
+        "type" : "object",
+        "properties" : {
+          "invite_code" : {
+            "type" : "string",
+            "description" : "제공받은 초대 코드"
+          }
+        }
+      },
+      "oauth-reissue12297033" : {
         "type" : "object",
         "properties" : {
           "code" : {
@@ -916,7 +1023,17 @@
             "description" : "상태 코드"
           },
           "data" : {
-            "type" : "string",
+            "type" : "object",
+            "properties" : {
+              "access_token" : {
+                "type" : "string",
+                "description" : "access token"
+              },
+              "refresh_token" : {
+                "type" : "string",
+                "description" : "refresh token"
+              }
+            },
             "description" : "응답 데이터"
           },
           "success" : {
@@ -929,12 +1046,12 @@
           }
         }
       },
-      "mission-image-891843899" : {
+      "oauth-reissue89409441" : {
         "type" : "object",
         "properties" : {
-          "img_prefix" : {
-            "type" : "string",
-            "description" : "운동 인증 사진 디렉터리"
+          "user_id" : {
+            "type" : "number",
+            "description" : "유저 아이디"
           }
         }
       },
@@ -1065,13 +1182,6 @@
             "description" : "상태 메세지"
           }
         }
-      }
-    },
-    "securitySchemes": {
-      "jwtAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
       }
     }
   }
