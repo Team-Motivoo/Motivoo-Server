@@ -12,8 +12,10 @@ import static sopt.org.motivooServer.util.ApiDocumentUtil.*;
 
 import java.security.Principal;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -22,9 +24,14 @@ import org.springframework.http.ResponseEntity;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import sopt.org.motivooServer.domain.auth.controller.OauthController;
 import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
+import sopt.org.motivooServer.domain.auth.dto.request.RefreshRequest;
 import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
+import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.fixture.UserFixture;
 import sopt.org.motivooServer.global.response.ApiResponse;
@@ -96,51 +103,31 @@ public class OauthControllerTest extends BaseControllerTest {
 //        RefreshRequest request = new RefreshRequest(1L);
 //        OauthTokenResponse response = new OauthTokenResponse("eyJ0eXAiOiJKV1QiLCJhbrG", "eyJ0eXAiOiJKV1QicLCJdhbG");
 //
-//        // ApiResponse에 응답 데이터 추가
-//        ResponseEntity<ApiResponse<OauthTokenResponse>> result = ApiResponse.success(REISSUE_SUCCESS, response);
-//
 //        // when
 //        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/oauth/reissue")
 //                .header("Authorization", "Bearer {refresh token}")
 //                .contentType(MediaType.APPLICATION_JSON)
 //                .content(objectMapper.writeValueAsString(request))
-//
 //        );
 //
 //        // then
-//        try {
-//            // 추가: 실패한 JSON 문자열을 로그에 출력
-//            resultActions.andDo(a -> System.out.println(a.getResponse().getContentAsString()));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        resultActions.andDo(
-//                document("토큰 재발급 API 성공 Example",
-//                        getDocumentRequest(),
-//                        getDocumentResponse(),
-//                        resource(
-//                                ResourceSnippetParameters.builder()
-//                                        .tag(TAG)
-//                                        .description("토큰 재발급 API")
-//                                        .requestFields(
-//                                                fieldWithPath("user_id").type(NUMBER).description("유저 아이디")
-//                                        )
-//                                        .responseFields(
-//                                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
-//                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
-//                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
-//                                                fieldWithPath("data").description("응답 데이터"),
-//                                                fieldWithPath("data.access_token").type(STRING).description("access token"),
-//                                                fieldWithPath("data.refresh_token").type(STRING).description("refresh token")
-//                                        ).build()
+//        resultActions
+//                .andExpect(status().isOk())
+//                .andDo(document("토큰 재발급 API 성공 Example",
+//                        requestFields(
+//                                fieldWithPath("user_id").type(NUMBER).description("유저 아이디")),
+//                        responseFields(
+//                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
+//                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+//                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
+//                                fieldWithPath("data").description("응답 데이터"),
+//                                fieldWithPath("data.access_token").type(STRING).description("access token"),
+//                                fieldWithPath("data.refresh_token").type(STRING).description("refresh token")
 //                        ))
-//        );
-//        resultActions.andExpect(status().isOk());
-//
-//        // ... (테스트 결과에 대한 추가적인 검증 등)
+//                );
 //    }
-//
+
+
 //
 //    @Test
 //    @DisplayName("로그아웃 테스트")
