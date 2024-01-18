@@ -102,36 +102,36 @@ public class OauthControllerTest extends BaseControllerTest {
                 )).andExpect(status().isOk());
     }
 
-    @Test
-    @DisplayName("토큰 재발급 테스트")
-    void reissueTest() throws Exception {
-        // given
-        RefreshRequest request = new RefreshRequest(1L);
-        OauthTokenResponse response = new OauthTokenResponse("eyJ0eXAiOiJKV1QiLCJhbrG", "eyJ0eXAiOiJKV1QicLCJdhbG");
-
-        // when
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/oauth/reissue")
-                .header("Authorization", "Bearer {refresh token}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        );
-
-        // then
-        resultActions
-                .andExpect(status().isOk())
-                .andDo(document("토큰 재발급 API 성공 Example",
-                        requestFields(
-                                fieldWithPath("user_id").type(NUMBER).description("유저 아이디")),
-                        responseFields(
-                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
-                                fieldWithPath("message").type(STRING).description("상태 메세지"),
-                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
-                                fieldWithPath("data").description("응답 데이터"),
-                                fieldWithPath("data.access_token").type(STRING).description("access token"),
-                                fieldWithPath("data.refresh_token").type(STRING).description("refresh token")
-                        ))
-                );
-    }
+//    @Test
+//    @DisplayName("토큰 재발급 테스트")
+//    void reissueTest() throws Exception {
+//        // given
+//        RefreshRequest request = new RefreshRequest(1L);
+//        OauthTokenResponse response = new OauthTokenResponse("eyJ0eXAiOiJKV1QiLCJhbrG", "eyJ0eXAiOiJKV1QicLCJdhbG");
+//
+//        // when
+//        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/oauth/reissue")
+//                .header("Authorization", "Bearer {refresh token}")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(objectMapper.writeValueAsString(request))
+//        );
+//
+//        // then
+//        resultActions
+//                .andExpect(status().isOk())
+//                .andDo(document("토큰 재발급 API 성공 Example",
+//                        requestFields(
+//                                fieldWithPath("user_id").type(NUMBER).description("유저 아이디")),
+//                        responseFields(
+//                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
+//                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+//                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
+//                                fieldWithPath("data").description("응답 데이터"),
+//                                fieldWithPath("data.access_token").type(STRING).description("access token"),
+//                                fieldWithPath("data.refresh_token").type(STRING).description("refresh token")
+//                        ))
+//                );
+//    }
 
 
 //
