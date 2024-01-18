@@ -17,6 +17,7 @@ public enum MissionExceptionType implements BusinessExceptionType {
 	NOT_FILTERED_TODAY_MISSION(HttpStatus.BAD_REQUEST, "아직 오늘의 미션 선택지가 정해지지 않았습니다."),
 	NOT_EXIST_TODAY_MISSION_CHOICE(HttpStatus.BAD_REQUEST, "미션 선택지에 존재하지 않는 미션 ID 값입니다."),
 	ALREADY_CHOICE_TODAY_MISSION(HttpStatus.BAD_REQUEST, "이미 오늘의 미션을 선정했습니다."),
+	NOT_COMPLETE_MISSION_STEPS_SUCCESS(HttpStatus.BAD_REQUEST, "아직 미션 걸음 수를 달성하지 못해 인증사진을 등록할 수 없습니다."),
 
 
 	/**
@@ -25,6 +26,7 @@ public enum MissionExceptionType implements BusinessExceptionType {
 	MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션입니다."),
 	USER_MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 유저 미션입니다."),
 	NOT_CHOICE_TODAY_MISSION(HttpStatus.NOT_FOUND, "아직 오늘의 미션을 선정하지 않았습니다."),
+	MISSION_QUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션 퀘스트입니다."),
 
 	/**
 	 * 500 Internal Server Error

@@ -24,6 +24,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
@@ -36,7 +37,7 @@ import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 @Getter
 @Entity
 @Table(name = "`user`")
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -115,6 +116,14 @@ public class User extends BaseTimeEntity {
 		this.refreshToken = refreshToken;
 	}
 
+	public void udpateDeleted(){
+		this.deleted = true;
+	}
+
+	public void updateDeleteAt(){
+		this.deletedAt = LocalDateTime.now().plusDays(30);
+	}
+
 	public void updateOnboardingInfo(UserType type, Integer age) {
 		this.type = type;
 		this.age = age;
@@ -137,11 +146,11 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void setPreUserMissionChoice(List<UserMissionChoices> userMissionChoice) {
-		log.info("임시 UserMission 선택지(매일 자정 초기화 후, 메인 홈 첫 진입 시 업데이트: {}가지", userMissionChoice.size());
-		if (!this.userMissionChoice.isEmpty()) {
-			clearPreUserMissionChoice();
+		log.info("임시 UserMission 선택지(매일 자정 초기화 후, 메인 홈 첫 진입 시 업데이트: {}가지 / User-{}가지", userMissionChoice.size(), this.userMissionChoice.size());
+		if (this.userMissionChoice.isEmpty()) {
+			this.userMissionChoice.addAll(userMissionChoice);
 		}
-		this.userMissionChoice.addAll(userMissionChoice);
+
 	}
 
 	// 가장 최근의 운동 미션 조회

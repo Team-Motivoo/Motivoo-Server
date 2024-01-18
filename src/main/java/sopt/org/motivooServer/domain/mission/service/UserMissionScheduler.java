@@ -54,10 +54,26 @@ public class UserMissionScheduler {
 
 			log.info(userMission.getMission().getContent());
 			log.info(userMission.getCompletedStatus().getValue());
-			if (userMission.getCompletedStatus() != CompletedStatus.SUCCESS) {
+			if (userMission.getImgUrl() != null) {
+				try {
+					log.info("이미지가 올라왔으니 성공이어라..");
+					userMission.updateCompletedStatus(CompletedStatus.SUCCESS);
+
+					UserMission um = em.merge(userMission);
+					log.info("성공 상태로 업데이트 완료: {}", um.getCompletedStatus());
+					transactionManager.commit(transactionStatus);
+				} catch (PessimisticLockingFailureException | PessimisticLockException e) {
+					transactionManager.rollback(transactionStatus);
+				} finally {
+					em.close();
+				}
+			}
+
+			if (userMission.getCompletedStatus() != CompletedStatus.SUCCESS || userMission.getImgUrl() == null) {
 				try {
 					log.info("성공이 아니니 실패여라..");
 					userMission.updateCompletedStatus(CompletedStatus.FAIL);
+
 					UserMission um = em.merge(userMission);
 					log.info("실패 상태로 업데이트 완료: {}", um.getCompletedStatus());
 					transactionManager.commit(transactionStatus);
@@ -67,6 +83,7 @@ public class UserMissionScheduler {
 					em.close();
 				}
 			}
+
 		}
 	}
 
@@ -105,6 +122,7 @@ public class UserMissionScheduler {
 	// 매일 새벽 4시마다 30일 이전의 사진은 버킷에서 삭제한다
 	@Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
 	public void deleteImgBefore30Days() {
+		log.info("30일 동안 보관한 이미지는 삭제");
 		LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
 		userMissionRepository.findUserMissionsByCreatedAtBefore(thirtyDaysAgo)
 			.forEach(um -> s3Service.deleteImage(um.getImgUrl()));

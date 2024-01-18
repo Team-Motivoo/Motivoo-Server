@@ -1,6 +1,9 @@
 package sopt.org.motivooServer.domain.mission.entity;
 
 
+import static sopt.org.motivooServer.domain.mission.entity.CompletedStatus.*;
+import static sopt.org.motivooServer.domain.mission.exception.MissionExceptionType.*;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -19,7 +22,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sopt.org.motivooServer.domain.common.BaseTimeEntity;
+import sopt.org.motivooServer.domain.mission.exception.MissionException;
 import sopt.org.motivooServer.domain.user.entity.User;
+import sopt.org.motivooServer.domain.user.entity.UserType;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -57,10 +62,11 @@ public class UserMission extends BaseTimeEntity {
 	}
 
 	@Builder(builderMethodName = "builderForEmpty")
-	private UserMission(CompletedStatus completedStatus, Mission mission, User user) {
+	private UserMission(CompletedStatus completedStatus, Mission mission, User user, MissionQuest missionQuest) {
 		this.completedStatus = completedStatus;
 		this.mission = mission;
 		this.user = user;
+		this.missionQuest = missionQuest;
 	}
 
 	//== 연관관계 메서드 ==//
@@ -82,6 +88,16 @@ public class UserMission extends BaseTimeEntity {
 
 	public void updateCompletedStatus(final CompletedStatus completedStatus) {
 		this.completedStatus = completedStatus;
+	}
+
+
+	public void updateMissionFromEmpty(final Mission mission) {
+		if (!this.getMission().getTarget().equals(UserType.NONE)) {
+			throw new MissionException(ALREADY_CHOICE_TODAY_MISSION);
+		}
+
+		this.mission = mission;
+		this.updateCompletedStatus(IN_PROGRESS);
 	}
 
 }

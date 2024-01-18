@@ -1,25 +1,28 @@
 package sopt.org.motivooServer.domain.auth.controller;
 
-import jakarta.validation.Valid;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import static sopt.org.motivooServer.global.response.SuccessType.*;
+
+import java.security.Principal;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.RequiredArgsConstructor;
 import sopt.org.motivooServer.domain.auth.config.JwtTokenProvider;
+import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
 import sopt.org.motivooServer.domain.auth.dto.request.RefreshRequest;
 import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
-import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
 import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivooServer.domain.auth.service.OauthService;
 import sopt.org.motivooServer.domain.user.service.UserService;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
-import java.security.Principal;
-
-import static sopt.org.motivooServer.global.response.SuccessType.*;
-
 @RestController
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 public class OauthController {
     private final OauthService oauthService;
     private final JwtTokenProvider tokenProvider;
@@ -33,7 +36,7 @@ public class OauthController {
     @PostMapping("/oauth/reissue")
     public ResponseEntity<ApiResponse<OauthTokenResponse>> reissue(
             @RequestHeader("Authorization") String refreshToken,
-            @RequestBody final RefreshRequest request) {
+            @RequestBody RefreshRequest request) {
         return ApiResponse.success(REISSUE_SUCCESS, tokenProvider.reissue(request.userId(), refreshToken));
     }
 
@@ -45,12 +48,10 @@ public class OauthController {
     }
 
     @DeleteMapping("/withdraw")
-    public ResponseEntity<ApiResponse<Object>> signout(Principal principal,
-                                                       @Valid @RequestBody OauthTokenRequest tokenRequest) {
+    public ResponseEntity<ApiResponse<Object>> signout(Principal principal) {
         Long userId = Long.parseLong(principal.getName());
-        userService.deleteSocialAccount(tokenRequest.tokenType(), userId, tokenRequest.accessToken());
+        userService.deleteSocialAccount(userId);
 
         return ApiResponse.success(SIGNOUT_SUCCESS);
     }
-
 }

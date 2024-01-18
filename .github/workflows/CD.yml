@@ -21,6 +21,13 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-2
+
       - name: application.yml 파일 생성
         run: |
           # yml을 생성할 디렉터리로 작업 디렉터리 이동
@@ -29,13 +36,26 @@ jobs:
           echo "${{ secrets.APPLICATION_TEST }}" > ./application.yml
         working-directory: ${{ env.working-directory }}
 
+
+      - name: Firebase JSON 파일 생성
+        run: |
+          cd ./src/main/resources
+          
+          mkdir ./firebase
+          cd ./firebase
+          echo $(ls -al)
+          
+          aws s3 cp --region ap-northeast-2 s3://${{ secrets.S3_BUCKET_PATH }}/motivoo-firebase-adminsdk.json .
+          echo $(ls -al; pwd)
+
+        shell: bash
+
       - name: 빌드
         run: |
           chmod +x gradlew
           ./gradlew build
         working-directory: ${{ env.working-directory }}
         shell: bash
-
 
       - name: Docker 빌드 환경 설정
         uses: docker/setup-buildx-action@v2.9.1

@@ -4,6 +4,7 @@ import static sopt.org.motivooServer.global.advice.CommonExceptionType.*;
 import static sopt.org.motivooServer.global.external.s3.S3ExceptionType.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 import sopt.org.motivooServer.global.advice.BusinessException;
@@ -31,6 +34,7 @@ public class S3Service {
 
 	private static final Long PRE_SIGNED_URL_EXPIRE_MINUTE = 1L;  // 만료시간 1분
 	private static final String IMAGE_EXTENSION = ".jpg";
+	private static final String AWS_DOMAIN = "amazonaws.com/";
 
 	private final String bucketName;
 
@@ -100,6 +104,36 @@ public class S3Service {
 					.key(key).build());
 		} catch (RuntimeException e) {
 			throw new BusinessException(FAIL_TO_DELETE_IMAGE);
+		}
+	}
+
+	// imageKey 기반으로 실제 S3 URL 도출
+	public String getURL(final String url) {
+
+		int index = url.indexOf(AWS_DOMAIN);
+		String imageKey = "";
+		if (index != -1) {
+			imageKey = url.substring(index + AWS_DOMAIN.length());
+			log.info("imageKey substring으로 가져옴: {}", imageKey);
+		} else {
+			log.error("imageKey substring으로 가져오기 실패");
+		}
+
+		try {
+			GetUrlRequest request = GetUrlRequest.builder()
+				.bucket(bucketName)
+				.key(imageKey)
+				.build();
+
+			URL imageUrl = s3Client.utilities().getUrl(request);
+
+			String urlWithKey = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/" + imageKey;
+			if (urlWithKey.equals(imageUrl.toString())) {
+				return imageUrl.toString();
+			}
+			throw new BusinessException(S3_BUCKET_GET_IMAGE_ERROR);
+		} catch (S3Exception e) {
+			throw new BusinessException(e.getMessage(), S3_BUCKET_GET_IMAGE_ERROR);
 		}
 	}
 

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -22,7 +23,7 @@ public record TodayMissionResponse(
 	public static TodayMissionResponse of(List<UserMissionChoices> missionChoiceList) {
 		return TodayMissionResponse.builder()
 			.isChoiceFinished(false)
-			.date(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)))
+			.date(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(Locale.KOREAN)))
 			.missionChoiceList(missionChoiceList.stream()
 				.map(TodayUserMissionDto::of).toList()).build();
 	}

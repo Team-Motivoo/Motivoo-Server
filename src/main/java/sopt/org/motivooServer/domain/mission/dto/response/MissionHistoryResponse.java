@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
+import sopt.org.motivooServer.domain.mission.entity.Mission;
 import sopt.org.motivooServer.domain.mission.entity.UserMission;
 import sopt.org.motivooServer.domain.user.entity.User;
 
@@ -26,12 +27,21 @@ public record MissionHistoryResponse(
 		List<ParentchildMissionDto> parentchildMissions = new ArrayList<>(missionGroupsByDate.size());
 
 		for (Map.Entry<LocalDate, List<UserMission>> entry : missionGroupsByDate.entrySet()) {
-			parentchildMissions.add(ParentchildMissionDto.of(entry.getValue().get(0), entry.getValue().get(1)));
+			if (user.equals(entry.getValue().get(0).getUser())) {
+				parentchildMissions.add(ParentchildMissionDto.of(entry.getValue().get(0), entry.getValue().get(1)));
+			} else {
+				parentchildMissions.add(ParentchildMissionDto.of(entry.getValue().get(1), entry.getValue().get(0)));
+			}
 		}
 		return MissionHistoryResponse.builder()
 			.userType(user.getType().getValue())
 			.todayMission(TodayUserMissionDto.ofHistory(todayMission))
 			.missionHistory(parentchildMissions).build();
+	}
+
+	public static MissionHistoryResponse of(User user) {
+		return MissionHistoryResponse.builder()
+			.userType(user.getType().getValue()).build();
 	}
 
 	public static MissionHistoryResponse of(User user, UserMission todayMission, List<UserMission> myMissions, List<UserMission> opponentMissions) {

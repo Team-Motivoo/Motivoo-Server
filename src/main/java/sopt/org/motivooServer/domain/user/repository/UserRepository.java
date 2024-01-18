@@ -10,14 +10,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
+
+import sopt.org.motivooServer.domain.user.entity.SocialPlatform;
 import sopt.org.motivooServer.domain.user.entity.User;
 
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findBySocialId(String socialId);
+    List<User> findBySocialId(String socialId);
 
     @Query("select u.refreshToken from User u where u.id=?1")
     String findRefreshTokenById(Long id);
+
+    @Query("select u.socialAccessToken from User u where u.id=?1")
+    String findSocialAccessTokenById(Long id);
 
     @Query("select u from User u where u.deletedAt < now()")
     List<User> deleteExpiredUser();
@@ -31,20 +36,23 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.parentchild = ?1 and u.deleted=true")
     List<User> findByParentchild(Parentchild parentchild);
 
+    @Query("select u from User u where u.parentchild = ?1 and u.deleted=false")
+    List<User> findUserByParentchild(Parentchild parentchild);
 
     @Query("select u from User u where u.id!=?1 and u.parentchild=?2")
     Optional<User> findByIdAndParentchild(Long userId, Parentchild parentchild);
 
-    @Modifying
-    @Query("update User u set u.deletedAt=?1 where u.id=?2")
-    void updateDeleteAt(LocalDateTime deletedAt, Long userId);
+    boolean existsBySocialPlatformAndSocialId(SocialPlatform socialPlatform, String socialId);
 
-    @Query("UPDATE User u SET u.deleted=true WHERE u.id=?1")
-    void updateDelete(Long userId);
+    List<User> findBySocialPlatformAndSocialId(SocialPlatform socialPlatform, String socialId);
 
     @Query("select u from User u where u.id=?1 and u.deleted=false")
     Optional<User> findById(Long id);
 
+    User findUserById(Long id);
+
     @Query("SELECT u FROM User u WHERE u.id IN :ids")
     List<User> findAllByIds(@Param("ids") List<Long> ids);
+
+    List<User> findAllByDeleted(boolean deleted);
 }

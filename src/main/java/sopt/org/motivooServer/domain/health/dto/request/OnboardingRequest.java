@@ -19,5 +19,4 @@ public record OnboardingRequest (
         @JsonProperty("exercise_note")
         List<String> exerciseNote
 ){
-
 }

@@ -19,7 +19,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
@@ -31,13 +30,12 @@ import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 @Slf4j
-@WithMockUser(roles = "USER")
 @DisplayName("UserController 테스트")
 @WebMvcTest(UserController.class)
 public class UserControllerTest extends BaseControllerTest {
 
 	protected static final String DEFAULT_URL = "/user";
-	private final String TAG = "유저";
+	private final String TAG = "마이페이지";
 
 	@MockBean
 	UserController userController;
@@ -58,7 +56,7 @@ public class UserControllerTest extends BaseControllerTest {
 		MyPageInfoResponse response = MyPageInfoResponse.builder()
 			.userNickname("모티뿡뿡이")
 			.userAge(20)
-			.userType("CHILD").build();
+			.userType("자녀").build();
 		ResponseEntity<ApiResponse<MyPageInfoResponse>> result = ApiResponse
 			.success(GET_MYINFO_SUCCESS, response);
 
@@ -86,7 +84,7 @@ public class UserControllerTest extends BaseControllerTest {
 							fieldWithPath("data").type(OBJECT).description("응답 데이터"),
 							fieldWithPath("data.user_nickname").type(STRING).description("유저 닉네임"),
 							fieldWithPath("data.user_age").type(NUMBER).description("유저 나이"),
-							fieldWithPath("data.user_type").type(STRING).description("유저 타입 (부모/자식)"))
+							fieldWithPath("data.user_type").type(STRING).description("유저 타입 (부모/자녀)"))
 						.build()
 				)
 			)).andExpect(status().isOk());

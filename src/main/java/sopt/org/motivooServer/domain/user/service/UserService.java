@@ -1,7 +1,6 @@
 package sopt.org.motivooServer.domain.user.service;
 
 import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.*;
-import static sopt.org.motivooServer.domain.user.entity.SocialPlatform.KAKAO;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.client.RestTemplate;
+import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivooServer.domain.health.entity.Health;
 import sopt.org.motivooServer.domain.health.exception.HealthException;
 import sopt.org.motivooServer.domain.health.repository.HealthRepository;
-import sopt.org.motivooServer.domain.parentchild.repository.ParentchildRepository;
 import sopt.org.motivooServer.domain.user.dto.response.MyHealthInfoResponse;
 import sopt.org.motivooServer.domain.user.dto.response.MyPageInfoResponse;
 import sopt.org.motivooServer.domain.user.entity.SocialPlatform;
@@ -22,7 +21,8 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Slf4j
 @Service
@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 public class UserService {
 	private final UserRepository userRepository;
 	private final HealthRepository healthRepository;
+	private final TokenRedisRepository tokenRedisRepository;
 
 	public MyPageInfoResponse getMyInfo(final Long userId) {
 		User user = getUserById(userId);
@@ -46,32 +47,52 @@ public class UserService {
 
 	private User getUserById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(
-			() -> new UserException(USER_NOT_FOUND)
+				() -> new UserException(USER_NOT_FOUND)
 		);
 	}
 
 	@Transactional
-	public void deleteSocialAccount(String socialPlatform, Long userId, String accessToken){
-		switch (socialPlatform){
+	public void deleteSocialAccount(Long userId){
+		deleteKakaoAccount(userId);
+
+		//TODO 애플 로그인 구현 후 리팩토링
+//		switch (){
 //			case "apple" ->
-			case "kakao" -> deleteKakaoAccount(userId, accessToken);
-		}
+//			case "kakao" -> deleteKakaoAccount(userId, accessToken);
+//		}
 	}
 
 	@Transactional
-	public void deleteKakaoAccount(Long userId, String accessToken){
-		User user = getUserById(userId);
+	public void deleteKakaoAccount(Long userId){
+		User user = userRepository.findUserById(userId);
+		//탈퇴하려고 하는데 가입한 이력이 없는 경우 -> 30일이 지나서 영구탈퇴
+		if(user==null)
+			throw new UserException(ALREADY_WITHDRAW_USER);
 
-		userRepository.updateDelete(userId); //회원 탈퇴 deleted false -> true
-		userRepository.updateDeleteAt(LocalDateTime.now().plusDays(30), user.getId()); //회원 탈퇴날짜 갱신
+		String socialId = user.getSocialId();
+		System.out.println("socialId= "+socialId);
+		List<User> users = userRepository.findBySocialId(socialId);
+		boolean is_withdrawn = users.stream()
+				.filter(u -> !u.isDeleted())
+				.peek(u -> {
+					u.udpateDeleted();
+					u.updateDeleteAt();
+					System.out.println("유저 정보=" + u.isDeleted() + " " + u.getDeletedAt());
+					String accessToken = userRepository.findSocialAccessTokenById(u.getId());
+					String refreshToken = userRepository.findRefreshTokenById(u.getId());
+					u.updateRefreshToken(null);
+				})
+				.findFirst()
+				.isPresent();
 
-		log.info("영구 탈퇴 날짜="+user.getDeletedAt());
-
-		sendRevokeRequest(null, KAKAO, accessToken); //카카오 연결 해제
+		//이미 탈퇴한 경우
+		if(!is_withdrawn)
+			throw new UserException(ALREADY_WITHDRAW_USER);
+		//sendRevokeRequest(null, KAKAO, "FHdk_lLY2GObLpez2qGCdmqDlMBwwDk7FXgKPXTZAAABjRVYY2X6Fwx8Dt1GgQ"); //카카오 연결 해제
 	}
 
 	private void sendRevokeRequest(String data, SocialPlatform socialPlatform, String accessToken) {
-		String appleRevokeUrl = "https://appleid.apple.com/auth/revoke"; //TODO 추후 애플 로그인 구현 후
+		// String appleRevokeUrl = "https://appleid.apple.com/auth/revoke"; //TODO 추후 애플 로그인 구현 후
 		String kakaoRevokeUrl = "https://kapi.kakao.com/v1/user/unlink";
 
 		RestTemplate restTemplate = new RestTemplate();
@@ -83,7 +104,7 @@ public class UserService {
 		HttpEntity<String> entity = new HttpEntity<>(data, headers);
 
 		switch (socialPlatform) {
-			case APPLE -> revokeUrl = appleRevokeUrl;
+			// case APPLE -> revokeUrl = appleRevokeUrl;
 			case KAKAO -> {
 				revokeUrl = kakaoRevokeUrl;
 				headers.setBearerAuth(accessToken);
