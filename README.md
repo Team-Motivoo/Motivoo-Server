@@ -3,41 +3,36 @@
 > 자녀와 부모를 잇는 매일 한 걸음, 가족과 함께 만들어 나가는 오늘의 운동 습관
 >
 
-## 🥕 서뿡이들
-
-|                                      박예준                                      |                                                                이혜연                                                                 |                                                               조찬우                                                               |
-|:-----------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------:|
-| <img src="https://avatars.githubusercontent.com/u/80024278?v=4" width="300"/> | <img src="https://avatars.githubusercontent.com/u/115079024?v=4" width="300"/> | <img src="https://avatars.githubusercontent.com/u/58971262?v=4" width="300"/> |
-|                    [jun02160](https://github.com/jun02160)                    |                                             [hyeyeonnnnn](https://github.com/hyeyeonnnnn)  |                                         [oownahcohc](https://github.com/oownahcohc)                                             |
+<img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/e87b6c2d-2bdf-4da7-9d02-8227f159a4f2">
 
 
 
-## 👻 Role
+## 🥕 서뿡이들 (MOTIVOO Server Developers)
 
-| 담당 역할              |   Role   |
-|:-------------------|:--------:|
-| Nginx 배포, CI/CD 구축 |   박예준    |
-| ERD 및 DB 설계        | 박예준, 이혜연 |
-| API 개발             |   박예준, 이혜연    |
-| 소셜로그인 기능 구현        |   이혜연    |
-| API 문서 자동화 세팅      |   박예준    |
+|                                                                                                  박예준                                                                                                  |                                                 이혜연                                                  |                                      조찬우                                      |
+|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|
+|                                                             <img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/17bd3b2f-9ee5-4400-997d-d89a81a6f676" width="300"/>                                                             |            <img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/d067272c-ab0b-44d7-8628-b11a7d76758b" width="300"/>            | <img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/156e2625-786e-4b5b-8095-5131440a3c67" width="300"/> |
+|                                                                                [jun02160](https://github.com/jun02160)                                                                                |                            [hyeyeonnnnn](https://github.com/hyeyeonnnnn)                             |                  [oownahcohc](https://github.com/oownahcohc)                  |
+| Architecture 설계(Nginx, Docker)<br/>CI/CD 구축 및 관리<br/>ERD 및 DB 설계<br/>미션, 홈, 마이페이지 API 개발<br/>Firebase Realtime DB 연동<br/>Restdocs with Swagger UI 세팅</br>PreSigned Url(S3 Management)<br/>Slack 알림 연동 | ERD 및 DB 설계<br/>온보딩, 유저 API 개발<br/>인증/인가 구현(OAuthClient, Spring Security, Redis)<br/>JPA Soft Delete |            ERD 및 DB 설계<br/>JPA Query Inspector<br/>            |                                                                                                                                 |
+
+
 
 
 ## 🛠️ 개발 환경
-| 통합 개발 환경 | IntelliJ |
-| --- | --- |
-| 배포 | AWS EC2(Ubuntu) |
-| 데이터베이스 | AWS RDS(MySQL) |
-| Spring 버전 | 3.0.11 |
-| Project 빌드 관리 도구 | Gradle |
-| CI/CD 툴 | Github Actions, Docker |
-| ERD 다이어그램 툴 | ERDCloud, MySQL Workbench |
-| API 명세서 툴 | Spring Restdocs(MockMvc), Swagger UI, Notion |
-| Java version | Java 17 |
-| 패키지 구조 | 도메인 패키지 구조 |
-| 파일 업로드  | AWS S3 |
-| 기타 | JPA, Redis, Spring Security, Spring Scheduler |
-| 외부 연동 | Slack |
+| 통합 개발 환경                 | IntelliJ                                      |
+|--------------------------|-----------------------------------------------|
+| 배포                       | AWS EC2(Ubuntu)                               |
+| Database                 | AWS RDS(MySQL), Firebase Realtime DB, Redis   |
+| Spring Version           | 3.0.11                                        |
+| Project Build Management | Gradle                                        |
+| CI/CD Process            | Github Actions, Docker Compose                |
+| ERD Diagram              | ERDCloud, MySQL Workbench                     |
+| API Document             | Spring Restdocs(MockMvc), Swagger UI, Notion  |
+| Java version             | Java 17                                       |
+| Package Structure        | 도메인 패키지 구조                                    |
+| File Upload              | AWS S3(PreSigned Url)                         |
+| ETC                      | JPA, Redis, Spring Security, Spring Scheduler |
+| Webhook                  | Slack                                         |
 
 <br/><br/>
 
