@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,6 @@ import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
-import sopt.org.motivooServer.domain.mission.entity.CompletedStatus;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
 import sopt.org.motivooServer.domain.mission.entity.MissionQuest;
 import sopt.org.motivooServer.domain.mission.entity.MissionType;
@@ -81,7 +79,7 @@ public class UserMissionService {
 
 		UserMission todayMission = user.getCurrentUserMission();
 		checkMissionChoice(todayMission);
-		checkMissionStepComplete(todayMission);
+		// checkMissionStepComplete(todayMission);
 
 		PreSignedUrlResponse preSignedUrl = s3Service.getUploadPreSignedUrl(
 			S3BucketDirectory.of(request.imgPrefix()));
@@ -115,8 +113,8 @@ public class UserMissionService {
 					.forEach(um -> um.updateCompletedStatus(FAIL));
 			} else {
 				missionsByDate.get(localDateTime).stream()
-					.filter(um -> um.getImgUrl() == null && !um.getMission().getTarget().equals(UserType.NONE))
-					.forEach(um -> um.updateCompletedStatus(IN_PROGRESS));
+					.filter(um -> um.getImgUrl() != null && !um.getMission().getTarget().equals(UserType.NONE))
+					.forEach(um -> um.updateCompletedStatus(SUCCESS));
 			}
 
 			missionsByDate.get(localDateTime).stream()
