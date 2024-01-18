@@ -17,10 +17,11 @@ public record MissionStepStatusResponse(
 	@JsonProperty("opponent_user_id") Long opponentUserId,
 	@JsonProperty("opponent_user_goal_step_count") Integer opponentUserGoalStepCount,
 	@JsonProperty("is_step_count_completed") Boolean isStepCountCompleted,
-	@JsonProperty("is_opponent_user_withdraw") Boolean isOpponentUserWithdraw
+	@JsonProperty("is_opponent_user_withdraw") Boolean isOpponentUserWithdraw,
+	@JsonProperty("is_mission_img_completed") Boolean isMissionImgCompleted
 ) {
 
-	public static MissionStepStatusResponse of(User user, User opponentUser, int myGoalStep, int opponentGoalStep, Boolean status) {
+	public static MissionStepStatusResponse of(User user, User opponentUser, int myGoalStep, int opponentGoalStep, Boolean status, Boolean imgCompleted) {
 		return MissionStepStatusResponse.builder()
 			.userType(user.getType().getValue())
 			.userId(user.getId())
@@ -28,6 +29,7 @@ public record MissionStepStatusResponse(
 			.opponentUserId(opponentUser.getId())
 			.opponentUserGoalStepCount(opponentGoalStep)
 			.isStepCountCompleted(status)
-			.isOpponentUserWithdraw(opponentUser.isDeleted()).build();
+			.isOpponentUserWithdraw(opponentUser.isDeleted())
+			.isMissionImgCompleted(imgCompleted).build();
 	}
 }

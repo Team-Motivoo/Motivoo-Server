@@ -2,12 +2,13 @@ package sopt.org.motivooServer.controller;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.*;
 import static com.epages.restdocs.apispec.ResourceDocumentation.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static sopt.org.motivooServer.global.response.SuccessType.*;
+import static sopt.org.motivooServer.util.ApiDocumentUtil.*;
 
 import java.security.Principal;
 
@@ -25,11 +26,6 @@ import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
 import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.response.ApiResponse;
-
-
-
-import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentRequest;
-import static sopt.org.motivooServer.util.ApiDocumentUtil.getDocumentResponse;
 
 @Slf4j
 @DisplayName("OauthController 테스트")
