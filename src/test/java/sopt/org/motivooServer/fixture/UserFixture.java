@@ -1,6 +1,14 @@
 package sopt.org.motivooServer.fixture;
 
+import java.util.List;
+
 import lombok.val;
+import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
+import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
+import sopt.org.motivooServer.domain.health.dto.request.OnboardingRequest;
+import sopt.org.motivooServer.domain.health.dto.response.OnboardingResponse;
+import sopt.org.motivooServer.domain.health.entity.Health;
+import sopt.org.motivooServer.domain.parentchild.entity.Parentchild;
 import sopt.org.motivooServer.domain.user.entity.SocialPlatform;
 import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
@@ -24,6 +32,14 @@ public class UserFixture {
 	private static final String USER_SOCIAL_ID2 = "1234567social";
 	private static final SocialPlatform USER_SOCIAL_PLATFORM2 = SocialPlatform.KAKAO;
 
+	private static final int USER_AGE3 =20;
+	private static final String USER_NICKNAME3 = "모티부";
+	private static final UserType USER_TYPE3 = UserType.CHILD;
+	private static final String SOCIAL_ID = "1222222";
+	private static final String SOCIAL_ACCESS_TOKEN = "Dfsfnoidnfa";
+	private static final String REFRESH_TOKEN = "sdffsfsfdsfd";
+	private static final boolean DELETED = false;
+	private static final SocialPlatform USER_SOCIAL_PLATFORM3 = SocialPlatform.KAKAO;
 
 	public static User createUser() {
 		// Lombok에서 제공하는 final 선언
@@ -45,4 +61,39 @@ public class UserFixture {
 			.type(USER_TYPE2).build();
 		return user;
 	}
+
+	public static User createUserV3(){
+		val user = User.builder()
+				.nickname(USER_NICKNAME3)
+				.socialId(SOCIAL_ID)
+				.socialPlatform(USER_SOCIAL_PLATFORM3)
+				.socialAccessToken(SOCIAL_ACCESS_TOKEN)
+				.refreshToken(REFRESH_TOKEN)
+				.type(USER_TYPE3)
+				.deleted(DELETED)
+				.build();
+		return user;
+	}
+
+	/*public static User createUserV4(){
+		val health = HealthFixture.createHealthInfo();
+		val user = health.getUser();
+		user.addParentChild(ParentchildFixture.createParentchild());
+		return user;
+	}*/
+
+	public static OauthTokenRequest createOauthTokenRequest() {
+		return new OauthTokenRequest(SOCIAL_ACCESS_TOKEN, "kakao");
+	}
+
+	public static LoginResponse createLoginResponse() {
+		val user = createUserV3();
+		return LoginResponse.builder()
+			.id(user.getSocialId())
+			.nickname(user.getNickname())
+			.accessToken(user.getSocialAccessToken())
+			.refreshToken(user.getRefreshToken())
+			.tokenType("Bearer").build();
+	}
+
 }

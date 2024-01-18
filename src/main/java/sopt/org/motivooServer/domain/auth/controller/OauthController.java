@@ -50,10 +50,8 @@ public class OauthController {
     @DeleteMapping("/withdraw")
     public ResponseEntity<ApiResponse<Object>> signout(Principal principal) {
         Long userId = Long.parseLong(principal.getName());
-
         userService.deleteSocialAccount(userId);
 
         return ApiResponse.success(SIGNOUT_SUCCESS);
     }
-
 }

@@ -18,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
@@ -27,19 +26,20 @@ import sopt.org.motivooServer.domain.auth.controller.OauthController;
 import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
 import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
+import sopt.org.motivooServer.fixture.UserFixture;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
 @Slf4j
 @DisplayName("OauthController 테스트")
 @WebMvcTest(OauthController.class)
-public class OauthControllerTest extends BaseControllerTest{
-    private final String TAG = "oauth";
+public class OauthControllerTest extends BaseControllerTest {
+    private static final String TAG = "유저";
 
     @MockBean
-    OauthController oauthController;
+    private OauthController oauthController;
 
     @MockBean
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @MockBean
     Principal principal;
@@ -49,19 +49,12 @@ public class OauthControllerTest extends BaseControllerTest{
     void loginTest() throws Exception {
 
         //given
-        LoginResponse response = LoginResponse.builder()
-                .id("1")
-                .nickname("모티뿌")
-                .accessToken("Bearer")
-                .accessToken("eyJ0eXAiOiJKV1QiLCJhbG")
-                .tokenType("Bearer")
-                .refreshToken("eyJ0eXAiOiJKV1QiLCJhbG")
-                .build();
+        LoginResponse response = UserFixture.createLoginResponse();
         ResponseEntity<ApiResponse<LoginResponse>> result = ApiResponse
                 .success(LOGIN_SUCCESS, response);
 
         //when
-        OauthTokenRequest request = new OauthTokenRequest("eyJ0eXAiOiJKV1QiLCJhbG", "kakao");
+        OauthTokenRequest request = UserFixture.createOauthTokenRequest();
         when(oauthController.login(request)).thenReturn(result);
 
         //then
@@ -101,21 +94,28 @@ public class OauthControllerTest extends BaseControllerTest{
 //    void reissueTest() throws Exception {
 //        // given
 //        RefreshRequest request = new RefreshRequest(1L);
-//        OauthTokenResponse response = new OauthTokenResponse("eyJ0eXAiOiJKV1QiLCJhbrG", "eyJ0eXAiOiJKV1QiLCJdhbG");
+//        OauthTokenResponse response = new OauthTokenResponse("eyJ0eXAiOiJKV1QiLCJhbrG", "eyJ0eXAiOiJKV1QicLCJdhbG");
 //
 //        // ApiResponse에 응답 데이터 추가
 //        ResponseEntity<ApiResponse<OauthTokenResponse>> result = ApiResponse.success(REISSUE_SUCCESS, response);
 //
 //        // when
-//        when(oauthController.reissue("eyJ0eXAiOiJKV1QiLCJhbG", request)).thenReturn(result);
-//
-//        // then
-//        mockMvc.perform(RestDocumentationRequestBuilders.post("/oauth/reissue")
+//        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/oauth/reissue")
 //                .header("Authorization", "Bearer {refresh token}")
 //                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
 //                .content(objectMapper.writeValueAsString(request))
-//        ).andDo(
+//
+//        );
+//
+//        // then
+//        try {
+//            // 추가: 실패한 JSON 문자열을 로그에 출력
+//            resultActions.andDo(a -> System.out.println(a.getResponse().getContentAsString()));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        resultActions.andDo(
 //                document("토큰 재발급 API 성공 Example",
 //                        getDocumentRequest(),
 //                        getDocumentResponse(),
@@ -123,9 +123,6 @@ public class OauthControllerTest extends BaseControllerTest{
 //                                ResourceSnippetParameters.builder()
 //                                        .tag(TAG)
 //                                        .description("토큰 재발급 API")
-//                                        .requestHeaders(headerWithName("Authorization")
-//                                                .description("refresh token")
-//                                        )
 //                                        .requestFields(
 //                                                fieldWithPath("user_id").type(NUMBER).description("유저 아이디")
 //                                        )
@@ -137,9 +134,13 @@ public class OauthControllerTest extends BaseControllerTest{
 //                                                fieldWithPath("data.access_token").type(STRING).description("access token"),
 //                                                fieldWithPath("data.refresh_token").type(STRING).description("refresh token")
 //                                        ).build()
-//                        )
-//                )).andExpect(status().isOk());
+//                        ))
+//        );
+//        resultActions.andExpect(status().isOk());
+//
+//        // ... (테스트 결과에 대한 추가적인 검증 등)
 //    }
+//
 //
 //    @Test
 //    @DisplayName("로그아웃 테스트")
@@ -151,7 +152,7 @@ public class OauthControllerTest extends BaseControllerTest{
 //        when(oauthController.logout("access token")).thenReturn(result);
 //
 //        //then
-//        mockMvc.perform(RestDocumentationRequestBuilders.post("/oauth/logout")
+//        mockMvc.perform(post("/oauth/logout")
 //                .header("Authorization", "Bearer access token")
 //                .contentType(MediaType.APPLICATION_JSON)
 //                .accept(MediaType.APPLICATION_JSON)
@@ -182,7 +183,6 @@ public class OauthControllerTest extends BaseControllerTest{
     void withdrawTest() throws Exception {
 
         //given
-        OauthTokenRequest request = new OauthTokenRequest("TJ-tINCO5zPBhmFudnfm-Sjn4H3jtOe8G3IKKiWRAAABjPxmAbhDz1szkZmFRA","kakao");
         ResponseEntity<ApiResponse<Object>> result = ApiResponse
                 .success(SIGNOUT_SUCCESS);
 
@@ -190,10 +190,9 @@ public class OauthControllerTest extends BaseControllerTest{
         when(oauthController.signout(principal)).thenReturn(result);
 
         //then
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/withdraw")
+        mockMvc.perform(delete("/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
                 .principal(principal)
         ).andDo(
                 document("회원탈퇴 API 성공 Example",
@@ -203,10 +202,7 @@ public class OauthControllerTest extends BaseControllerTest{
                                 ResourceSnippetParameters.builder()
                                         .tag(TAG)
                                         .description("회원 탈퇴 API")
-                                        .requestFields(
-                                                fieldWithPath("social_access_token").type(STRING).description("access token"),
-                                                fieldWithPath("token_type").type(STRING).description("소셜 플랫폼(kakao|apple)")
-                                        )
+                                        .requestFields()
                                         .responseFields(
                                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
                                                 fieldWithPath("message").type(STRING).description("상태 메세지"),
