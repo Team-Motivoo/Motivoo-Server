@@ -48,12 +48,6 @@ public class OauthControllerTest extends BaseControllerTest {
     @MockBean
     private UserRepository userRepository;
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockBean
     Principal principal;
 
