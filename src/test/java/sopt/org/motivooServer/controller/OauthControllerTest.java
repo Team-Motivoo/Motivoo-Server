@@ -36,10 +36,10 @@ public class OauthControllerTest extends BaseControllerTest {
     private final String TAG = "oauth";
 
     @MockBean
-    OauthController oauthController;
+    private OauthController oauthController;
 
     @MockBean
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @MockBean
     Principal principal;

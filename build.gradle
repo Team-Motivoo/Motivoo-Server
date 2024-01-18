@@ -160,8 +160,6 @@ bootJar {
 	}
 }
 
-
-
 openapi3 {
 	servers = [
 			{ url = "http://15.165.248.213" },
