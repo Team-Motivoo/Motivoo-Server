@@ -37,13 +37,17 @@
 <br/><br/>
 
 
-## 🔧 시스템 아키텍처
+## 🔧 System Architecture
 <img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/c557f8ff-1d10-4b9c-82fa-057f85c52caf" />
 <br/><br/>
 
-## ☁️ ERD
+## ☁️ ER Diagram
 <img width=600 src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/fcc46c18-c238-4e00-84fc-2dc7c905470a">
 <br/><br/>
+
+## 📄 API Document
+<img width="900" alt="image" src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/2a2312f9-0560-4be1-a9b4-21852d0aa824">
+
 
 ## 📂 Project Structure
 
@@ -59,7 +63,7 @@
     🗂 main
         🗂 java/sopt/org/motivooServer
             📁 domain
-                🗂 auth    // 소셜로그인 관련 로직
+                🗂 auth    // 인증, 인가 관련 로직
                     🗂 config
                     🗂 controller
                     🗂 dto
@@ -109,6 +113,8 @@
                 🗂 config
                     🗂 swagger
                 🗂 external
+                    🗂 firebase
+                      🗂 config
                     🗂 s3
                       🗂 config
                     🗂 slack
@@ -123,7 +129,8 @@
 
     🗂 test 
         🗂 java/sopt/org/motivooServer
-          🗂 controller
+          🗂 controller   // API 문서화를 위한 컨트롤러 테스트
+          🗂 fixture      // 테스트용 Entity, DTO 객체 Fixture 관리
           🗂 util
 ```
 
@@ -136,7 +143,7 @@
 
 ## 📓 Backend Convention
 
-### 🌳 Branch 전략
+### 👣 Git Flow
 
 <img src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/2619fc0c-1b14-4abe-9407-43219fca9e71">
 
@@ -168,7 +175,7 @@
 </div>
 </details>
 
-### 🗣️ Code Review
+### 👣️ Code Review
 
 <details>
 <summary>자세히 보기</summary>
@@ -190,7 +197,7 @@
 </div>
 </details>
 
-### 🚀 Commit Convention
+### 👣 Commit Convention
 
 <details>
 <summary>자세히 보기</summary>
@@ -238,7 +245,7 @@
 </details>
 
 
-### ✨ Code Convention
+### 👣 Code Convention
 
 <details>
 <summary>자세히 보기</summary>
