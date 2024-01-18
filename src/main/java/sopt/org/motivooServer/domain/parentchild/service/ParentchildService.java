@@ -110,7 +110,7 @@ public class ParentchildService {
     public InviteResponse validateInviteCode(Long userId, InviteRequest request){
         User user = getUserById(userId);
 
-        Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode()).get();
+        Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode());
 
         //잘못된 초대 코드를 입력하는 경우
         if(parentchild == null)
