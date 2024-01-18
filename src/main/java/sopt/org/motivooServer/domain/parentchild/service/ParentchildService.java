@@ -122,7 +122,7 @@ public class ParentchildService {
 
         Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode());
 
-        System.out.println("parentchild="+parentchild);
+        log.info("parentchild="+parentchild);
         //잘못된 초대 코드를 입력하는 경우
         if(parentchild == null)
             return new InviteResponse(userId, false, false, false);
@@ -130,7 +130,6 @@ public class ParentchildService {
         //나의 매칭이 완료된 경우
         if(user.getParentchild()!=null && user.getParentchild().isMatched() == true)
             throw new ParentchildException(MATCH_ALREADY_COMPLETED);
-
 
         //상대방이 이미 매칭이 완료된 경우
         if(userRepository.findUserByParentchild(parentchild).size()>=2)
@@ -142,7 +141,6 @@ public class ParentchildService {
 
 
         if (!parentchild.isMatched()) {
-
             //1. 온보딩 정보 입력을 한 적이 있고 2. 내가 발급한 초대 코드인 경우
             if (!healthRepository.findByUser(user).isEmpty() && user.getParentchild() == parentchild)
                 return new InviteResponse(userId, false, true, true);
