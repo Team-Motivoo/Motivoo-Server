@@ -108,6 +108,9 @@ public class UserMissionService {
 		for (LocalDate localDateTime : missionsByDate.keySet()) {
 			log.info("missionsByDate.get(localDateTime) size: {}", missionsByDate.get(localDateTime).size());
 
+			missionsByDate.get(localDateTime).stream()
+				.filter(um -> um.getMission().getTarget().equals(UserType.NONE))
+				.forEach(um -> um.updateCompletedStatus(NONE));
 			// log.info("key={}, value={} 🥹{}", localDateTime, missionsByDate.get(localDateTime).get(0).getMission().getContent(),
 			// 	missionsByDate.get(localDateTime).get(1).getMission().getContent());
 		}
