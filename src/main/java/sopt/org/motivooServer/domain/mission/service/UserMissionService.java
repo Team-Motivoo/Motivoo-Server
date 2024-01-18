@@ -307,7 +307,8 @@ public class UserMissionService {
 
 		if (!user.getUserMissions().isEmpty()) {
 			UserMission todayMission = user.getCurrentUserMission();
-			if (validateTodayDateMission(todayMission)) {
+			if (validateTodayDateMission(todayMission) && !todayMission.getMission().getTarget().equals(UserType.NONE)) {
+				user.clearPreUserMissionChoice();
 				return TodayMissionResponse.of(todayMission);
 			}
 		}
