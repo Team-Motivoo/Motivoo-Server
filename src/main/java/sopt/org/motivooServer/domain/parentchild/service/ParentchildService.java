@@ -53,9 +53,7 @@ public class ParentchildService {
 
     @Transactional
     public OnboardingResponse onboardInput(Long userId, OnboardingRequest request){
-        User user = userRepository.findById(userId).orElseThrow(
-            () -> new UserException(INVALID_USER_TYPE)
-        );
+        User user = getUserById(userId);
 
         log.info("user="+user.getNickname()+"유무="+request.isExercise()+"타입="+request.exerciseType()
                 +"횟수="+request.exerciseCount()+"시간="+request.exerciseTime()+"주의="+request.exerciseNote());
@@ -107,13 +105,12 @@ public class ParentchildService {
         return new OnboardingResponse(userId, inviteCode, health.getExerciseLevel().getValue());
     }
 
+
     @Transactional
     public InviteResponse validateInviteCode(Long userId, InviteRequest request){
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserException(INVALID_USER_TYPE)
-        );
+        User user = getUserById(userId);
 
-        Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode());
+        Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode()).get();
 
         //잘못된 초대 코드를 입력하는 경우
         if(parentchild == null)
@@ -123,39 +120,41 @@ public class ParentchildService {
         List<User> oppositeUser = userRepository.findByParentchild(parentchild);
 
         //상대방이 이미 매칭이 완료된 경우 예외처리
-        checkForOneToOneMatch(oppositeUser);
-        log.info("나의 타입="+user.getType()+"상대방의 타입="+oppositeUser.get(0).getType());
-        if(user.getType() == oppositeUser.get(0).getType())
-            throw new ParentchildException(INVALID_PARENTCHILD_RELATION);
+        // checkForOneToOneMatch(oppositeUser);
+        // log.info("나의 타입="+user.getType()+"상대방의 타입="+oppositeUser.get(0).getType());
+        // if(user.getType() == oppositeUser.get(0).getType())
+        //     throw new ParentchildException(INVALID_PARENTCHILD_RELATION);
 
         log.info("초대 코드 보낸 사람의 매칭 유무="+parentchild.isMatched());
 
-        //1. 온보딩 정보 입력을 한 적이 있고 2. 내가 발급한 초대 코드인 경우
-        if(!healthRepository.findByUser(user).isEmpty() && user.getParentchild() == parentchild)
-            return new InviteResponse(userId, false, true, true);
-        //1. 온보딩 정보 입력을 한 적이 있고 2. 내가 발급한 초대 코드가 아닌 경우 [매칭 완료]
-        else if(!healthRepository.findByUser(user).isEmpty() && user.getParentchild() != parentchild) {
-            parentchild.matchingSuccess();
-            user.addParentChild(parentchild);
-            return new InviteResponse(userId, true, false, true);
-        }
-        //1. 온보딩 정보 입력을 한 적이 없고 2. 내가 발급한 초대 코드가 아닌 경우 [매칭 완료]
-        else if(healthRepository.findByUser(user).isEmpty() && user.getParentchild() != parentchild) {
-            parentchild.matchingSuccess();
-            user.addParentChild(parentchild);
-            return new InviteResponse(userId, true, false, false);
-        }
+        if (!parentchild.isMatched()) {
 
-        //매칭 완료
-        parentchild.matchingSuccess();
-        user.addParentChild(parentchild);
-        return new InviteResponse(userId, true, false, false); //[매칭 완료]
+            //1. 온보딩 정보 입력을 한 적이 있고 2. 내가 발급한 초대 코드인 경우
+            if (!healthRepository.findByUser(user).isEmpty() && user.getParentchild() == parentchild)
+                return new InviteResponse(userId, false, true, true);
+                //1. 온보딩 정보 입력을 한 적이 있고 2. 내가 발급한 초대 코드가 아닌 경우 [매칭 완료]
+            else if (!healthRepository.findByUser(user).isEmpty() && user.getParentchild() != parentchild) {
+                parentchild.matchingSuccess();
+                user.addParentChild(parentchild);
+                return new InviteResponse(userId, true, false, true);
+            }
+            //1. 온보딩 정보 입력을 한 적이 없고 2. 내가 발급한 초대 코드가 아닌 경우 [매칭 완료]
+            else if (healthRepository.findByUser(user).isEmpty() && user.getParentchild() != parentchild) {
+                parentchild.matchingSuccess();
+                user.addParentChild(parentchild);
+                return new InviteResponse(userId, true, false, false);
+            }
+
+            //매칭 완료
+            parentchild.matchingSuccess();
+            user.addParentChild(parentchild);
+            return new InviteResponse(userId, true, false, false); //[매칭 완료]
+        }
+        throw new ParentchildException(FAIL_TO_MATCH_PARENTCHILD);
     }
 
     public CheckOnboardingResponse checkOnboardingInfo(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserException(INVALID_USER_TYPE)
-        );
+        User user = getUserById(userId);
 
         if(!healthRepository.findByUser(user).isEmpty())
             return new CheckOnboardingResponse(true);
@@ -163,9 +162,7 @@ public class ParentchildService {
     }
 
     public MatchingResponse checkMatching(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserException(INVALID_USER_TYPE)
-        );
+        User user = getUserById(userId);
         if(user.getParentchild()!=null){
             int matcedCnt = userRepository.countByParentchild(user.getParentchild());
             log.info("매칭된 숫자="+matcedCnt);
@@ -182,7 +179,7 @@ public class ParentchildService {
     }
 
     public void checkForOneToOneMatch(List<User> users){
-        if(users.size()!=1){
+        if(users.size()==2){
             throw new ParentchildException(MATCH_ALREADY_COMPLETED);
         }
     }
@@ -207,4 +204,9 @@ public class ParentchildService {
         return randomBuf.toString();
     }
 
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+            () -> new UserException(INVALID_USER_TYPE)
+        );
+    }
 }
