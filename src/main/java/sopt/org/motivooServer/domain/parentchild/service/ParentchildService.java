@@ -7,7 +7,6 @@ import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExc
 import java.util.List;
 import java.util.Random;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -112,6 +111,11 @@ public class ParentchildService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserException(INVALID_USER_TYPE)
         );
+
+        //매칭 성공시 API 두 번 호출하는 것을 막음
+        if(user.getParentchild()!=null){
+            throw new ParentchildException(INVALID_PARENTCHILD_RELATION);
+        }
 
         Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode());
 
