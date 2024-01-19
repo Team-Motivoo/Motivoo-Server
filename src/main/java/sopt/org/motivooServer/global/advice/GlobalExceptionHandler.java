@@ -52,45 +52,49 @@ public class GlobalExceptionHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(final HttpMessageNotReadableException e) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			.body(ErrorResponse.of(VALIDATION_WRONG_HTTP_REQUEST));
-	}
-
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-	protected ResponseEntity<ErrorResponse> handlerHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			.body(ErrorResponse.of(INVALID_HTTP_METHOD));
+		log.error("GlobalExceptionHandler에서 잡은 Exception: {}", e.getStackTrace());
+		ErrorResponse ex = ErrorResponse.of(VALIDATION_WRONG_HTTP_REQUEST);
+		return ResponseEntity.status(ex.code()).body(ex);
 	}
 
 	// Header에 원하는 Key가 없는 경우
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MissingRequestHeaderException.class)
 	protected ResponseEntity<ErrorResponse> handlerMissingRequestHeaderException(final MissingRequestHeaderException e) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			.body(ErrorResponse.of(HEADER_REQUEST_MISSING_EXCEPTION));
+		log.error("GlobalExceptionHandler에서 잡은 Exception: {}", e.getStackTrace());
+		ErrorResponse ex = ErrorResponse.of(HEADER_REQUEST_MISSING_EXCEPTION);
+		return ResponseEntity.status(ex.code()).body(ex);
 	}
 
+	/**
+	 * 405 Method Not Allowed
+	 */
+	@ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	protected ResponseEntity<ErrorResponse> handlerHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
+		log.error("GlobalExceptionHandler에서 잡은 Exception: {}", e.getStackTrace());
+		ErrorResponse ex = ErrorResponse.of(INVALID_HTTP_METHOD);
+		return ResponseEntity.status(ex.code()).body(ex);
+	}
 
 	/**
 	 * 500 Internal Server Error
 	 */
-
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(final Exception e, final HttpServletRequest request) throws
-		IOException {
+    public ResponseEntity<ErrorResponse> handleException(final Exception e, final HttpServletRequest request) throws IOException {
         slackService.sendAlert(e, request);
 
         log.error("🔔🚨 Slack에 전송된 Error Log: {}", e.getMessage());
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-			.body(ErrorResponse.of(INTERNAL_SERVER_ERROR));
+		ErrorResponse ex = ErrorResponse.of(INTERNAL_SERVER_ERROR);
+		return ResponseEntity.status(ex.code()).body(ex);
     }
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(IndexOutOfBoundsException.class)
 	public ResponseEntity<ErrorResponse> handleIndexOutOfBoundsException(final IndexOutOfBoundsException e) {
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-			.body(ErrorResponse.of(INDEX_OUT_OF_BOUND_ERROR));
+		log.error("GlobalExceptionHandler에서 잡은 Exception: {}", e.getStackTrace());
+		ErrorResponse ex = ErrorResponse.of(INDEX_OUT_OF_BOUND_ERROR);
+		return ResponseEntity.status(ex.code()).body(ex);
 	}
 
 	/*@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -107,7 +111,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(BusinessException.class)
 	public ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e) {
 
-		log.error("🚨🚨🚨 BusinessException occured: {} 🚨🚨🚨", e.getMessage());
+		log.error("🚨🚨🚨 BusinessException occured: {} 🚨🚨🚨", e.getStackTrace());
 
 		return ResponseEntity.status(e.getHttpStatus())
 				.body(ErrorResponse.of(e.getExceptionType()));
