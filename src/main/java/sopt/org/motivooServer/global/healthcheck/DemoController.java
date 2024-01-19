@@ -16,8 +16,8 @@ public class DemoController {
 
 	private final UserMissionService userMissionService;
 
-	@PostMapping("/history/{parentchildId}")
+	/*@PostMapping("/history/{parentchildId}")
 	public ResponseEntity<Object> getHistoryDummy(@PathVariable final Long parentchildId) {
 		userMissionService.getH
-	}
+	}*/
 }
