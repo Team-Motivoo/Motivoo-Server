@@ -18,12 +18,15 @@ public record LoginResponse (
     String refreshToken
 ){
 
-    public static LoginResponse of(Long userId, String nickname, String accessToken, String refreshToken) {
+    private static final String BEARER_TYPE = "Bearer";
+
+    public static LoginResponse of(User user, String accessToken, String refreshToken) {
         return LoginResponse.builder()
-            .id(userId.toString())
-            .nickname(nickname)
-            .tokenType("Bearer")
+            .id(user.getSocialId())
+            .nickname(user.getNickname())
+            .tokenType(BEARER_TYPE)
             .accessToken(accessToken)
             .refreshToken(refreshToken).build();
     }
+
 }

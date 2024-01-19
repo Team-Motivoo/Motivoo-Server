@@ -36,7 +36,6 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OauthService {
-    private static final String BEARER_TYPE = "Bearer";
     private final InMemoryClientRegistrationRepository inMemoryRepository;
     private final UserRepository userRepository;
     private final TokenRedisRepository tokenRedisRepository;
@@ -56,18 +55,8 @@ public class OauthService {
         User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
         String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(), null, null));
 
-        return getLoginResponse(user, accessToken, refreshToken);
+        return LoginResponse.of(user, accessToken, refreshToken);
 
-    }
-
-    private LoginResponse getLoginResponse(User user, String accessToken, String refreshToken) {
-        return LoginResponse.builder()
-                .id(user.getSocialId())
-                .nickname(user.getNickname())
-                .tokenType(BEARER_TYPE)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
     }
 
     public User getUserProfile(String providerName, OauthTokenRequest tokenRequest, ClientRegistration provider, String refreshToken) {
@@ -83,7 +72,6 @@ public class OauthService {
         //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
         if(userEntity==null || is_withdrawn(userEntity)){
             return saveUser(nickName, providerId, socialPlatform, tokenRequest, refreshToken);
-
         }
 
         //로그인

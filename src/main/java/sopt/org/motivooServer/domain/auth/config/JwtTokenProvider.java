@@ -50,14 +50,6 @@ public class JwtTokenProvider {
         return createToken(authentication, accessTokenValidityInMilliseconds);
     }
 
-    public String createRefreshToken(Authentication authentication) {
-        byte[] array = new byte[7];
-        new Random().nextBytes(array);
-        String generatedString = Base64.getEncoder().encodeToString(array);
-        return createToken(generatedString, refreshTokenValidityInMilliseconds);
-    }
-
-
     public String createAccessToken(String payload) {
         return createToken(payload, accessTokenValidityInMilliseconds);
     }
@@ -138,7 +130,7 @@ public class JwtTokenProvider {
     public OauthTokenResponse reissue(Long userId, String refreshToken) {
         validateToken(refreshToken);
 
-        String reissuedAccessToken = createAccessToken(String.valueOf(userId));
+        String reissuedAccessToken = createAccessToken(new UserAuthentication(userId, null, null));
         String reissuedRefreshToken = createRefreshToken();
         OauthTokenResponse tokenResponse = new OauthTokenResponse(reissuedAccessToken, reissuedAccessToken);
 
