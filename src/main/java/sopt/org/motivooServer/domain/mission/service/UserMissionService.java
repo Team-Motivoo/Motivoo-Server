@@ -121,7 +121,7 @@ public class UserMissionService {
 						// um.updateImgUrl(imgUrl);
 					} catch (IllegalArgumentException | BusinessException e) {
 						log.error(e.getMessage());
-						um.updateImgUrl(null);
+						// um.updateImgUrl(null);
 					}
 				});
 
