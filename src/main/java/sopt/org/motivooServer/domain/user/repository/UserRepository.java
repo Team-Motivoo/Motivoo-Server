@@ -47,7 +47,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsBySocialPlatformAndSocialId(SocialPlatform socialPlatform, String socialId);
 
-    List<User> findBySocialPlatformAndSocialId(SocialPlatform socialPlatform, String socialId);
+    @Query("select u from User u where u.deleted=true and u.id=?1") //탈퇴한 이력이 있는 회원
+    User findByDeletedAndId(Long userId);
 
     @Query("select u from User u where u.id=?1 and u.deleted=false")
     Optional<User> findById(Long id);
