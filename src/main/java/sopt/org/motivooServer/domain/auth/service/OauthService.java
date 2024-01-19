@@ -25,6 +25,7 @@ import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,7 +53,7 @@ public class OauthService {
         String refreshToken = jwtTokenProvider.createRefreshToken();
         User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
         String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getId()));
-
+        tokenRedisRepository.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
         return getLoginResponse(user, accessToken, refreshToken);
 
     }
