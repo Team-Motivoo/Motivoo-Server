@@ -54,7 +54,7 @@ public class OauthService {
         log.info("유저 아이디="+user.getId());
         String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(), null, null));
         tokenRedisRepository.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
-        return getLoginResponse(user, accessToken, refreshToken);
+        return LoginResponse.of(user, accessToken, refreshToken);
 
     }
 
