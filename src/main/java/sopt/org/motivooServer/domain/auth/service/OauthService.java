@@ -27,6 +27,7 @@ import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -46,45 +47,14 @@ public class OauthService {
         String providerName = tokenRequest.tokenType();
 
         //카카오
-        if (providerName.equals("kakao")) {
-            ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
-
-            String refreshToken = jwtTokenProvider.createRefreshToken();
-            User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
-            String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getId()));
-
-            return getLoginResponse(user, accessToken, refreshToken);
-        }
-
-        //애플
-        String socialId = appleLoginService.getAppleId(tokenRequest.accessToken());
-
-        boolean isRegistered = userRepository.existsBySocialPlatformAndSocialId(SocialPlatform.of(tokenRequest.tokenType()), socialId);
+        ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
 
         String refreshToken = jwtTokenProvider.createRefreshToken();
-        if (!isRegistered) {
-            User user = User.builder()
-//                    .nickname(nickName)
-                    .socialId(socialId)
-                    .socialPlatform(SocialPlatform.of(tokenRequest.tokenType()))
-                    .socialAccessToken(tokenRequest.accessToken())
-                    .refreshToken(refreshToken)
-                    .type(UserType.NONE)
-                    .deleted(Boolean.FALSE)
-                    .build();
-            userRepository.save(user);
-        }
+        User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
+        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getId()));
 
-        List<User> users = userRepository.findBySocialPlatformAndSocialId(SocialPlatform.of(tokenRequest.tokenType()), socialId);
-        if (users.isEmpty()) throw new UserException(UserExceptionType.INVALID_USER_TYPE);
-        User loginUser = users.get(0);
+        return getLoginResponse(user, accessToken, refreshToken);
 
-        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(loginUser.getId()));
-        OauthTokenResponse tokenDto = new OauthTokenResponse(accessToken, refreshToken);
-        loginUser.updateRefreshToken(tokenDto.refreshToken());
-
-        log.info("JWT Access Token: ", loginUser.getNickname(), tokenDto.accessToken());
-        return getLoginResponse(loginUser, accessToken, refreshToken);
     }
 
     private LoginResponse getLoginResponse(User user, String accessToken, String refreshToken) {

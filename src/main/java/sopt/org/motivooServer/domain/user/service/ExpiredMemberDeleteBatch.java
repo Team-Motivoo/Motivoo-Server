@@ -56,6 +56,7 @@ public class ExpiredMemberDeleteBatch {
 
             log.info("탈퇴할 유저 닉네임=" + userToDelete.getNickname());
             healthRepository.deleteByUser(userToDelete);
+
             userMissionChoicesRepository.deleteByUser(userToDelete);
             userMissionRepository.deleteByUser(userToDelete);
 
