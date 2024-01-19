@@ -583,6 +583,6 @@ public class UserMissionService {
 		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all3.png", SUCCESS, LocalDateTime.of(2024, 1, 15, 12, 0, 0));
 		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all2.jpg", SUCCESS, LocalDateTime.of(2024, 1, 13, 12, 0, 0));
 		createUserMission(matchedUser, null, FAIL, LocalDateTime.of(2024, 1, 11, 12, 0, 0));
-		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/um.png", SUCCESS, LocalDateTime.of(2024, 1, 9, 12, 0, 0));
+		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/um.jpg", SUCCESS, LocalDateTime.of(2024, 1, 9, 12, 0, 0));
 	}
 }
