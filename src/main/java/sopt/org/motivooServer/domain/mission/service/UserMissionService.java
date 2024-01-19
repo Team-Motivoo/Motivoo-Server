@@ -115,7 +115,7 @@ public class UserMissionService {
 						String imgUrl = s3Service.getURL(MISSION_PREFIX.value() + um.getImgUrl());
 						log.info("S3에서 받아온 이미지 URL: {}", imgUrl);
 						um.updateImgUrl(imgUrl);
-					} catch (BusinessException e) {
+					} catch (IllegalArgumentException | BusinessException e) {
 						log.error(e.getMessage());
 						um.updateImgUrl(null);
 					}
