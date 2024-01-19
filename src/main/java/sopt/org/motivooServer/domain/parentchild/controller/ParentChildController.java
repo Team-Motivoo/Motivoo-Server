@@ -33,6 +33,7 @@ public class ParentChildController {
     public ResponseEntity<ApiResponse<OnboardingResponse>> onboardInput(@Valid @RequestBody final OnboardingRequest request,
                                                                         Principal principal){
         Long userId = getUserFromPrincipal(principal);
+        log.info("유저 아이디="+userId);
         return ApiResponse.success(ONBOARDING_SUCCESS, parentchildService.onboardInput(userId, request));
     }
 
