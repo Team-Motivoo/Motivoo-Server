@@ -556,7 +556,7 @@ public class UserMissionService {
 		final List<UserMission> userMissions = new ArrayList<>();
 		UserMission userMission = UserMission.builderForDemo()
 			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg")
+			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/um2.jpg")
 			.mission(getRandomSingleMission(getFilteredMissions(user)))
 			.missionQuest(getRandomMissionQuest())
 			.user(user).build();
@@ -567,7 +567,7 @@ public class UserMissionService {
 
 		UserMission userMission1 = UserMission.builderForDemo()
 			.completedStatus(FAIL)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg")
+			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/cat.jpg")
 			.mission(getRandomSingleMission(getFilteredMissions(user)))
 			.missionQuest(getRandomMissionQuest())
 			.user(user).build();
@@ -578,7 +578,7 @@ public class UserMissionService {
 
 		UserMission userMission2 = UserMission.builderForDemo()
 			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg")
+			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/tl_baseball.jpg")
 			.mission(getRandomSingleMission(getFilteredMissions(user)))
 			.missionQuest(getRandomMissionQuest())
 			.user(user).build();
@@ -589,7 +589,7 @@ public class UserMissionService {
 
 		UserMission userMission3 = UserMission.builderForDemo()
 			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg")
+			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo.jpg")
 			.mission(getRandomSingleMission(getFilteredMissions(user)))
 			.missionQuest(getRandomMissionQuest())
 			.user(user).build();
@@ -600,7 +600,7 @@ public class UserMissionService {
 
 		UserMission userMission4 = UserMission.builderForDemo()
 			.completedStatus(FAIL)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg")
+			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/jo.jpg")
 			.mission(getRandomSingleMission(getFilteredMissions(user)))
 			.missionQuest(getRandomMissionQuest())
 			.user(user).build();
@@ -611,7 +611,7 @@ public class UserMissionService {
 
 		UserMission matchedUserMission = UserMission.builderForDemo()
 			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg")
+			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all1.png")
 			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
 			.missionQuest(getRandomMissionQuest())
 			.user(matchedUser).build();
@@ -622,7 +622,7 @@ public class UserMissionService {
 
 		UserMission matchedUserMission1 = UserMission.builderForDemo()
 			.completedStatus(FAIL)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg")
+			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/leejs.jpg")
 			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
 			.missionQuest(getRandomMissionQuest())
 			.user(matchedUser).build();
@@ -633,7 +633,7 @@ public class UserMissionService {
 
 		UserMission matchedUserMission2 = UserMission.builderForDemo()
 			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg")
+			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all3.png")
 			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
 			.missionQuest(getRandomMissionQuest())
 			.user(matchedUser).build();
@@ -644,7 +644,7 @@ public class UserMissionService {
 
 		UserMission matchedUserMission3 = UserMission.builderForDemo()
 			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg")
+			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all2.jpg")
 			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
 			.missionQuest(getRandomMissionQuest())
 			.user(matchedUser).build();
@@ -655,7 +655,7 @@ public class UserMissionService {
 
 		UserMission matchedUserMission4 = UserMission.builderForDemo()
 			.completedStatus(FAIL)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg")
+			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/um.jpg")
 			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
 			.missionQuest(getRandomMissionQuest())
 			.user(matchedUser).build();
