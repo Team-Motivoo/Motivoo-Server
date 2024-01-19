@@ -123,7 +123,7 @@ public class OauthControllerTest extends BaseControllerTest {
                                         .tag(TAG)
                                         .description("토큰 재발급 API")
                                         .requestHeaders(
-                                                headerWithName("Authorization").description("Authorization token6"))
+                                                headerWithName("Authorization").description("JWT Access Token"))
                                         .requestFields(
                                                 fieldWithPath("user_id").type(NUMBER).description("유저 아이디"))
                                         .responseFields(

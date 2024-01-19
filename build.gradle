@@ -20,10 +20,13 @@ swaggerSources {
 	}
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 // openapi3 스펙 생성 시 설정 정보
 openapi3 {
 	servers = [
-			{ url = "http://15.165.248.213" },
+			{ url = properties["server.BASE_URL"] },
 			{ url = "http://localhost:8080" }
 	]
 	title = "모티부 API 명세서"
@@ -149,20 +152,20 @@ tasks.withType(GenerateSwaggerUI) {
 
 // openAPI 작성 자동화 => 패키징 전에 openapi3 태스크를 먼저 실행하도록 유발
 bootJar {
-	dependsOn(':openapi3')
-	dependsOn generateSwaggerUISample
-	from("${generateSwaggerUISample.outputDir}") {
-		into 'static/docs'
-	}
-	copy {
-		from "build/resources/main/static/docs"
-		into "src/main/resources/static/docs/"
-	}
+//	dependsOn(':openapi3')
+//	dependsOn generateSwaggerUISample
+//	from("${generateSwaggerUISample.outputDir}") {
+//		into 'static/docs'
+//	}
+//	copy {
+//		from "build/resources/main/static/docs"
+//		into "src/main/resources/static/docs/"
+//	}
 }
 
 openapi3 {
 	servers = [
-			{ url = "http://15.165.248.213" },
+			{ url = properties["server.BASE_URL"] },
 			{ url = "http://localhost:8080" }
 	]
 	title = "모티부 API 명세서"

@@ -17,6 +17,8 @@ motivoo-firebase-adminsdk.json
 
 **.sql
 
+local.properties
+
 ### STS ###
 .apt_generated
 .classpath
