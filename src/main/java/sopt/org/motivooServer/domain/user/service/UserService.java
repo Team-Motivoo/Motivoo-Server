@@ -70,7 +70,7 @@ public class UserService {
 			throw new UserException(ALREADY_WITHDRAW_USER);
 
 		String socialId = user.getSocialId();
-		System.out.println("socialId= "+socialId);
+		log.info("socialId= "+socialId);
 		List<User> users = userRepository.findBySocialId(socialId);
 		boolean is_withdrawn = users.stream()
 				.filter(u -> !u.isDeleted())
