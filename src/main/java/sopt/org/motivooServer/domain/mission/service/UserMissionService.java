@@ -118,7 +118,7 @@ public class UserMissionService {
 					try {
 						String imgUrl = s3Service.getURL(MISSION_PREFIX.value() + um.getImgUrl());
 						log.info("S3에서 받아온 이미지 URL: {}", imgUrl);
-						um.updateImgUrl(imgUrl);
+						// um.updateImgUrl(imgUrl);
 					} catch (IllegalArgumentException | BusinessException e) {
 						log.error(e.getMessage());
 						um.updateImgUrl(null);
@@ -129,11 +129,10 @@ public class UserMissionService {
 				missionsByDate.get(localDateTime).stream()
 					.filter(um -> um.getImgUrl() == null && !um.getMission().getTarget().equals(UserType.NONE))
 					.forEach(um -> um.updateCompletedStatus(FAIL));
-			} else {
-				missionsByDate.get(localDateTime).stream()
-					.filter(um -> um.getImgUrl() != null && !um.getMission().getTarget().equals(UserType.NONE))
-					.forEach(um -> um.updateCompletedStatus(SUCCESS));
 			}
+			missionsByDate.get(localDateTime).stream()
+				.filter(um -> um.getImgUrl() != null && !um.getMission().getTarget().equals(UserType.NONE))
+				.forEach(um -> um.updateCompletedStatus(SUCCESS));
 
 			missionsByDate.get(localDateTime).stream()
 				.filter(um -> um.getMission().getTarget().equals(UserType.NONE))
