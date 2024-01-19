@@ -8,6 +8,7 @@ import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 import static sopt.org.motivooServer.global.external.s3.S3BucketDirectory.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,6 +36,7 @@ import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
+import sopt.org.motivooServer.domain.mission.entity.CompletedStatus;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
 import sopt.org.motivooServer.domain.mission.entity.MissionQuest;
 import sopt.org.motivooServer.domain.mission.entity.MissionType;
@@ -351,28 +353,7 @@ public class UserMissionService {
 
 
 	private List<UserMissionChoices> filterTodayUserMission(User user) {
-		final List<Mission> missionChoicesFiltered = new ArrayList<>();
-
-		// 부모 미션 or 자식 미션 리스트
-		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType());
-		log.info("{} 미션 리스트 가져옴", user.getType().getValue());
-		Health health = getHealthByUser(user);
-		log.info("Health: {}", health.getId());
-
-		List<HealthNote> userNotes = health.getHealthNotes();
-		ExerciseLevel exerciseLevel = health.getExerciseLevel();
-
-		log.info("Mission 필터링 시작!");
-		for (Mission mission : missions) {
-			List<HealthNote> missionNotes = HealthNote.of(mission.getHealthNotes());
-			boolean hasUserNotes = missionNotes.stream().anyMatch(userNotes::contains);
-			boolean hasExerciseLevel = MissionType.of(mission.getType()).containsLevel(exerciseLevel);
-
-			if (!hasUserNotes && !hasExerciseLevel) {
-				missionChoicesFiltered.add(mission);
-			}
-		}
-		log.info("맞춤 Mission 리스트에 추가(Shuffle 전): {}가지", missionChoicesFiltered.size());
+		final List<Mission> missionChoicesFiltered = getFilteredMissions(user);
 
 		Collections.shuffle(missionChoicesFiltered);
 
@@ -414,14 +395,179 @@ public class UserMissionService {
 			.toList();
 	}
 
+	@NotNull
+	private List<Mission> getFilteredMissions(User user) {
+		final List<Mission> missionChoicesFiltered = new ArrayList<>();
+
+		// 부모 미션 or 자식 미션 리스트
+		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType());
+		log.info("{} 미션 리스트 가져옴", user.getType().getValue());
+		Health health = getHealthByUser(user);
+		log.info("Health: {}", health.getId());
+
+		List<HealthNote> userNotes = health.getHealthNotes();
+		ExerciseLevel exerciseLevel = health.getExerciseLevel();
+
+		log.info("Mission 필터링 시작!");
+		for (Mission mission : missions) {
+			List<HealthNote> missionNotes = HealthNote.of(mission.getHealthNotes());
+			boolean hasUserNotes = missionNotes.stream().anyMatch(userNotes::contains);
+			boolean hasExerciseLevel = MissionType.of(mission.getType()).containsLevel(exerciseLevel);
+
+			if (!hasUserNotes && !hasExerciseLevel) {
+				missionChoicesFiltered.add(mission);
+			}
+		}
+		log.info("맞춤 Mission 리스트에 추가(Shuffle 전): {}가지", missionChoicesFiltered.size());
+		return missionChoicesFiltered;
+	}
+
 	// 데모데이용 더미 미션 히스토리 생성
-	/*public void createUserMissionHistoryDummy(final Long parentchildId) {
+	@Transactional
+	public void demoHistory(final Long parentchildId) {
 		List<User> parentchildUsers = userRepository.findUsersByParentchildId(parentchildId);
-		parentchildUsers.stream()
-			.map(u -> {
-				u.addUserMission();
-			});
+		if (parentchildUsers.size() == 2) {
+			createUserMissionHistoryDummy(parentchildUsers.get(0), parentchildUsers.get(1));
+		}
+	}
+
+	private Mission getRandomSingleMission(List<Mission> missions) {
+		int index = (int) (Math.random() * missions.size());
+		return missions.get(index);
+	}
+
+	/*private void createUserMissionHistoryDummy(User user, User matchedUser) {
+		UserMission userMission = UserMission.builderForDemo()
+			.completedStatus(SUCCESS)
+			.imgUrl("aws s3 img")
+			.mission(getRandomSingleMission(getFilteredMissions(user)))
+			.missionQuest(getRandomMissionQuest())
+			.user(user).build();
+		userMission.updateCreatedAt(LocalDateTime.of(2024, 1, 18, 12, 0, 0));
+		userMission.updateUpdatedAt(LocalDateTime.of(2024, 1, 18, 12, 0, 0));
+		user.addUserMission(userMission);
+
+		UserMission userMission1 = UserMission.builderForDemo()
+			.completedStatus(FAIL)
+			.imgUrl("aws s3 img")
+			.mission(getRandomSingleMission(getFilteredMissions(user)))
+			.missionQuest(getRandomMissionQuest())
+			.user(user).build();
+		userMission1.updateCreatedAt(LocalDateTime.of(2024, 1, 17, 12, 0, 0));
+		userMission1.updateUpdatedAt(LocalDateTime.of(2024, 1, 17, 12, 0, 0));
+		user.addUserMission(userMission1);
+
+		UserMission userMission2 = UserMission.builderForDemo()
+			.completedStatus(SUCCESS)
+			.imgUrl("aws s3 img")
+			.mission(getRandomSingleMission(getFilteredMissions(user)))
+			.missionQuest(getRandomMissionQuest())
+			.user(user).build();
+		userMission2.updateCreatedAt(LocalDateTime.of(2024, 1, 16, 12, 0, 0));
+		userMission2.updateUpdatedAt(LocalDateTime.of(2024, 1, 16, 12, 0, 0));
+		user.addUserMission(userMission2);
+
+		UserMission userMission3 = UserMission.builderForDemo()
+			.completedStatus(SUCCESS)
+			.imgUrl("aws s3 img")
+			.mission(getRandomSingleMission(getFilteredMissions(user)))
+			.missionQuest(getRandomMissionQuest())
+			.user(user).build();
+		userMission3.updateCreatedAt(LocalDateTime.of(2024, 1, 13, 12, 0, 0));
+		userMission3.updateUpdatedAt(LocalDateTime.of(2024, 1, 13, 12, 0, 0));
+		user.addUserMission(userMission3);
+
+		UserMission userMission4 = UserMission.builderForDemo()
+			.completedStatus(FAIL)
+			.imgUrl("aws s3 img")
+			.mission(getRandomSingleMission(getFilteredMissions(user)))
+			.missionQuest(getRandomMissionQuest())
+			.user(user).build();
+		userMission4.updateCreatedAt(LocalDateTime.of(2024, 1, 11, 12, 0, 0));
+		userMission4.updateUpdatedAt(LocalDateTime.of(2024, 1, 11, 12, 0, 0));
+		user.addUserMission(userMission4);
+
+		UserMission matchedUserMission = UserMission.builderForDemo()
+			.completedStatus(SUCCESS)
+			.imgUrl("aws s3 img")
+			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
+			.missionQuest(getRandomMissionQuest())
+			.user(matchedUser).build();
+		matchedUserMission.updateCreatedAt(LocalDateTime.of(2024, 1, 18, 12, 0, 0));
+		matchedUserMission.updateUpdatedAt(LocalDateTime.of(2024, 1, 18, 12, 0, 0));
+		matchedUser.addUserMission(matchedUserMission);
+
+		UserMission matchedUserMission1 = UserMission.builderForDemo()
+			.completedStatus(FAIL)
+			.imgUrl("aws s3 img")
+			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
+			.missionQuest(getRandomMissionQuest())
+			.user(matchedUser).build();
+		matchedUserMission1.updateCreatedAt(LocalDateTime.of(2024, 1, 17, 12, 0, 0));
+		matchedUserMission1.updateUpdatedAt(LocalDateTime.of(2024, 1, 17, 12, 0, 0));
+		matchedUser.addUserMission(matchedUserMission1);
+
+		UserMission matchedUserMission2 = UserMission.builderForDemo()
+			.completedStatus(SUCCESS)
+			.imgUrl("aws s3 img")
+			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
+			.missionQuest(getRandomMissionQuest())
+			.user(matchedUser).build();
+		matchedUserMission2.updateCreatedAt(LocalDateTime.of(2024, 1, 15, 12, 0, 0));
+		matchedUserMission2.updateUpdatedAt(LocalDateTime.of(2024, 1, 15, 12, 0, 0));
+		matchedUser.addUserMission(matchedUserMission2);
+
+		UserMission matchedUserMission3 = UserMission.builderForDemo()
+			.completedStatus(SUCCESS)
+			.imgUrl("aws s3 img")
+			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
+			.missionQuest(getRandomMissionQuest())
+			.user(matchedUser).build();
+		matchedUserMission3.updateCreatedAt(LocalDateTime.of(2024, 1, 13, 12, 0, 0));
+		matchedUserMission3.updateUpdatedAt(LocalDateTime.of(2024, 1, 13, 12, 0, 0));
+		matchedUser.addUserMission(matchedUserMission3);
+
+		UserMission matchedUserMission4 = UserMission.builderForDemo()
+			.completedStatus(FAIL)
+			.imgUrl("aws s3 img")
+			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
+			.missionQuest(getRandomMissionQuest())
+			.user(matchedUser).build();
+		matchedUserMission4.updateCreatedAt(LocalDateTime.of(2024, 1, 11, 12, 0, 0));
+		matchedUserMission4.updateUpdatedAt(LocalDateTime.of(2024, 1, 11, 12, 0, 0));
+		matchedUser.addUserMission(matchedUserMission4);
 	}*/
+
+	private void createUserMissionHistoryDummy(User user, User matchedUser) {
+		List<UserMission> userMissions = new ArrayList<>();
+		user.addUserMission(createUserMission(user, SUCCESS, "AWS", LocalDateTime.of(2024, 1, 18, 12, 0, 0)));
+		user.addUserMission(createUserMission(user, FAIL, "AWS", LocalDateTime.of(2024, 1, 17, 12, 0, 0)));
+		user.addUserMission(createUserMission(user, SUCCESS, "AWS", LocalDateTime.of(2024, 1, 16, 12, 0, 0)));
+		user.addUserMission(createUserMission(user, SUCCESS, "AWS", LocalDateTime.of(2024, 1, 13, 12, 0, 0)));
+		user.addUserMission(createUserMission(user, FAIL, "AWS", LocalDateTime.of(2024, 1, 11, 12, 0, 0)));
+
+		matchedUser.addUserMission(createUserMission(matchedUser, SUCCESS, "AWS", LocalDateTime.of(2024, 1, 18, 12, 0, 0)));
+		matchedUser.addUserMission(createUserMission(matchedUser, SUCCESS, "AWS", LocalDateTime.of(2024, 1, 17, 12, 0, 0)));
+		matchedUser.addUserMission(createUserMission(matchedUser, FAIL, "AWS", LocalDateTime.of(2024, 1, 15, 12, 0, 0)));
+		matchedUser.addUserMission(createUserMission(matchedUser, SUCCESS, "AWS", LocalDateTime.of(2024, 1, 13, 12, 0, 0)));
+		matchedUser.addUserMission(createUserMission(matchedUser, FAIL, "AWS", LocalDateTime.of(2024, 1, 11, 12, 0, 0)));
+
+		userRepository.save(user);
+		userRepository.save(matchedUser);
+	}
+
+	private UserMission createUserMission(User user, CompletedStatus status, String imgUrl, LocalDateTime dateTime) {
+		UserMission userMission = UserMission.builderForDemo()
+			.completedStatus(status)
+			.imgUrl(imgUrl)
+			.mission(getRandomSingleMission(getFilteredMissions(user)))
+			.missionQuest(getRandomMissionQuest())
+			.user(user).build();
+		userMission.updateCreatedAt(dateTime);
+		userMission.updateUpdatedAt(dateTime);
+
+		return userMission;
+	}
 
 	@NotNull
 	private UserMission createTodayUserMission(Mission mission, User user) {

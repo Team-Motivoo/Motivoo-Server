@@ -70,7 +70,7 @@ public class OauthService {
         List<User> userEntity = userRepository.findBySocialId(providerId);
 
         //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
-        if(userEntity==null || is_withdrawn(userEntity)){
+        if(userEntity==null || isWithdrawn(userEntity)){
             return saveUser(nickName, providerId, socialPlatform, tokenRequest, refreshToken);
         }
 
@@ -79,7 +79,7 @@ public class OauthService {
         return userEntity.get(0);
     }
 
-    boolean is_withdrawn(List<User> users){
+    boolean isWithdrawn(List<User> users){
         for(User user:users){
             if(!user.isDeleted()){
                 return false;

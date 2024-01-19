@@ -76,7 +76,7 @@ public class User extends BaseTimeEntity {
 	@JoinColumn(name = "parentchild_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Parentchild parentchild;
 
-	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	private final List<UserMission> userMissions = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.EAGER)

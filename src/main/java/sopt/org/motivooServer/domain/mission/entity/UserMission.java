@@ -69,6 +69,16 @@ public class UserMission extends BaseTimeEntity {
 		this.missionQuest = missionQuest;
 	}
 
+	@Builder(builderMethodName = "builderForDemo")
+	private UserMission(CompletedStatus completedStatus, String imgUrl, Mission mission, MissionQuest missionQuest,
+		User user) {
+		this.completedStatus = completedStatus;
+		this.imgUrl = imgUrl;
+		this.mission = mission;
+		this.missionQuest = missionQuest;
+		this.user = user;
+	}
+
 	//== 연관관계 메서드 ==//
 	public void setUser(User user) {
 		this.user = user;
@@ -80,6 +90,10 @@ public class UserMission extends BaseTimeEntity {
 
 	public void updateCreatedAt(LocalDateTime date) {
 		this.createdAt = date;
+	}
+
+	public void updateUpdatedAt(LocalDateTime date) {
+		this.updatedAt = date;
 	}
 
 	public void updateImgUrl(final String imgUrl) {
