@@ -414,6 +414,15 @@ public class UserMissionService {
 			.toList();
 	}
 
+	// 데모데이용 더미 미션 히스토리 생성
+	/*public void createUserMissionHistoryDummy(final Long parentchildId) {
+		List<User> parentchildUsers = userRepository.findUsersByParentchildId(parentchildId);
+		parentchildUsers.stream()
+			.map(u -> {
+				u.addUserMission();
+			});
+	}*/
+
 	@NotNull
 	private UserMission createTodayUserMission(Mission mission, User user) {
 		MissionQuest missionQuest = getRandomMissionQuest();

@@ -3,9 +3,12 @@ package sopt.org.motivooServer.domain.auth.config;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
+
+import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivooServer.domain.user.exception.UserException;
@@ -36,6 +39,25 @@ public class JwtTokenProvider {
         this.tokenRedisRepository = tokenRedisRepository;
     }
 
+    /*public LoginResponse issueToken(Authentication authentication) {
+        return LoginResponse.of(
+            authentication.getPrincipal(),
+            createAccessToken(authentication),
+            createRefreshToken(authentication));
+    }*/
+
+    public String createAccessToken(Authentication authentication) {
+        return createToken(authentication, accessTokenValidityInMilliseconds);
+    }
+
+    public String createRefreshToken(Authentication authentication) {
+        byte[] array = new byte[7];
+        new Random().nextBytes(array);
+        String generatedString = Base64.getEncoder().encodeToString(array);
+        return createToken(generatedString, refreshTokenValidityInMilliseconds);
+    }
+
+
     public String createAccessToken(String payload) {
         return createToken(payload, accessTokenValidityInMilliseconds);
     }
@@ -58,6 +80,19 @@ public class JwtTokenProvider {
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256,secretKey)
                 .compact();
+    }
+
+    public String createToken(Authentication authentication, long expireLength) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("payload", authentication.getPrincipal());
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + expireLength);
+        return Jwts.builder()
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(validity)
+            .signWith(SignatureAlgorithm.HS256,secretKey)
+            .compact();
     }
 
     public String getPayload(String token){
