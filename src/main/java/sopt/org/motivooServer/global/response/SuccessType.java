@@ -15,6 +15,9 @@ public enum SuccessType {
 	 */
 	HEALTH_CHECK_SUCCESS(HttpStatus.OK, "헬스체크용 API 호출에 성공했습니다."),
 	IMAGE_S3_UPLOAD_SUCCESS(HttpStatus.OK, "S3 버킷에 이미지를 업로드하는 데 성공했습니다."),
+	IMAGE_S3_DELETE_SUCCESS(HttpStatus.OK, "S3 버킷에 이미지를 삭제하는 데 성공했습니다."),
+	UPDATE_MISSION_TEXT(HttpStatus.OK, "미션 내용 개행 추가에 성공했습니다."),
+	UPDATE_MISSION_ICON(HttpStatus.OK, "미션 내용 기본 아이콘 추가에 성공했습니다."),
 
 	//미션
 	GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS(HttpStatus.OK, "미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다."),
@@ -30,6 +33,7 @@ public enum SuccessType {
 	LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공했습니다."),
 	LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃에 성공했습니다."),
 	REISSUE_SUCCESS(HttpStatus.OK, "토큰 재발급에 성공했습니다."),
+	SIGNOUT_SUCCESS(HttpStatus.OK, "회원탈퇴에 성공했습니다."),
 
 
 	//온보딩
@@ -49,11 +53,6 @@ public enum SuccessType {
 	/**
 	 * 204 No Content
 	 */
-	IMAGE_S3_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "S3 버킷에 이미지를 삭제하는 데 성공했습니다."),
-	UPDATE_MISSION_TEXT(HttpStatus.NO_CONTENT, "미션 내용 개행 추가에 성공했습니다."),
-	UPDATE_MISSION_ICON(HttpStatus.NO_CONTENT, "미션 내용 기본 아이콘 추가에 성공했습니다."),
-
-	SIGNOUT_SUCCESS(HttpStatus.NO_CONTENT, "회원탈퇴에 성공했습니다."),
 
 
 	;
