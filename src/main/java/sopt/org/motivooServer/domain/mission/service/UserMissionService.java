@@ -121,7 +121,7 @@ public class UserMissionService {
 						// um.updateImgUrl(imgUrl);
 					} catch (IllegalArgumentException | BusinessException e) {
 						log.error(e.getMessage());
-						// um.updateImgUrl(null);
+						um.updateImgUrl(null);
 					}
 				});
 
@@ -552,148 +552,37 @@ public class UserMissionService {
 		return missions.get(index);
 	}
 
-	private void createUserMissionHistoryDummy(User user, User matchedUser) {
-		final List<UserMission> userMissions = new ArrayList<>();
+	private void createUserMission(User user, String imgUrl, CompletedStatus completedStatus, LocalDateTime createdAt) {
 		UserMission userMission = UserMission.builderForDemo()
-			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/um2.jpg")
+			.completedStatus(completedStatus)
 			.mission(getRandomSingleMission(getFilteredMissions(user)))
 			.missionQuest(getRandomMissionQuest())
 			.user(user).build();
-		userMissionRepository.save(userMission);
-		userMission.updateCreatedAt(LocalDateTime.of(2024, 1, 18, 12, 0, 0));
-		userMission.updateUpdatedAt(LocalDateTime.of(2024, 1, 18, 12, 0, 0));
+
 		user.addUserMission(userMission);
+		userMissionRepository.save(userMission);
 
-		UserMission userMission1 = UserMission.builderForDemo()
-			.completedStatus(FAIL)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/cat.jpg")
-			.mission(getRandomSingleMission(getFilteredMissions(user)))
-			.missionQuest(getRandomMissionQuest())
-			.user(user).build();
-		userMissionRepository.save(userMission1);
-		userMission1.updateCreatedAt(LocalDateTime.of(2024, 1, 17, 12, 0, 0));
-		userMission1.updateUpdatedAt(LocalDateTime.of(2024, 1, 17, 12, 0, 0));
-		user.addUserMission(userMission1);
+		userMission.updateImgUrl(imgUrl);
+		userMission.updateCreatedAt(createdAt);
+		userMission.updateUpdatedAt(createdAt);
 
-		UserMission userMission2 = UserMission.builderForDemo()
-			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/tl_baseball.jpg")
-			.mission(getRandomSingleMission(getFilteredMissions(user)))
-			.missionQuest(getRandomMissionQuest())
-			.user(user).build();
-		userMissionRepository.save(userMission2);
-		userMission2.updateCreatedAt(LocalDateTime.of(2024, 1, 16, 12, 0, 0));
-		userMission2.updateUpdatedAt(LocalDateTime.of(2024, 1, 16, 12, 0, 0));
-		user.addUserMission(userMission2);
-
-		UserMission userMission3 = UserMission.builderForDemo()
-			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo.jpg")
-			.mission(getRandomSingleMission(getFilteredMissions(user)))
-			.missionQuest(getRandomMissionQuest())
-			.user(user).build();
-		userMissionRepository.save(userMission3);
-		userMission3.updateCreatedAt(LocalDateTime.of(2024, 1, 13, 12, 0, 0));
-		userMission3.updateUpdatedAt(LocalDateTime.of(2024, 1, 13, 12, 0, 0));
-		user.addUserMission(userMission3);
-
-		UserMission userMission4 = UserMission.builderForDemo()
-			.completedStatus(FAIL)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/jo.jpg")
-			.mission(getRandomSingleMission(getFilteredMissions(user)))
-			.missionQuest(getRandomMissionQuest())
-			.user(user).build();
-		userMissionRepository.save(userMission4);
-		userMission4.updateCreatedAt(LocalDateTime.of(2024, 1, 11, 12, 0, 0));
-		userMission4.updateUpdatedAt(LocalDateTime.of(2024, 1, 11, 12, 0, 0));
-		user.addUserMission(userMission4);
-
-		UserMission matchedUserMission = UserMission.builderForDemo()
-			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all1.png")
-			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
-			.missionQuest(getRandomMissionQuest())
-			.user(matchedUser).build();
-		userMissionRepository.save(matchedUserMission);
-		matchedUserMission.updateCreatedAt(LocalDateTime.of(2024, 1, 18, 12, 0, 0));
-		matchedUserMission.updateUpdatedAt(LocalDateTime.of(2024, 1, 18, 12, 0, 0));
-		matchedUser.addUserMission(matchedUserMission);
-
-		UserMission matchedUserMission1 = UserMission.builderForDemo()
-			.completedStatus(FAIL)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/leejs.jpg")
-			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
-			.missionQuest(getRandomMissionQuest())
-			.user(matchedUser).build();
-		userMissionRepository.save(matchedUserMission1);
-		matchedUserMission1.updateCreatedAt(LocalDateTime.of(2024, 1, 17, 12, 0, 0));
-		matchedUserMission1.updateUpdatedAt(LocalDateTime.of(2024, 1, 17, 12, 0, 0));
-		matchedUser.addUserMission(matchedUserMission1);
-
-		UserMission matchedUserMission2 = UserMission.builderForDemo()
-			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all3.png")
-			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
-			.missionQuest(getRandomMissionQuest())
-			.user(matchedUser).build();
-		userMissionRepository.save(matchedUserMission2);
-		matchedUserMission2.updateCreatedAt(LocalDateTime.of(2024, 1, 15, 12, 0, 0));
-		matchedUserMission2.updateUpdatedAt(LocalDateTime.of(2024, 1, 15, 12, 0, 0));
-		matchedUser.addUserMission(matchedUserMission2);
-
-		UserMission matchedUserMission3 = UserMission.builderForDemo()
-			.completedStatus(SUCCESS)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all2.jpg")
-			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
-			.missionQuest(getRandomMissionQuest())
-			.user(matchedUser).build();
-		userMissionRepository.save(matchedUserMission3);
-		matchedUserMission3.updateCreatedAt(LocalDateTime.of(2024, 1, 13, 12, 0, 0));
-		matchedUserMission3.updateUpdatedAt(LocalDateTime.of(2024, 1, 13, 12, 0, 0));
-		matchedUser.addUserMission(matchedUserMission3);
-
-		UserMission matchedUserMission4 = UserMission.builderForDemo()
-			.completedStatus(FAIL)
-			.imgUrl("https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/um.jpg")
-			.mission(getRandomSingleMission(getFilteredMissions(matchedUser)))
-			.missionQuest(getRandomMissionQuest())
-			.user(matchedUser).build();
-		userMissionRepository.save(matchedUserMission4);
-		matchedUserMission4.updateCreatedAt(LocalDateTime.of(2024, 1, 11, 12, 0, 0));
-		matchedUserMission4.updateUpdatedAt(LocalDateTime.of(2024, 1, 11, 12, 0, 0));
-		matchedUser.addUserMission(matchedUserMission4);
-
+		userMissionRepository.save(userMission);
 	}
 
-	/*private void createUserMissionHistoryDummy(User user, User matchedUser) {
-		user.addUserMission(createUserMission(user, SUCCESS, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg", LocalDateTime.of(2024, 1, 18, 12, 0, 0)));
-		user.addUserMission(createUserMission(user, FAIL, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg", LocalDateTime.of(2024, 1, 17, 12, 0, 0)));
-		user.addUserMission(createUserMission(user, SUCCESS, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg", LocalDateTime.of(2024, 1, 16, 12, 0, 0)));
-		user.addUserMission(createUserMission(user, SUCCESS, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg", LocalDateTime.of(2024, 1, 13, 12, 0, 0)));
-		user.addUserMission(createUserMission(user, FAIL, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg", LocalDateTime.of(2024, 1, 11, 12, 0, 0)));
-
-		matchedUser.addUserMission(createUserMission(matchedUser, SUCCESS, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg", LocalDateTime.of(2024, 1, 18, 12, 0, 0)));
-		matchedUser.addUserMission(createUserMission(matchedUser, SUCCESS, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg", LocalDateTime.of(2024, 1, 17, 12, 0, 0)));
-		matchedUser.addUserMission(createUserMission(matchedUser, FAIL, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg", LocalDateTime.of(2024, 1, 15, 12, 0, 0)));
-		matchedUser.addUserMission(createUserMission(matchedUser, SUCCESS, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg", LocalDateTime.of(2024, 1, 13, 12, 0, 0)));
-		matchedUser.addUserMission(createUserMission(matchedUser, FAIL, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/e8570b46-4068-442e-80bd-bc2dc590953e.jpg", LocalDateTime.of(2024, 1, 11, 12, 0, 0)));
-
-		userRepository.save(user);
-		userRepository.save(matchedUser);
-	}*/
-
-	private UserMission createUserMission(User user, CompletedStatus status, String imgUrl, LocalDateTime dateTime) {
-		UserMission userMission = UserMission.builderForDemo()
-			.completedStatus(status)
-			.imgUrl(imgUrl)
-			.mission(getRandomSingleMission(getFilteredMissions(user)))
-			.missionQuest(getRandomMissionQuest())
-			.user(user).build();
-		userMission.updateCreatedAt(dateTime);
-		userMission.updateUpdatedAt(dateTime);
-
-		return userMission;
+	private void createUserMissionHistoryDummy(User user, User matchedUser) {
+		createUserMission(user, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/um2.jpg", SUCCESS, LocalDateTime.of(2024, 1, 18, 12, 0, 0));
+		createUserMission(user, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/cat.jpg", SUCCESS, LocalDateTime.of(2024, 1, 17, 12, 0, 0));
+		createUserMission(user, null, FAIL, LocalDateTime.of(2024, 1, 16, 12, 0, 0));
+		createUserMission(user, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/tl_baseball.jpg", SUCCESS, LocalDateTime.of(2024, 1, 15, 12, 0, 0));
+		createUserMission(user, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo.jpg", SUCCESS, LocalDateTime.of(2024, 1, 13, 12, 0, 0));
+		createUserMission(user, null, FAIL, LocalDateTime.of(2024, 1, 11, 12, 0, 0));
+		createUserMission(user, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/jo.jpg", SUCCESS, LocalDateTime.of(2024, 1, 9, 12, 0, 0));
+		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all1.png", SUCCESS, LocalDateTime.of(2024, 1, 18, 12, 0, 0));
+		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/leejs.jpg", SUCCESS, LocalDateTime.of(2024, 1, 17, 12, 0, 0));
+		createUserMission(matchedUser, null, FAIL, LocalDateTime.of(2024, 1, 16, 12, 0, 0));
+		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all3.png", SUCCESS, LocalDateTime.of(2024, 1, 15, 12, 0, 0));
+		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all2.jpg", SUCCESS, LocalDateTime.of(2024, 1, 13, 12, 0, 0));
+		createUserMission(matchedUser, null, FAIL, LocalDateTime.of(2024, 1, 11, 12, 0, 0));
+		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/um.png", SUCCESS, LocalDateTime.of(2024, 1, 9, 12, 0, 0));
 	}
-
 }
