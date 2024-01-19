@@ -35,7 +35,6 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OauthService {
-    private static final String BEARER_TYPE = "Bearer";
     private final InMemoryClientRegistrationRepository inMemoryRepository;
     private final UserRepository userRepository;
     private final TokenRedisRepository tokenRedisRepository;
@@ -55,18 +54,8 @@ public class OauthService {
         log.info("유저 아이디="+user.getId());
         String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(), null, null));
         tokenRedisRepository.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
-        return getLoginResponse(user, accessToken, refreshToken);
+        return LoginResponse.of(user, accessToken, refreshToken);
 
-    }
-
-    private LoginResponse getLoginResponse(User user, String accessToken, String refreshToken) {
-        return LoginResponse.builder()
-                .id(user.getSocialId())
-                .nickname(user.getNickname())
-                .tokenType(BEARER_TYPE)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
     }
 
     public User getUserProfile(String providerName, OauthTokenRequest tokenRequest, ClientRegistration provider, String refreshToken) {
@@ -80,9 +69,8 @@ public class OauthService {
         List<User> userEntity = userRepository.findBySocialId(providerId);
 
         //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
-        if(userEntity==null || is_withdrawn(userEntity)){
+        if(userEntity==null || isWithdrawn(userEntity)){
             return saveUser(nickName, providerId, socialPlatform, tokenRequest, refreshToken);
-
         }
 
         //로그인
@@ -90,7 +78,7 @@ public class OauthService {
         return userEntity.get(0);
     }
 
-    boolean is_withdrawn(List<User> users){
+    boolean isWithdrawn(List<User> users){
         for(User user:users){
             if(!user.isDeleted()){
                 return false;

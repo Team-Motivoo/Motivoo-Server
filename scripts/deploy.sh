@@ -58,7 +58,7 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
   echo "[$NOW_TIME] Green 컨테이너 Up (빌드 & 실행)"
   docker-compose up -d green
 
-  for retry_count in {1..20}; do
+  for retry_count in {1..25}; do
     echo "[$NOW_TIME] Green health check ..."
     sleep 3
 
@@ -102,7 +102,7 @@ else
   echo "[$NOW_TIME] Blue 컨테이너 Up (빌드 & 실행)"
   docker-compose up -d blue
 
-  for retry_count in {1..20}; do
+  for retry_count in {1..25}; do
     echo "[$NOW_TIME] Blue health check ..."
     sleep 3
 
