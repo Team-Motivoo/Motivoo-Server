@@ -16,7 +16,11 @@ import sopt.org.motivooServer.domain.user.entity.User;
 
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    @Query("select u from User u where u.socialId=?1 and u.deleted = false")
+
     List<User> findBySocialId(String socialId);
+
 
     @Query("select u.refreshToken from User u where u.id=?1")
     String findRefreshTokenById(Long id);

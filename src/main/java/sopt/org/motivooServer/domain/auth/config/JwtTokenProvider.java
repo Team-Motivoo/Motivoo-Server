@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
+import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.exception.UserException;
+import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
 import java.security.Principal;
 import java.util.*;
@@ -35,8 +37,11 @@ public class JwtTokenProvider {
 
     private TokenRedisRepository tokenRedisRepository;
 
-    public JwtTokenProvider(TokenRedisRepository tokenRedisRepository){
+    private static UserRepository userRepository;
+
+    public JwtTokenProvider(TokenRedisRepository tokenRedisRepository, UserRepository userRepository){
         this.tokenRedisRepository = tokenRedisRepository;
+        this.userRepository = userRepository;
     }
 
     /*public LoginResponse issueToken(Authentication authentication) {
@@ -153,10 +158,12 @@ public class JwtTokenProvider {
     }
 
     public static Long getUserFromPrincipal(Principal principal) {
-        if (isNull(principal)) {
-            throw new UserException(EMPTY_PRINCIPLE_EXCEPTION);
-        }
-        return Long.valueOf(principal.getName());
+        Long id = Long.valueOf(principal.getName());
+        User user = userRepository.findUserById(id);
+        if(user == null)
+            throw new UserException(INVALID_USER_TYPE);
+
+        return userRepository.findBySocialId(user.getSocialId()).get(0).getId();
     }
 
 

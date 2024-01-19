@@ -77,6 +77,7 @@ public class UserService {
 				.peek(u -> {
 					u.udpateDeleted();
 					u.updateDeleteAt();
+					healthRepository.deleteByUser(u); //온보딩 정보 지우기
 					System.out.println("유저 정보=" + u.isDeleted() + " " + u.getDeletedAt());
 					String accessToken = userRepository.findSocialAccessTokenById(u.getId());
 					String refreshToken = userRepository.findRefreshTokenById(u.getId());

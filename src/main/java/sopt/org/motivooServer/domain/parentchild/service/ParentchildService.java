@@ -136,7 +136,7 @@ public class ParentchildService {
 
         //부모-부모이거나 자녀-자녀인 경우
         if(user.getType() == userRepository.findUserByParentchild(parentchild).get(0).getType())
-            throw new ParentchildException(PARENTCHILD_NOT_FOUND);
+            throw new ParentchildException(INVALID_PARENTCHILD_RELATION);
 
 
         if (!parentchild.isMatched()) {
@@ -216,6 +216,7 @@ public class ParentchildService {
     }
 
     private User getUserById(Long userId) {
+        log.info("유저 아이디="+userId);
         return userRepository.findById(userId).orElseThrow(
                 () -> new UserException(INVALID_USER_TYPE)
         );
