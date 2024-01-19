@@ -11,7 +11,6 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-
 import sopt.org.motivooServer.domain.auth.config.UserAuthentication;
 import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivooServer.domain.auth.service.apple.AppleLoginService;
@@ -51,11 +50,11 @@ public class OauthService {
         //카카오
         ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
 
-        // LoginResponse loginResponse = jwtTokenProvider.issueToken(new UserAuthentication(loginUser.getId(), null, null))
         String refreshToken = jwtTokenProvider.createRefreshToken();
         User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
+        log.info("유저 아이디="+user.getId());
         String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(), null, null));
-
+        tokenRedisRepository.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
         return getLoginResponse(user, accessToken, refreshToken);
 
     }

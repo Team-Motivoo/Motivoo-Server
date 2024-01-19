@@ -4,6 +4,7 @@ import static sopt.org.motivooServer.global.response.SuccessType.*;
 
 import java.security.Principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import sopt.org.motivooServer.domain.auth.service.OauthService;
 import sopt.org.motivooServer.domain.user.service.UserService;
 import sopt.org.motivooServer.global.response.ApiResponse;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class OauthController {
@@ -50,6 +52,7 @@ public class OauthController {
     @DeleteMapping("/withdraw")
     public ResponseEntity<ApiResponse<Object>> signout(Principal principal) {
         Long userId = Long.parseLong(principal.getName());
+        log.info("유저 아이디="+userId);
         userService.deleteSocialAccount(userId);
 
         return ApiResponse.success(SIGNOUT_SUCCESS);
