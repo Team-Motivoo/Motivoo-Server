@@ -209,6 +209,6 @@ public class OauthControllerTest extends BaseControllerTest {
                                                 fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부")
                                         ).build()
                         )
-                )).andExpect(status().isNoContent());
+                )).andExpect(status().isOk());
     }
 }
