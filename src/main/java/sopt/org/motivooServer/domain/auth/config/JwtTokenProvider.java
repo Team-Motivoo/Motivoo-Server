@@ -150,6 +150,9 @@ public class JwtTokenProvider {
     }
 
     public static Long getUserFromPrincipal(Principal principal) {
+        if (principal == null) {
+            throw new UserException(EMPTY_PRINCIPLE_EXCEPTION);
+        }
         Long id = Long.valueOf(principal.getName());
         User user = userRepository.findUserById(id);
         if(user == null)
