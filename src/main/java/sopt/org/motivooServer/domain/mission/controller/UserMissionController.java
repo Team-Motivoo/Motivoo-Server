@@ -20,6 +20,7 @@ import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
 import sopt.org.motivooServer.domain.mission.dto.request.TodayMissionChoiceRequest;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
+import sopt.org.motivooServer.domain.mission.dto.response.OpponentGoalStepsResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivooServer.domain.mission.service.UserMissionService;
 import sopt.org.motivooServer.global.response.ApiResponse;
@@ -54,5 +55,10 @@ public class UserMissionController {
 		URI location = URI.create("/today" + userMissionId);
 
 		return ResponseEntity.created(location).body(ApiResponse.successV2(CHOICE_TODAY_MISSION_SUCCESS));
+	}
+
+	@GetMapping("/opponent")
+	public ResponseEntity<ApiResponse<OpponentGoalStepsResponse>> getOpponentGoalSteps(final Principal principal) {
+		return ApiResponse.success(GET_TODAY_OPPONENT_GOAL_STEP_COUNT, userMissionService.getOpponentGoalSteps(getUserFromPrincipal(principal)));
 	}
 }
