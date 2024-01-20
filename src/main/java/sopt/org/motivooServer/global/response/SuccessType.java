@@ -22,6 +22,7 @@ public enum SuccessType {
 	//미션
 	GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS(HttpStatus.OK, "미션 인증사진의 Presigned Url을 생성하는 데 성공했습니다."),
 	GET_MISSION_HISTORY_SUCCESS(HttpStatus.OK, "이전 운동 미션 히스토리를 조회하는 데 성공했습니다."),
+	GET_TODAY_OPPONENT_GOAL_STEP_COUNT(HttpStatus.OK, "오늘의 상대 목표 걸음 수를 조회하는 데 성공했습니다."),
 
 	//유저
 	GET_MYINFO_SUCCESS(HttpStatus.OK, "마이페이지 나의 정보 조회에 성공했습니다."),

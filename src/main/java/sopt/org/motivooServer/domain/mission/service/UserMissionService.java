@@ -37,6 +37,7 @@ import sopt.org.motivooServer.domain.mission.dto.request.TodayMissionChoiceReque
 import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
+import sopt.org.motivooServer.domain.mission.dto.response.OpponentGoalStepsResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivooServer.domain.mission.entity.CompletedStatus;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
@@ -283,6 +284,19 @@ public class UserMissionService {
 		}
 		return MissionStepStatusResponse.of(myUser, opponentUser, 0, 0, false);*/
 
+	}
+
+	public OpponentGoalStepsResponse getOpponentGoalSteps(final Long userId) {
+		User myUser = getUserById(userId);
+		User opponentUser = getMatchedUserWith(myUser);
+
+		if (!opponentUser.getUserMissions().isEmpty()) {
+			UserMission opponentCurrentUserMission = opponentUser.getCurrentUserMission();
+			int opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ? opponentCurrentUserMission.getMission().getStepCount() : 0;
+			assert opponentCurrentUserMission != null;
+			return OpponentGoalStepsResponse.of(opponentGoalStep);
+		}
+		throw new MissionException(NOT_EXIST_TODAY_MISSION_CHOICE);
 	}
 
 	private boolean isStepCountCompleted(int currentStepCount, UserMission todayMission) {
