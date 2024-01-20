@@ -28,7 +28,7 @@ public enum UserExceptionType implements BusinessExceptionType {
 	/**
 	 * 401 Unauthorized
 	 */
-	EMPTY_PRINCIPLE_EXCEPTION(HttpStatus.UNAUTHORIZED, "액세스 토큰이 비어있거나, 유효하지 않은 엑세스 토큰입니다."),
+	EMPTY_PRINCIPAL_EXCEPTION(HttpStatus.UNAUTHORIZED, "액세스 토큰이 비어있거나, 유효하지 않은 엑세스 토큰입니다."),
 	TOKEN_UNSUPPORTED(HttpStatus.UNAUTHORIZED, "변조된 토큰입니다."),
 	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
 	TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "토큰을 찾을 수 없습니다."),
