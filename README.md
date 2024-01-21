@@ -46,7 +46,7 @@
 <br/><br/>
 
 ## 📄 API Document
-<img width="900" alt="image" src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/2a2312f9-0560-4be1-a9b4-21852d0aa824">
+<img width="900" alt="image" src="https://github.com/Team-Motivoo/Motivoo-Server/assets/80024278/c8162be6-8855-4486-be6f-1bd1c4b7485e">
 
 
 ## 📂 Project Structure
@@ -109,17 +109,17 @@
                     🗂 repository
                     🗂 service
             📁 global 
-                🗂 advice
+                🗂 advice     // 예외 핸들러
                 🗂 config
                     🗂 swagger
-                🗂 external
+                🗂 external    // 외부 연동
                     🗂 firebase
                       🗂 config
                     🗂 s3
                       🗂 config
                     🗂 slack
-                🗂 healthcheck
-                🗂 response
+                🗂 healthcheck  // 헬스체크 API
+                🗂 response     // 공통 응답 클래스 관리
         🗂 resources
             application.yaml
             application-local.yaml
