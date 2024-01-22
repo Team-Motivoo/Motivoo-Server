@@ -20,10 +20,13 @@ swaggerSources {
 	}
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 // openapi3 스펙 생성 시 설정 정보
 openapi3 {
 	servers = [
-			{ url = "http://15.165.248.213" },
+			{ url = properties["server.BASE_URL"] },
 			{ url = "http://localhost:8080" }
 	]
 	title = "모티부 API 명세서"
@@ -162,7 +165,7 @@ bootJar {
 
 openapi3 {
 	servers = [
-			{ url = "http://15.165.248.213" },
+			{ url = properties["server.BASE_URL"] },
 			{ url = "http://localhost:8080" }
 	]
 	title = "모티부 API 명세서"

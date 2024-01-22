@@ -35,7 +35,6 @@ import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.external.firebase.FirebaseService;
 
-import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.ALREADY_WITHDRAW_USER;
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INVALID_USER_TYPE;
 
 @Slf4j
@@ -137,7 +136,7 @@ public class ParentchildService {
 
         //부모-부모이거나 자녀-자녀인 경우
         if(user.getType() == userRepository.findUserByParentchild(parentchild).get(0).getType())
-            throw new ParentchildException(PARENTCHILD_NOT_FOUND);
+            throw new ParentchildException(INVALID_PARENTCHILD_RELATION);
 
 
         if (!parentchild.isMatched()) {
@@ -217,6 +216,7 @@ public class ParentchildService {
     }
 
     private User getUserById(Long userId) {
+        log.info("유저 아이디="+userId);
         return userRepository.findById(userId).orElseThrow(
                 () -> new UserException(INVALID_USER_TYPE)
         );

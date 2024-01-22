@@ -12,10 +12,8 @@ import static sopt.org.motivooServer.util.ApiDocumentUtil.*;
 
 import java.security.Principal;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -24,9 +22,8 @@ import org.springframework.http.ResponseEntity;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.web.bind.annotation.RequestHeader;
 import sopt.org.motivooServer.domain.auth.controller.OauthController;
 import sopt.org.motivooServer.domain.auth.dto.request.OauthTokenRequest;
 import sopt.org.motivooServer.domain.auth.dto.request.RefreshRequest;
@@ -96,74 +93,90 @@ public class OauthControllerTest extends BaseControllerTest {
                 )).andExpect(status().isOk());
     }
 
-//    @Test
-//    @DisplayName("토큰 재발급 테스트")
-//    void reissueTest() throws Exception {
-//        // given
-//        RefreshRequest request = new RefreshRequest(1L);
-//        OauthTokenResponse response = new OauthTokenResponse("eyJ0eXAiOiJKV1QiLCJhbrG", "eyJ0eXAiOiJKV1QicLCJdhbG");
-//
-//        // when
-//        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/oauth/reissue")
-//                .header("Authorization", "Bearer {refresh token}")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(objectMapper.writeValueAsString(request))
-//        );
-//
-//        // then
-//        resultActions
-//                .andExpect(status().isOk())
-//                .andDo(document("토큰 재발급 API 성공 Example",
-//                        requestFields(
-//                                fieldWithPath("user_id").type(NUMBER).description("유저 아이디")),
-//                        responseFields(
-//                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
-//                                fieldWithPath("message").type(STRING).description("상태 메세지"),
-//                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
-//                                fieldWithPath("data").description("응답 데이터"),
-//                                fieldWithPath("data.access_token").type(STRING).description("access token"),
-//                                fieldWithPath("data.refresh_token").type(STRING).description("refresh token")
-//                        ))
-//                );
-//    }
+    @Test
+    @DisplayName("토큰 재발급 테스트")
+    void reissueTest() throws Exception {
+        // given
+        RefreshRequest request = new RefreshRequest(1L);
+        OauthTokenResponse response = new OauthTokenResponse("eyJ0eXAiOiJKV1QiLCJhbrG", "eyJ0eXAiOiJKV1QcLCJdhbG");
+
+        ResponseEntity<ApiResponse<OauthTokenResponse>> result = ApiResponse
+                .success(
+                        REISSUE_SUCCESS, response);
+
+        // 헤더에 담길 토큰 값을 직접 설정
+        String refreshToken = "eyasdfsfsdfds";
+
+        // when
+        when(oauthController.reissue(refreshToken, request)).thenReturn(result);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/oauth/reissue")
+                        .header("Authorization", refreshToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(document("토큰 재발급 API 성공 Example",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag(TAG)
+                                        .description("토큰 재발급 API")
+                                        .requestHeaders(
+                                                headerWithName("Authorization").description("JWT Access Token"))
+                                        .requestFields(
+                                                fieldWithPath("user_id").type(NUMBER).description("유저 아이디"))
+                                        .responseFields(
+                                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
+                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("data").description("응답 데이터"),
+                                                fieldWithPath("data.access_token").type(STRING).description("access token"),
+                                                fieldWithPath("data.refresh_token").type(STRING).description("refresh token"))
+                                        .build())
+                )).andExpect(status().isOk());
+
+    }
 
 
-//
-//    @Test
-//    @DisplayName("로그아웃 테스트")
-//    void logoutTest() throws Exception {
-//        //given
-//        ResponseEntity<ApiResponse<Object>> result = ApiResponse.success(
-//                LOGOUT_SUCCESS);
-//        //when
-//        when(oauthController.logout("access token")).thenReturn(result);
-//
-//        //then
-//        mockMvc.perform(post("/oauth/logout")
-//                .header("Authorization", "Bearer access token")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//        ).andDo(
-//                document("로그아웃 API 성공 Example",
-//                        getDocumentRequest(),
-//                        getDocumentResponse(),
-//                        resource(
-//                                ResourceSnippetParameters.builder()
-//                                        .tag(TAG)
-//                                        .description("소셜 로그인 로그아웃 API")
-//                                        .requestHeaders(headerWithName("Authorization")
-//                                                .description("access token")
-//                                        )
-//                                        .responseFields(
-//                                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
-//                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
-//                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부")
-//                                        )
-//                                        .build()
-//                        )
-//                )).andExpect(status().isOk());
-//
-//    }
+
+    @Test
+    @DisplayName("로그아웃 테스트")
+    void logoutTest() throws Exception {
+        //given
+        ResponseEntity<ApiResponse<Object>> result = ApiResponse.success(
+                LOGOUT_SUCCESS);
+
+        // 헤더에 담길 토큰 값을 직접 설정
+        String accessToken = "eyasdfsfsdfds";
+
+        //when
+        when(oauthController.logout(accessToken)).thenReturn(result);
+
+        //then
+        mockMvc.perform(post("/oauth/logout")
+                .header("Authorization", accessToken)
+        ).andDo(
+                document("로그아웃 API 성공 Example",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag(TAG)
+                                        .description("소셜 로그인 로그아웃 API")
+                                        .requestHeaders(headerWithName("Authorization")
+                                                .description("access token")
+                                        )
+                                        .responseFields(
+                                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
+                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부")
+                                        )
+                                        .build()
+                        )
+                )).andExpect(status().isOk());
+
+    }
 
     @Test
     @DisplayName("회원탈퇴 테스트")

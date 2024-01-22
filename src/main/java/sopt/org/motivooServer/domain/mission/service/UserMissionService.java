@@ -8,13 +8,16 @@ import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.*;
 import static sopt.org.motivooServer.global.external.s3.S3BucketDirectory.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +37,9 @@ import sopt.org.motivooServer.domain.mission.dto.request.TodayMissionChoiceReque
 import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.MissionStepStatusResponse;
+import sopt.org.motivooServer.domain.mission.dto.response.OpponentGoalStepsResponse;
 import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
+import sopt.org.motivooServer.domain.mission.entity.CompletedStatus;
 import sopt.org.motivooServer.domain.mission.entity.Mission;
 import sopt.org.motivooServer.domain.mission.entity.MissionQuest;
 import sopt.org.motivooServer.domain.mission.entity.MissionType;
@@ -106,7 +111,7 @@ public class UserMissionService {
 		Map<LocalDate, List<UserMission>> missionsByDate = groupUserMissionsByDate(userId, opponentUser.getId());
 		log.info("missionsByDate size: {}", missionsByDate.size());
 		for (LocalDate localDateTime : missionsByDate.keySet()) {
-			log.info("missionsByDate.get(localDateTime) size: {}", missionsByDate.get(localDateTime).size());
+			log.info("missionsByDate.get(localDateTime) size: {}-{}", missionsByDate.get(localDateTime).size(), localDateTime);
 
 			missionsByDate.get(localDateTime).stream()
 				.filter(um -> um.getImgUrl() != null)
@@ -114,8 +119,8 @@ public class UserMissionService {
 					try {
 						String imgUrl = s3Service.getURL(MISSION_PREFIX.value() + um.getImgUrl());
 						log.info("S3에서 받아온 이미지 URL: {}", imgUrl);
-						um.updateImgUrl(imgUrl);
-					} catch (BusinessException e) {
+						// um.updateImgUrl(imgUrl);
+					} catch (IllegalArgumentException | BusinessException e) {
 						log.error(e.getMessage());
 						um.updateImgUrl(null);
 					}
@@ -125,11 +130,10 @@ public class UserMissionService {
 				missionsByDate.get(localDateTime).stream()
 					.filter(um -> um.getImgUrl() == null && !um.getMission().getTarget().equals(UserType.NONE))
 					.forEach(um -> um.updateCompletedStatus(FAIL));
-			} else {
-				missionsByDate.get(localDateTime).stream()
-					.filter(um -> um.getImgUrl() != null && !um.getMission().getTarget().equals(UserType.NONE))
-					.forEach(um -> um.updateCompletedStatus(SUCCESS));
 			}
+			missionsByDate.get(localDateTime).stream()
+				.filter(um -> um.getImgUrl() != null && !um.getMission().getTarget().equals(UserType.NONE))
+				.forEach(um -> um.updateCompletedStatus(SUCCESS));
 
 			missionsByDate.get(localDateTime).stream()
 				.filter(um -> um.getMission().getTarget().equals(UserType.NONE))
@@ -171,9 +175,14 @@ public class UserMissionService {
 		userMissionRepository.saveAll(emptyUserMissions);
 
 		// 그룹화
-		return users.stream()
+		Map<LocalDate, List<UserMission>> dateGroups = users.stream()
 			.flatMap(user -> user.getUserMissions().stream())
 			.collect(Collectors.groupingBy(userMission -> userMission.getCreatedAt().toLocalDate()));
+
+		Map<LocalDate, List<UserMission>> sortedGroups = new TreeMap<>(Comparator.reverseOrder());
+		sortedGroups.putAll(dateGroups);
+
+		return sortedGroups;
 	}
 
 	@Transactional
@@ -277,6 +286,19 @@ public class UserMissionService {
 
 	}
 
+	public OpponentGoalStepsResponse getOpponentGoalSteps(final Long userId) {
+		User myUser = getUserById(userId);
+		User opponentUser = getMatchedUserWith(myUser);
+
+		if (!opponentUser.getUserMissions().isEmpty()) {
+			UserMission opponentCurrentUserMission = opponentUser.getCurrentUserMission();
+			int opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ? opponentCurrentUserMission.getMission().getStepCount() : 0;
+			assert opponentCurrentUserMission != null;
+			return OpponentGoalStepsResponse.of(opponentGoalStep);
+		}
+		throw new MissionException(NOT_EXIST_TODAY_MISSION_CHOICE);
+	}
+
 	private boolean isStepCountCompleted(int currentStepCount, UserMission todayMission) {
 		boolean isStepCountCompleted = currentStepCount >= todayMission.getMission().getStepCount();
 		if (isStepCountCompleted) {
@@ -351,37 +373,13 @@ public class UserMissionService {
 
 
 	private List<UserMissionChoices> filterTodayUserMission(User user) {
-		final List<Mission> missionChoicesFiltered = new ArrayList<>();
-
-		// 부모 미션 or 자식 미션 리스트
-		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType());
-		log.info("{} 미션 리스트 가져옴", user.getType().getValue());
-		Health health = getHealthByUser(user);
-		log.info("Health: {}", health.getId());
-
-		List<HealthNote> userNotes = health.getHealthNotes();
-		ExerciseLevel exerciseLevel = health.getExerciseLevel();
-
-		log.info("Mission 필터링 시작!");
-		for (Mission mission : missions) {
-			List<HealthNote> missionNotes = HealthNote.of(mission.getHealthNotes());
-			boolean hasUserNotes = missionNotes.stream().anyMatch(userNotes::contains);
-			boolean hasExerciseLevel = MissionType.of(mission.getType()).containsLevel(exerciseLevel);
-
-			if (!hasUserNotes && !hasExerciseLevel) {
-				missionChoicesFiltered.add(mission);
-			}
-		}
-		log.info("맞춤 Mission 리스트에 추가(Shuffle 전): {}가지", missionChoicesFiltered.size());
-
-		Collections.shuffle(missionChoicesFiltered);
+		final List<Mission> missionChoicesFiltered = getFilteredMissions(user);
 
 		List<UserMissionChoices> missionChoices = new ArrayList<>();
 		for (int i = 0; i < Math.min(missionChoicesFiltered.size(), 2); i++) {
 			UserMissionChoices missionChoice = UserMissionChoices.builder()
 				.mission(missionChoicesFiltered.get(i))
-				.user(user)
-				.build();
+				.user(user).build();
 			missionChoices.add(userMissionChoicesRepository.save(missionChoice));
 		}
 
@@ -412,6 +410,35 @@ public class UserMissionService {
 				.user(user).build())
 			.map(userMissionChoicesRepository::save)
 			.toList();
+	}
+
+	@NotNull
+	public List<Mission> getFilteredMissions(User user) {
+		final List<Mission> missionChoicesFiltered = new ArrayList<>();
+
+		// 부모 미션 or 자식 미션 리스트
+		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType());
+		log.info("{} 미션 리스트 가져옴", user.getType().getValue());
+		Health health = getHealthByUser(user);
+		log.info("Health: {}", health.getId());
+
+		List<HealthNote> userNotes = health.getHealthNotes();
+		ExerciseLevel exerciseLevel = health.getExerciseLevel();
+
+		log.info("Mission 필터링 시작!");
+		for (Mission mission : missions) {
+			List<HealthNote> missionNotes = HealthNote.of(mission.getHealthNotes());
+			boolean hasUserNotes = missionNotes.stream().anyMatch(userNotes::contains);
+			boolean hasExerciseLevel = MissionType.of(mission.getType()).containsLevel(exerciseLevel);
+
+			if (!hasUserNotes && !hasExerciseLevel) {
+				missionChoicesFiltered.add(mission);
+			}
+		}
+		log.info("맞춤 Mission 리스트에 추가(Shuffle 전): {}가지", missionChoicesFiltered.size());
+		Collections.shuffle(missionChoicesFiltered);
+
+		return missionChoicesFiltered;
 	}
 
 	@NotNull
@@ -446,8 +473,9 @@ public class UserMissionService {
 			.missionQuest(getRandomMissionQuest())
 			.build();
 
-		user.getUserMissions().add(um);
+		userMissionRepository.save(um);
 		um.updateCreatedAt(date.atStartOfDay());  // 동일한 날짜로 세팅
+		user.addUserMission(um);
 		return um;
 	}
 
@@ -522,4 +550,53 @@ public class UserMissionService {
 	}
 
 
+
+
+	// 데모데이용 더미 미션 히스토리 생성
+	@Transactional
+	public void demoHistory(final Long parentchildId) {
+		List<User> parentchildUsers = userRepository.findUsersByParentchildId(parentchildId);
+		if (parentchildUsers.size() == 2) {
+			createUserMissionHistoryDummy(parentchildUsers.get(0), parentchildUsers.get(1));
+		}
+	}
+
+	private Mission getRandomSingleMission(List<Mission> missions) {
+		int index = (int) (Math.random() * missions.size());
+		return missions.get(index);
+	}
+
+	private void createUserMission(User user, String imgUrl, CompletedStatus completedStatus, LocalDateTime createdAt) {
+		UserMission userMission = UserMission.builderForDemo()
+			.completedStatus(completedStatus)
+			.mission(getRandomSingleMission(getFilteredMissions(user)))
+			.missionQuest(getRandomMissionQuest())
+			.user(user).build();
+
+		user.addUserMission(userMission);
+		userMissionRepository.save(userMission);
+
+		userMission.updateImgUrl(imgUrl);
+		userMission.updateCreatedAt(createdAt);
+		userMission.updateUpdatedAt(createdAt);
+
+		userMissionRepository.save(userMission);
+	}
+
+	private void createUserMissionHistoryDummy(User user, User matchedUser) {
+		createUserMission(user, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/um2.jpg", SUCCESS, LocalDateTime.of(2024, 1, 18, 12, 0, 0));
+		createUserMission(user, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/cat.jpg", SUCCESS, LocalDateTime.of(2024, 1, 17, 12, 0, 0));
+		createUserMission(user, null, FAIL, LocalDateTime.of(2024, 1, 16, 12, 0, 0));
+		createUserMission(user, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/tl_baseball.jpg", SUCCESS, LocalDateTime.of(2024, 1, 15, 12, 0, 0));
+		createUserMission(user, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo.jpg", SUCCESS, LocalDateTime.of(2024, 1, 13, 12, 0, 0));
+		createUserMission(user, null, FAIL, LocalDateTime.of(2024, 1, 11, 12, 0, 0));
+		createUserMission(user, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/jo.jpg", SUCCESS, LocalDateTime.of(2024, 1, 9, 12, 0, 0));
+		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all1.png", SUCCESS, LocalDateTime.of(2024, 1, 18, 12, 0, 0));
+		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/leejs.jpg", SUCCESS, LocalDateTime.of(2024, 1, 17, 12, 0, 0));
+		createUserMission(matchedUser, null, FAIL, LocalDateTime.of(2024, 1, 16, 12, 0, 0));
+		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all3.png", SUCCESS, LocalDateTime.of(2024, 1, 15, 12, 0, 0));
+		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/motivoo_all2.jpg", SUCCESS, LocalDateTime.of(2024, 1, 13, 12, 0, 0));
+		createUserMission(matchedUser, null, FAIL, LocalDateTime.of(2024, 1, 11, 12, 0, 0));
+		createUserMission(matchedUser, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/um.jpg", SUCCESS, LocalDateTime.of(2024, 1, 9, 12, 0, 0));
+	}
 }

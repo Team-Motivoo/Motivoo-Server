@@ -3,12 +3,17 @@ package sopt.org.motivooServer.domain.auth.config;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
+
+import sopt.org.motivooServer.domain.auth.dto.response.LoginResponse;
 import sopt.org.motivooServer.domain.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivooServer.domain.auth.repository.TokenRedisRepository;
+import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.exception.UserException;
+import sopt.org.motivooServer.domain.user.repository.UserRepository;
 
 import java.security.Principal;
 import java.util.*;
@@ -32,8 +37,22 @@ public class JwtTokenProvider {
 
     private TokenRedisRepository tokenRedisRepository;
 
-    public JwtTokenProvider(TokenRedisRepository tokenRedisRepository){
+    private static UserRepository userRepository;
+
+    public JwtTokenProvider(TokenRedisRepository tokenRedisRepository, UserRepository userRepository){
         this.tokenRedisRepository = tokenRedisRepository;
+        this.userRepository = userRepository;
+    }
+
+    /*public LoginResponse issueToken(Authentication authentication) {
+        return LoginResponse.of(
+            authentication.getPrincipal(),
+            createAccessToken(authentication),
+            createRefreshToken(authentication));
+    }*/
+
+    public String createAccessToken(Authentication authentication) {
+        return createToken(authentication, accessTokenValidityInMilliseconds);
     }
 
     public String createAccessToken(String payload) {
@@ -58,6 +77,19 @@ public class JwtTokenProvider {
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256,secretKey)
                 .compact();
+    }
+
+    public String createToken(Authentication authentication, long expireLength) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("payload", authentication.getPrincipal());
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + expireLength);
+        return Jwts.builder()
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(validity)
+            .signWith(SignatureAlgorithm.HS256,secretKey)
+            .compact();
     }
 
     public String getPayload(String token){
@@ -103,7 +135,7 @@ public class JwtTokenProvider {
     public OauthTokenResponse reissue(Long userId, String refreshToken) {
         validateToken(refreshToken);
 
-        String reissuedAccessToken = createAccessToken(String.valueOf(userId));
+        String reissuedAccessToken = createAccessToken(new UserAuthentication(userId, null, null));
         String reissuedRefreshToken = createRefreshToken();
         OauthTokenResponse tokenResponse = new OauthTokenResponse(reissuedAccessToken, reissuedAccessToken);
 
@@ -118,10 +150,12 @@ public class JwtTokenProvider {
     }
 
     public static Long getUserFromPrincipal(Principal principal) {
-        if (isNull(principal)) {
-            throw new UserException(EMPTY_PRINCIPLE_EXCEPTION);
-        }
-        return Long.valueOf(principal.getName());
+        Long id = Long.valueOf(principal.getName());
+        User user = userRepository.findUserById(id);
+        if(user == null)
+            throw new UserException(INVALID_USER_TYPE);
+
+        return userRepository.findBySocialId(user.getSocialId()).get(0).getId();
     }
 
 

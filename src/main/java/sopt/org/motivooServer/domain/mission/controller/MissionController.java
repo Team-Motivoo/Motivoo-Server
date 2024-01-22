@@ -21,4 +21,10 @@ public class MissionController {
 		missionService.updateMissionContentText();
 		return ApiResponse.success(UPDATE_MISSION_TEXT);
 	}
+
+	@PatchMapping("/util/icon")
+	public ResponseEntity<ApiResponse<Object>> updateMissionDefaultIcon() {
+		missionService.updateMissionDefaultIcon();
+		return ApiResponse.success(UPDATE_MISSION_ICON);
+	}
 }
