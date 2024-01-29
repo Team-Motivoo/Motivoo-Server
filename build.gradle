@@ -11,6 +11,8 @@ plugins {
 
 	id 'com.epages.restdocs-api-spec' version "${restdocsApiSpecVersion}"
 	id 'org.hidetake.swagger.generator' version '2.18.2'
+
+	id "io.sentry.jvm.gradle" version "4.2.0"
 }
 
 
@@ -18,6 +20,17 @@ swaggerSources {
 	sample {
 		setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
 	}
+}
+
+sentry {
+	// Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+	// This enables source context, allowing you to see your source
+	// code as part of your stack traces in Sentry.
+	includeSourceContext = true
+
+	org = "sookmyung-womens-university-it"
+	projectName = "java-spring-boot"
+	authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
 
 Properties properties = new Properties()
@@ -125,6 +138,9 @@ dependencies {
 
 	// Firebase
 	implementation "com.google.firebase:firebase-admin:9.1.1"
+
+	// Sentry
+	implementation "io.sentry:sentry-spring-boot-starter:4.3.0"
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
