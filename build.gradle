@@ -22,19 +22,18 @@ swaggerSources {
 	}
 }
 
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+// Sentry 연동을 위한 설정 정보
 sentry {
-	// Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
-	// This enables source context, allowing you to see your source
-	// code as part of your stack traces in Sentry.
 	includeSourceContext = true
 
 	org = "sookmyung-womens-university-it"
 	projectName = "java-spring-boot"
 	authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
-
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 // openapi3 스펙 생성 시 설정 정보
 openapi3 {
@@ -121,16 +120,16 @@ dependencies {
 	implementation("software.amazon.awssdk:bom:2.21.0")
 	implementation("software.amazon.awssdk:s3:2.21.0")
 
-	//OAuth2
+	// OAuth2
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-	//jwt
+	// jwt
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
-	//redis
+	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	// Feign
@@ -141,6 +140,9 @@ dependencies {
 
 	// Sentry
 	implementation "io.sentry:sentry-spring-boot-starter:4.3.0"
+
+	// AOP
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 

@@ -35,7 +35,7 @@ public class UserMissionController {
 	@PatchMapping("/image")
 	public ResponseEntity<ApiResponse<MissionImgUrlResponse>> getMissionImgUrl(@Valid @RequestBody final MissionImgUrlRequest request, final Principal principal) {
 		return ApiResponse.success(GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS,
-			userMissionService.getMissionImgUrl(request, getAuthenticatedUser()));
+			userMissionService.getMissionImgUrl(request, getUserFromPrincipal(principal)));
 	}
 
 	@GetMapping
