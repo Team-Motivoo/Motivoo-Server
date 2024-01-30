@@ -91,7 +91,7 @@ public class RequestApiInfo {
 				try {
 					final String[] methodUrl = (String[]) mappingClass.getMethod("value").invoke(annotation);
 					this.httpMethod = (mappingClass.getSimpleName().replace("Mapping", "")).toUpperCase();
-					this.url = String.format("%s%s", baseUrl, methodUrl.length > 0 ? "/"+methodUrl[0] : "");
+					this.url = String.format("%s%s", baseUrl, methodUrl.length > 0 ? methodUrl[0] : "");
 					this.name = (String) mappingClass.getMethod("name").invoke(annotation);
 				} catch (Exception e) {
 					// TODO 하위 예외 클래스로 변경

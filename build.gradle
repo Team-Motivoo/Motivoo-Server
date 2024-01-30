@@ -30,8 +30,8 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 sentry {
 	includeSourceContext = true
 
-	org = "sookmyung-womens-university-it"
-	projectName = "java-spring-boot"
+	org = "motivooteam"
+	projectName = "motivoo-server"
 	authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
 

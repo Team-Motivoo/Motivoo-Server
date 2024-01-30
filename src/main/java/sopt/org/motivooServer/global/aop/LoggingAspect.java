@@ -34,7 +34,7 @@ public class LoggingAspect {
 
 	private final ObjectMapper objectMapper;
 
-	@Pointcut("within(sopt.org.motivooServer.global.healthcheck..*)")  // 패키지 범위 설정
+	@Pointcut("within(*..*Controller)")  // 패키지 범위 설정
 	public void onRequest() {}
 
 	@Around("onRequest()")

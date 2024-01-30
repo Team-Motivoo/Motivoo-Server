@@ -32,4 +32,15 @@ public class SlackTestController {
 		}
 		return ResponseEntity.ok("Success Send to Sentry!");
 	}
+
+	@GetMapping(name = "Sentry 트랜잭션 테스트", value = "transcation")
+	public void sentryTransactionTest() {
+		System.out.println("sentryTransactionTest");
+	}
+
+	@GetMapping(name = "Sentry Exception Test", value = "exception")
+	public void sentryExceptionTest() throws Exception {
+		System.out.println("sentryExceptionTest");
+		throw new Exception("test");
+	}
 }
