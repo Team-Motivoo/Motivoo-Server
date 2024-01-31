@@ -51,7 +51,7 @@ public class RequestApiInfo {
 
 	// Access Token에서 회원정보 추출
 	private void setUser() {
-		this.userId = JwtTokenProvider.getAuthenticatedUser().toString();
+		this.userId = String.valueOf(JwtTokenProvider.getAuthenticatedUser());
 		// this.userName =
 	}
 

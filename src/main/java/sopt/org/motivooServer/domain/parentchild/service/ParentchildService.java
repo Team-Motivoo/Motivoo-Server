@@ -5,6 +5,7 @@ import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType
 import static sopt.org.motivooServer.domain.health.exception.HealthExceptionType.EXIST_ONBOARDING_INFO;
 import static sopt.org.motivooServer.domain.parentchild.exception.ParentchildExceptionType.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import org.springframework.stereotype.Service;
@@ -34,8 +35,10 @@ import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.exception.UserException;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
 import sopt.org.motivooServer.global.external.firebase.FirebaseService;
+import sopt.org.motivooServer.global.external.slack.SlackService;
 
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INVALID_USER_TYPE;
+import static sopt.org.motivooServer.global.response.SuccessType.*;
 
 @Slf4j
 @Service
@@ -47,6 +50,7 @@ public class ParentchildService {
     private final ParentchildRepository parentchildRepository;
     private final CalculateScore calculateScore;
     private final FirebaseService firebaseService;
+    private final SlackService slackService;
 
     private static final int RANDOM_STR_LEN = 8;
     private static final int MATCHING_SUCCESS = 2;
@@ -79,6 +83,13 @@ public class ParentchildService {
             throw new HealthException(EXCEED_HEALTH_NOTES_RANGE);
 
         healthRepository.save(health);
+
+        // Slack에 신규 유저 가입 알림 전송
+        try {
+            slackService.sendSuccess(LOGIN_SUCCESS);
+        } catch (IOException e) {
+            log.error("슬랙 알림 전송에 실패했습니다.");
+        }
 
         // 온보딩을 마친 유저의 걸음 수 데이터 DB에 추가
         /*try {

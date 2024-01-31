@@ -18,6 +18,8 @@ import com.slack.api.webhook.WebhookPayloads;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import sopt.org.motivooServer.domain.user.repository.UserRepository;
+import sopt.org.motivooServer.global.response.SuccessType;
 
 @Component
 @RequiredArgsConstructor
@@ -25,11 +27,16 @@ import lombok.extern.slf4j.Slf4j;
 public class SlackService {
 
 	@Value("${slack.webhook.url}")
-	private String webhookUrl;
+	private String errorUrl;
+	@Value("${slack.webhook.success}")
+	private String successUrl;
+
 	private final static String NEW_LINE = "\n";
 	private final static String DOUBLE_NEW_LINE = "\n\n";
 
 	private StringBuilder sb = new StringBuilder();
+
+	private final UserRepository userRepository;
 
 	// Slack으로 알림 보내기
 	public void sendAlert(Exception error, HttpServletRequest request) throws IOException {
@@ -40,10 +47,20 @@ public class SlackService {
 		List layoutBlocks = generateLayoutBlock(error, request);
 
 		// Slack의 sent API와 webhookURL을 통해 생성한 메시지 내용 전송
-		Slack.getInstance().send(webhookUrl, WebhookPayloads.payload(p ->
+		Slack.getInstance().send(errorUrl, WebhookPayloads.payload(p ->
 			p.username("Exception is detected 🚨")  // 메시지 전송 유저명
 				.iconUrl("<https://yt3.googleusercontent.com/ytc/AGIKgqMVUzRrhoo1gDQcqvPo0PxaJz7e0gqDXT0D78R5VQ=s900-c-k-c0x00ffffff-no-rj>")  // 메시지 전송 유저 아이콘 이미지 URL
 				.blocks(layoutBlocks)));  // 메시지 내용
+	}
+
+	public void sendSuccess(SuccessType successType) throws IOException {
+
+		List<LayoutBlock> layoutBlocks = generateSignInBlock(successType);
+
+		Slack.getInstance().send(successUrl, WebhookPayloads.payload(p ->
+				p.username("모티뿡 알리미")
+					.iconUrl("https://yt3.googleusercontent.com/ytc/AGIKgqMVUzRrhoo1gDQcqvPo0PxaJz7e0gqDXT0D78R5VQ=s900-c-k-c0x00ffffff-no-rj")
+					.blocks(layoutBlocks)));
 	}
 
 	// 전체 메시지가 담긴 LayoutBlock 생성
@@ -82,6 +99,35 @@ public class SlackService {
 
 		return sb.toString();
 	}
+
+
+	// 회원가입 성공 알림 LayoutBlock 생성
+	private List<LayoutBlock> generateSignInBlock(SuccessType successType) {
+		return Blocks.asBlocks(
+			getHeader("💨새로운 유저가 가입했습니다."),
+			Blocks.divider(),
+			getSection(generateSuccessMessage(successType)),
+			Blocks.divider(),
+			getSection(generateSignInMessage()),
+			Blocks.divider()
+		);
+	}
+
+	private String generateSuccessMessage(SuccessType successType) {
+		sb.setLength(0);
+		sb.append("*[🎉축하합니다!]*" + NEW_LINE + "" + DOUBLE_NEW_LINE);
+
+		return sb.toString();
+	}
+
+	private String generateSignInMessage() {
+		sb.setLength(0);
+		sb.append("*[🧾유저 가입 정보]*" + NEW_LINE);
+		sb.append(userRepository.count() + "번째 유저가 모티부와 함께 합니다!♥");
+
+		return sb.toString();
+	}
+
 
 	// 예외발생 클래스 정보 return
 	private String readRootStackTrace(Exception error) {
