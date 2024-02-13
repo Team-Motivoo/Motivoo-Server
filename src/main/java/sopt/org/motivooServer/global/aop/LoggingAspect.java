@@ -1,6 +1,5 @@
 package sopt.org.motivooServer.global.aop;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
@@ -23,10 +22,12 @@ import io.sentry.protocol.Request;
 import io.sentry.protocol.SentryException;
 import io.sentry.protocol.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Exception 발생 시 트랜잭션을 적용하고 SentryEvent에 정보를 담아 다시 던지도록 설록
  */
+@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -57,13 +58,11 @@ public class LoggingAspect {
 
 		// User 설정
 		final User user = new User();
-		user.setId(Optional.ofNullable(apiInfo.getUserId()).orElse("Unknown"));
-		user.setIpAddress(apiInfo.getIpAddress());
+		setUserInfo(user, apiInfo);
 
 		// 트랜잭션 설정 & 필터링
 		final ITransaction transaction = Sentry.startTransaction(requestMessage, "request-api");
-		transaction.setTag(SentryEventProcessor.TAG_KEY, SentryEventProcessor.TAG_VALUE);
-		transaction.setStatus(SpanStatus.OK);
+		setTransactionInfo(transaction);
 		Sentry.configureScope(scope -> {
 			scope.setRequest(request);
 			scope.setUser(user);
@@ -74,7 +73,8 @@ public class LoggingAspect {
 			return result;
 		} catch (Exception e) {
 			final StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
+			log.error(String.valueOf(sw));
+
 			final String exceptionAsString = sw.toString();
 
 			// Sentry Event 생성 및 설정
@@ -102,5 +102,15 @@ public class LoggingAspect {
 			// 트랜잭션 close
 			transaction.finish();
 		}
+	}
+
+	private void setUserInfo(User user, RequestApiInfo apiInfo) {
+		user.setId(Optional.ofNullable(apiInfo.getUserId()).orElse("Unknown"));
+		user.setIpAddress(apiInfo.getIpAddress());
+	}
+
+	private void setTransactionInfo(ITransaction transaction) {
+		transaction.setTag(SentryEventProcessor.TAG_KEY, SentryEventProcessor.TAG_VALUE);
+		transaction.setStatus(SpanStatus.OK);
 	}
 }
