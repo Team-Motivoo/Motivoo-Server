@@ -1,6 +1,7 @@
 package sopt.org.motivooServer.domain.auth.service;
 
 import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.*;
+import static sopt.org.motivooServer.global.response.SuccessType.*;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,10 @@ import sopt.org.motivooServer.domain.user.entity.SocialPlatform;
 import sopt.org.motivooServer.domain.user.entity.User;
 import sopt.org.motivooServer.domain.user.entity.UserType;
 import sopt.org.motivooServer.domain.user.repository.UserRepository;
+import sopt.org.motivooServer.global.external.slack.SlackService;
+import sopt.org.motivooServer.global.response.SuccessType;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,6 +56,7 @@ public class OauthService {
         String refreshToken = jwtTokenProvider.createRefreshToken();
         User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
         log.info("유저 아이디="+user.getId());
+
         String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(), null, null));
         tokenRedisRepository.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
         return LoginResponse.of(user, accessToken, refreshToken);
