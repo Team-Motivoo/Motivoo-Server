@@ -40,7 +40,7 @@ jobs:
           cd ./motivoo-api/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
           echo "${{ secrets.APPLICATION_TEST }}" > ./application.yml
-          cd 
+          cd ~
           cd ./motivoo-domain/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
 

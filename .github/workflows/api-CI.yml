@@ -47,7 +47,7 @@ jobs:
           # yml을 생성할 디렉터리로 작업 디렉터리 이동
           cd ./motivoo-api/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
-          cd 
+          cd ~
           cd ./motivoo-domain/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
         working-directory: ${{ env.working-directory }}
