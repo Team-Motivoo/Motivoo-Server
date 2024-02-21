@@ -1,9 +1,8 @@
 package sopt.org.motivoo.domain.parentchild.service;
 
+import static sopt.org.motivoo.common.response.SuccessType.*;
 import static sopt.org.motivoo.domain.health.exception.HealthExceptionType.*;
 import static sopt.org.motivoo.domain.parentchild.exception.ParentchildExceptionType.*;
-import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
-import static sopt.org.motivoo.common.response.SuccessType.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,27 +25,28 @@ import sopt.org.motivoo.domain.health.entity.ExerciseType;
 import sopt.org.motivoo.domain.health.entity.Health;
 import sopt.org.motivoo.domain.health.entity.HealthNote;
 import sopt.org.motivoo.domain.health.exception.HealthException;
-import sopt.org.motivoo.domain.health.repository.HealthRepository;
+import sopt.org.motivoo.domain.health.repository.HealthRetriever;
 import sopt.org.motivoo.domain.health.service.CalculateScore;
 import sopt.org.motivoo.domain.parentchild.dto.request.InviteCommand;
 import sopt.org.motivoo.domain.parentchild.dto.response.InviteResult;
 import sopt.org.motivoo.domain.parentchild.dto.response.MatchingResult;
 import sopt.org.motivoo.domain.parentchild.entity.Parentchild;
 import sopt.org.motivoo.domain.parentchild.exception.ParentchildException;
-import sopt.org.motivoo.domain.parentchild.repository.ParentchildRepository;
+import sopt.org.motivoo.domain.parentchild.repository.ParentchildRetriever;
 import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.entity.UserType;
-import sopt.org.motivoo.domain.user.exception.UserException;
-import sopt.org.motivoo.domain.user.repository.UserRepository;
+import sopt.org.motivoo.domain.user.repository.UserRetriever;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ParentchildService {
-    private final HealthRepository healthRepository;
-    private final UserRepository userRepository;
-    private final ParentchildRepository parentchildRepository;
+
+    private final UserRetriever userRetriever;
+    private final HealthRetriever healthRetriever;
+    private final ParentchildRetriever parentchildRetriever;
+
     private final CalculateScore calculateScore;
     private final FirebaseService firebaseService;
     private final SlackService slackService;
@@ -56,13 +56,14 @@ public class ParentchildService {
 
     @Transactional
     public OnboardingResult onboardInput(Long userId, OnboardingCommand request){
-        User user = getUserById(userId);
+        User user = userRetriever.getUserById(userId);
 
         log.info("user="+user.getNickname()+"유무="+request.isExercise()+"타입="+request.exerciseType()
                 +"횟수="+request.exerciseCount()+"시간="+request.exerciseTime()+"주의="+request.exerciseNote());
 
-        if(!healthRepository.findByUser(user).isEmpty()) //두번 API 호출하는 것을 막음
+        if (healthRetriever.existsHealthByUser(user)) {   // 두번 API 호출하는 것을 막음
             throw new HealthException(EXIST_ONBOARDING_INFO);
+        }
 
         user.updateOnboardingInfo(UserType.of(request.type()), request.age());
 
@@ -73,15 +74,14 @@ public class ParentchildService {
                 .exerciseFrequency(ExerciseFrequency.of(request.exerciseCount()))
                 .exerciseTime(ExerciseTime.of(request.exerciseTime()))
                 .healthNotes(HealthNote.of(request.exerciseNote()))
-                .exerciseLevel(ExerciseLevel.BEGINNER)
-                .build();
+                .exerciseLevel(ExerciseLevel.BEGINNER).build();
         log.info("health user="+health.getId());
 
         //운동 특이사항 최대 3개까지 선택 가능
         if(health.getHealthNotes().size()>3)
             throw new HealthException(EXCEED_HEALTH_NOTES_RANGE);
 
-        healthRepository.save(health);
+        healthRetriever.save(health);
 
         // Slack에 신규 유저 가입 알림 전송
         try {
@@ -116,51 +116,49 @@ public class ParentchildService {
         //초대 하는 입장
         user.addParentChild(parentchild);
 
-        parentchildRepository.save(parentchild);
+        parentchildRetriever.saveParentchild(parentchild);
         return new OnboardingResult(userId, inviteCode, health.getExerciseLevel().getValue());
     }
 
 
     @Transactional
     public InviteResult validateInviteCode(Long userId, InviteCommand request){
-        User user = getUserById(userId);
-//        //매칭 성공시 API 두 번 호출하는 것을 막음
-//        if(user.getParentchild()!=null){
-//            throw new ParentchildException(INVALID_PARENTCHILD_RELATION);
-//        }
 
-        Parentchild parentchild = parentchildRepository.findByInviteCode(request.inviteCode());
+        User user = userRetriever.getUserById(userId);
 
-        log.info("parentchild="+parentchild);
-        //잘못된 초대 코드를 입력하는 경우
-        if(parentchild == null)
+        // TODO 이미 매칭이 이루어진 경우에 대한 예외처리
+
+        Parentchild parentchild = parentchildRetriever.getByInviteCode(request.inviteCode());
+
+        // 잘못된 초대 코드를 입력하는 경우
+        if (parentchild == null)
             return new InviteResult(userId, false, false, false);
 
-        //나의 매칭이 완료된 경우
+        // 나의 매칭이 완료된 경우
         if(user.getParentchild()!=null && user.getParentchild().isMatched() == true)
             throw new ParentchildException(MATCH_ALREADY_COMPLETED);
 
-        //상대방이 이미 매칭이 완료된 경우
-        if(userRepository.findUserByParentchild(parentchild).size()>=2)
+        // 상대방이 이미 매칭이 완료된 경우
+        if(userRetriever.getUserByParentchild(parentchild).size()>=2)
             throw new ParentchildException(MATCH_ALREADY_COMPLETED);
 
-        //부모-부모이거나 자녀-자녀인 경우
-        if(user.getType() == userRepository.findUserByParentchild(parentchild).get(0).getType())
+        // 부모-부모이거나 자녀-자녀인 경우
+        if(user.getType() == userRetriever.getUserByParentchild(parentchild).get(0).getType())
             throw new ParentchildException(INVALID_PARENTCHILD_RELATION);
 
 
         if (!parentchild.isMatched()) {
             //1. 온보딩 정보 입력을 한 적이 있고 2. 내가 발급한 초대 코드인 경우
-            if (!healthRepository.findByUser(user).isEmpty() && user.getParentchild() == parentchild)
+            if (healthRetriever.existsHealthByUser(user) && user.getParentchild() == parentchild)
                 return new InviteResult(userId, false, true, true);
                 //1. 온보딩 정보 입력을 한 적이 있고 2. 내가 발급한 초대 코드가 아닌 경우 [매칭 완료]
-            else if (!healthRepository.findByUser(user).isEmpty() && user.getParentchild() != parentchild) {
+            else if (healthRetriever.existsHealthByUser(user) && user.getParentchild() != parentchild) {
                 parentchild.matchingSuccess();
                 user.addParentChild(parentchild);
                 return new InviteResult(userId, true, false, true);
             }
             //1. 온보딩 정보 입력을 한 적이 없고 2. 내가 발급한 초대 코드가 아닌 경우 [매칭 완료]
-            else if (healthRepository.findByUser(user).isEmpty() && user.getParentchild() != parentchild) {
+            else if (!healthRetriever.existsHealthByUser(user) && user.getParentchild() != parentchild) {
                 parentchild.matchingSuccess();
                 user.addParentChild(parentchild);
                 return new InviteResult(userId, true, false, false);
@@ -175,27 +173,30 @@ public class ParentchildService {
     }
 
     public CheckOnboardingResult checkOnboardingInfo(Long userId){
-        User user = getUserById(userId);
+        User user = userRetriever.getUserById(userId);
 
-        if(!healthRepository.findByUser(user).isEmpty())
+        if (healthRetriever.existsHealthByUser(user))
             return new CheckOnboardingResult(true);
         return new CheckOnboardingResult(false);
     }
 
     public MatchingResult checkMatching(Long userId){
-        User user = getUserById(userId);
-        if(user.getParentchild()!=null){
-            int matcedCnt = userRepository.countByParentchild(user.getParentchild());
-            log.info("매칭된 숫자="+matcedCnt);
-            if(matcedCnt == MATCHING_SUCCESS) {
-                Long opponentUserId = userRepository.getOpponentId(user.getParentchild(), userId);
-                log.info("상대편 유저 아이디="+opponentUserId);
+
+        User user = userRetriever.getUserById(userId);
+
+        if (user.getParentchild() != null) {
+            int matchedCnt = userRetriever.getMatchedCnt(user.getParentchild());
+
+            if(matchedCnt == MATCHING_SUCCESS) {
+                Long opponentUserId = userRetriever.getOpponentUserId(user.getParentchild(), userId);
                 return new MatchingResult(true, userId, opponentUserId);
             }
-            //초대 코드만 생성하고 아직 매칭에 성공하지 못한 경우
+
+            // 초대 코드만 생성하고 아직 매칭에 성공하지 못한 경우
             throw new ParentchildException(MATCHING_NOT_FOUND);
         }
-        //부모-자식 관계가 없는 경우
+
+        // 부모-자식 관계가 없는 경우
         throw new ParentchildException(PARENTCHILD_NOT_FOUND);
     }
 
@@ -204,6 +205,7 @@ public class ParentchildService {
             throw new ParentchildException(MATCH_ALREADY_COMPLETED);
         }
     }
+
     private String createInviteCode(){
         Random random = new Random();
         StringBuilder randomBuf = new StringBuilder();
@@ -225,10 +227,4 @@ public class ParentchildService {
         return randomBuf.toString();
     }
 
-    private User getUserById(Long userId) {
-        log.info("유저 아이디="+userId);
-        return userRepository.findById(userId).orElseThrow(
-                () -> new UserException(INVALID_USER_TYPE)
-        );
-    }
 }

@@ -15,6 +15,5 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
 
 	@Modifying
 	@Query("update Mission m set m.iconUrl=?1 where m.iconUrl = ''")
-	void updateIcon(String iconUrll);
-
+	void updateIcon(String iconUrl);
 }

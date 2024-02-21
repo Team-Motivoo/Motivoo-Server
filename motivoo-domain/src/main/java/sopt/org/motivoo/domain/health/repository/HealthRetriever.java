@@ -2,6 +2,8 @@ package sopt.org.motivoo.domain.health.repository;
 
 import static sopt.org.motivoo.domain.health.exception.HealthExceptionType.*;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,21 @@ public class HealthRetriever {
 			() -> new HealthException(NOT_EXIST_USER_HEALTH));
 	}
 
+	// 유저의 건강정보 조회 (주의사항 반영 의도)
+	public Health getHealthByUser(User user) {
+		return healthRepository.findByUser(user).orElseThrow(
+			() -> new HealthException(HEALTH_NOT_FOUND));
+	}
+
 	public void deleteByUser(User u) {
 		healthRepository.deleteByUser(u);
+	}
+
+	public boolean existsHealthByUser(User user) {
+		return healthRepository.findByUser(user).isPresent();
+	}
+
+	public Health save(Health health) {
+		return healthRepository.save(health);
 	}
 }

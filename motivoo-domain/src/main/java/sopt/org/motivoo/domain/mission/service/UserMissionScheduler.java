@@ -21,16 +21,18 @@ import sopt.org.motivoo.domain.external.s3.S3Service;
 import sopt.org.motivoo.domain.mission.entity.CompletedStatus;
 import sopt.org.motivoo.domain.mission.entity.UserMission;
 import sopt.org.motivoo.domain.mission.repository.UserMissionRepository;
+import sopt.org.motivoo.domain.mission.repository.UserMissionRetriever;
 import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.repository.UserRepository;
+import sopt.org.motivoo.domain.user.repository.UserRetriever;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class UserMissionScheduler {
 
-	private final UserMissionRepository userMissionRepository;
-	private final UserRepository userRepository;
+	private final UserMissionRetriever userMissionRetriever;
+	private final UserRetriever userRetriever;
 
 	private final S3Service s3Service;
 	private final PlatformTransactionManager transactionManager;  // 수동 트랜잭션 처리를 위한 주입
@@ -44,11 +46,11 @@ public class UserMissionScheduler {
 	public void setCompletedStatus() {
 		log.info("미션 달성상태 업데이트 스케줄러 진입");
 
-		List<UserMission> missionsByCreatedAt = userMissionRepository.findUserMissionsByCreatedAt(
-			LocalDate.now().minusDays(1));
+		List<UserMission> missionsByCreatedAt = userMissionRetriever.getUserMissionsByCreatedDt(LocalDate.now().minusDays(1));
 		log.info("어제의 UserMission 개수: {}개", missionsByCreatedAt.size());
 		for (UserMission userMission : missionsByCreatedAt) {
 
+			// 수동 트랜잭션 처리
 			TransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
 			TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
 
@@ -87,13 +89,14 @@ public class UserMissionScheduler {
 		}
 	}
 
+
 	// 2. 오늘의 미션 선택지가 구성되었지만, 선정하지 않고 그냥 넘어간 경우
 	// @Scheduled(cron = "* */2 * * * *", zone = "Asia/Seoul")
 	@Scheduled(cron = "@daily", zone = "Asia/Seoul")
 	public void setClearPreUserMissionChoices() {
 		log.info("미션 선택지 리스트 초기화 스케줄러 진입");
 
-		List<User> users = userRepository.findAll();
+		List<User> users = userRetriever.findAll();
 		log.info("모든 User 개수: {}개", users.size());
 		for (User user : users) {
 
@@ -124,7 +127,7 @@ public class UserMissionScheduler {
 	public void deleteImgBefore30Days() {
 		log.info("30일 동안 보관한 이미지는 삭제");
 		LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
-		userMissionRepository.findUserMissionsByCreatedAtBefore(thirtyDaysAgo)
+		userMissionRetriever.getUserMissionsByCreatedAtBefore(thirtyDaysAgo)
 			.forEach(um -> s3Service.deleteImage(um.getImgUrl()));
 	}
 

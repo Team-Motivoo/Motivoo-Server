@@ -1,16 +1,13 @@
 package sopt.org.motivoo.domain.mission.service;
 
 import static sopt.org.motivoo.domain.external.s3.S3BucketDirectory.*;
-import static sopt.org.motivoo.domain.health.exception.HealthExceptionType.*;
 import static sopt.org.motivoo.domain.mission.entity.CompletedStatus.*;
 import static sopt.org.motivoo.domain.mission.exception.MissionExceptionType.*;
-import static sopt.org.motivoo.domain.parentchild.exception.ParentchildExceptionType.*;
 import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -34,8 +31,7 @@ import sopt.org.motivoo.domain.external.s3.S3Service;
 import sopt.org.motivoo.domain.health.entity.ExerciseLevel;
 import sopt.org.motivoo.domain.health.entity.Health;
 import sopt.org.motivoo.domain.health.entity.HealthNote;
-import sopt.org.motivoo.domain.health.exception.HealthException;
-import sopt.org.motivoo.domain.health.repository.HealthRepository;
+import sopt.org.motivoo.domain.health.repository.HealthRetriever;
 import sopt.org.motivoo.domain.mission.dto.request.MissionImgUrlCommand;
 import sopt.org.motivoo.domain.mission.dto.request.MissionStepStatusCommand;
 import sopt.org.motivoo.domain.mission.dto.request.TodayMissionChoiceCommand;
@@ -51,27 +47,28 @@ import sopt.org.motivoo.domain.mission.entity.MissionType;
 import sopt.org.motivoo.domain.mission.entity.UserMission;
 import sopt.org.motivoo.domain.mission.entity.UserMissionChoices;
 import sopt.org.motivoo.domain.mission.exception.MissionException;
-import sopt.org.motivoo.domain.mission.repository.MissionQuestRepository;
-import sopt.org.motivoo.domain.mission.repository.MissionRepository;
-import sopt.org.motivoo.domain.mission.repository.UserMissionChoicesRepository;
-import sopt.org.motivoo.domain.mission.repository.UserMissionRepository;
-import sopt.org.motivoo.domain.parentchild.exception.ParentchildException;
+import sopt.org.motivoo.domain.mission.repository.MissionQuestRetriever;
+import sopt.org.motivoo.domain.mission.repository.MissionRetriever;
+import sopt.org.motivoo.domain.mission.repository.UserMissionChoicesRetriever;
+import sopt.org.motivoo.domain.mission.repository.UserMissionRetriever;
 import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.entity.UserType;
 import sopt.org.motivoo.domain.user.exception.UserException;
 import sopt.org.motivoo.domain.user.repository.UserRepository;
+import sopt.org.motivoo.domain.user.repository.UserRetriever;
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserMissionService {
-	private final UserMissionRepository userMissionRepository;
-	private final UserMissionChoicesRepository userMissionChoicesRepository;
-	private final UserRepository userRepository;
-	private final MissionRepository missionRepository;
-	private final MissionQuestRepository missionQuestRepository;
-	private final HealthRepository healthRepository;
+	private final UserMissionRetriever userMissionRetriever;
+	private final UserMissionChoicesRetriever userMissionChoicesRetriever;
+	private final UserRetriever userRetriever;
+	private final MissionRetriever missionRetriever;
+	private final MissionQuestRetriever missionQuestRetriever;
+	private final HealthRetriever healthRetriever;
+
 	private final S3Service s3Service;
 	private final FirebaseService firebaseService;
 
@@ -79,7 +76,7 @@ public class UserMissionService {
 
 	@Transactional
 	public MissionImgUrlResult getMissionImgUrl(final MissionImgUrlCommand request, final Long userId) {
-		User user = getUserById(userId);
+		User user = userRetriever.getUserById(userId);
 		checkedUserMissionEmpty(user);
 		checkMatchedUserWithdraw(user);
 
@@ -99,8 +96,8 @@ public class UserMissionService {
 
 	@Transactional
 	public MissionHistoryResult getUserMissionHistory(final Long userId) {
-		User myUser = getUserById(userId);
-		User opponentUser = getMatchedUserWith(myUser);
+		User myUser = userRetriever.getUserById(userId);
+		User opponentUser = userRetriever.getMatchedUserWith(myUser);
 		if (myUser.getUserMissions().isEmpty()) {
 			return MissionHistoryResult.of(myUser);
 		}
@@ -146,7 +143,7 @@ public class UserMissionService {
 	}
 
 	private Map<LocalDate, List<UserMission>> groupUserMissionsByDate(Long myUserId, Long opponentUserId) {
-		List<User> users = userRepository.findAllByIds(Arrays.asList(myUserId, opponentUserId));  // 둘 중 1명이 탈퇴할 경우를 대비, ID값으로만 조회
+		List<User> users = userRetriever.getUsersByIds(myUserId, opponentUserId);  // 둘 중 1명이 탈퇴할 경우를 대비, ID값으로만 조회
 		List<UserMission> emptyUserMissions = new ArrayList<>();
 
 		// 두 유저가 가진 모든 UserMission의 createdAt 날짜 집합
@@ -172,7 +169,7 @@ public class UserMissionService {
 				}
 			});
 		});
-		userMissionRepository.saveAll(emptyUserMissions);
+		userMissionRetriever.saveAll(emptyUserMissions);
 
 		// 그룹화
 		Map<LocalDate, List<UserMission>> dateGroups = users.stream()
@@ -187,12 +184,12 @@ public class UserMissionService {
 
 	@Transactional
 	public Long choiceTodayMission(final TodayMissionChoiceCommand request, final Long userId) {
-		User user = getUserById(userId);
+		User user = userRetriever.getUserById(userId);
 		checkMatchedUserWithdraw(user);
 
 		validateTodayMissionRequest(request.missionId(), user);
 
-		Mission mission = getMissionById(request.missionId());
+		Mission mission = missionRetriever.getMissionById(request.missionId());
 		if (!user.getUserMissions().isEmpty()) {
 			UserMission currentMission = user.getCurrentUserMission();
 
@@ -218,8 +215,8 @@ public class UserMissionService {
 
 	@Transactional
 	public MissionStepStatusResult getMissionCompleted(final MissionStepStatusCommand request, final Long userId) {
-		User myUser = getUserById(userId);
-		User opponentUser = getMatchedUserWith(myUser);
+		User myUser = userRetriever.getUserById(userId);
+		User opponentUser = userRetriever.getMatchedUserWith(myUser);
 
 		int myStep = request.myStepCount();
 		int opponentStep = request.opponentStepCount();
@@ -287,8 +284,8 @@ public class UserMissionService {
 	}
 
 	public OpponentGoalStepsResult getOpponentGoalSteps(final Long userId) {
-		User myUser = getUserById(userId);
-		User opponentUser = getMatchedUserWith(myUser);
+		User myUser = userRetriever.getUserById(userId);
+		User opponentUser = userRetriever.getMatchedUserWith(myUser);
 
 		if (!opponentUser.getUserMissions().isEmpty()) {
 			UserMission opponentCurrentUserMission = opponentUser.getCurrentUserMission();
@@ -310,7 +307,7 @@ public class UserMissionService {
 
 	@Transactional  // TODO 여기 최대한 분리해보자
 	public TodayMissionResult getTodayMission(final Long userId) {
-		User user = getUserById(userId);
+		User user = userRetriever.getUserById(userId);
 		checkMatchedUserWithdraw(user);
 		log.info("TodayMissionChoices이 있을까, 없을까? {}개 있음 ㅋㅋ", user.getUserMissionChoice().size());
 
@@ -380,7 +377,7 @@ public class UserMissionService {
 			UserMissionChoices missionChoice = UserMissionChoices.builder()
 				.mission(missionChoicesFiltered.get(i))
 				.user(user).build();
-			missionChoices.add(userMissionChoicesRepository.save(missionChoice));
+			missionChoices.add(userMissionChoicesRetriever.save(missionChoice));
 		}
 
 		// user.setPreUserMissionChoice(missionChoices);
@@ -390,10 +387,12 @@ public class UserMissionService {
 		return missionChoices;
 	}
 
+
+
 	private List<UserMissionChoices> filterTodayUserMissionV2(User user) {
 		// 부모 미션 or 자식 미션 리스트
-		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType());
-		Health health = getHealthByUser(user);
+		List<Mission> missions = missionRetriever.getMissionsByTarget(user);
+		Health health = healthRetriever.getHealthByUser(user);
 		List<HealthNote> userNotes = health.getHealthNotes();
 		ExerciseLevel exerciseLevel = health.getExerciseLevel();
 
@@ -408,7 +407,7 @@ public class UserMissionService {
 			.map(mission -> UserMissionChoices.builder()
 				.mission(mission)
 				.user(user).build())
-			.map(userMissionChoicesRepository::save)
+			.map(userMissionChoicesRetriever::save)
 			.toList();
 	}
 
@@ -417,10 +416,9 @@ public class UserMissionService {
 		final List<Mission> missionChoicesFiltered = new ArrayList<>();
 
 		// 부모 미션 or 자식 미션 리스트
-		List<Mission> missions = missionRepository.findMissionsByTarget(user.getType());
+		List<Mission> missions = missionRetriever.getMissionsByTarget(user);
 		log.info("{} 미션 리스트 가져옴", user.getType().getValue());
-		Health health = getHealthByUser(user);
-		log.info("Health: {}", health.getId());
+		Health health = healthRetriever.getHealthByUser(user);
 
 		List<HealthNote> userNotes = health.getHealthNotes();
 		ExerciseLevel exerciseLevel = health.getExerciseLevel();
@@ -443,7 +441,7 @@ public class UserMissionService {
 
 	@NotNull
 	private UserMission createTodayUserMission(Mission mission, User user) {
-		MissionQuest missionQuest = getRandomMissionQuest();
+		MissionQuest missionQuest = missionQuestRetriever.getRandomMissionQuest();
 
 		UserMission userMission = UserMission.builder()
 			.mission(mission)
@@ -451,29 +449,23 @@ public class UserMissionService {
 			.user(user)
 			.completedStatus(IN_PROGRESS).build();
 
-		userMissionRepository.save(userMission);
+		userMissionRetriever.saveUserMission(userMission);
 		user.addUserMission(userMission);
 		return userMission;
 	}
 
-	private MissionQuest getRandomMissionQuest() {
-		MissionQuest missionQuest = missionQuestRepository.findRandomMissionQuest();
-		if (missionQuest == null) {
-			throw new MissionException(MISSION_QUEST_NOT_FOUND);
-		}
-		return missionQuest;
-	}
+	
 
 	@NotNull
 	private UserMission createEmptyUserMission(User user, LocalDate date) {
 		UserMission um = UserMission.builderForEmpty()
 			.completedStatus(NONE)
 			.user(user)
-			.mission(getEmptyMission())
-			.missionQuest(getRandomMissionQuest())
+			.mission(missionRetriever.getEmptyMission())
+			.missionQuest(missionQuestRetriever.getRandomMissionQuest())
 			.build();
 
-		userMissionRepository.save(um);
+		userMissionRetriever.saveUserMission(um);
 		um.updateCreatedAt(date.atStartOfDay());  // 동일한 날짜로 세팅
 		user.addUserMission(um);
 		return um;
@@ -481,7 +473,7 @@ public class UserMissionService {
 
 	// 매칭된 유저의 탈퇴 여부 검사
 	private void checkMatchedUserWithdraw(User user) {
-		User opponentUser = getMatchedUserWith(user);
+		User opponentUser = userRetriever.getMatchedUserWith(user);
 		if (opponentUser.isDeleted()) {
 			throw new UserException(ALREADY_WITHDRAW_USER);
 		}
@@ -517,45 +509,11 @@ public class UserMissionService {
 		return true;
 	}
 
-	private User getUserById(Long userId) {
-		return userRepository.findById(userId).orElseThrow(
-			() -> new UserException(USER_NOT_FOUND));
-	}
-
-	private Mission getMissionById(Long missionId) {
-		return missionRepository.findById(missionId).orElseThrow(
-			() -> new MissionException(MISSION_NOT_FOUND));
-	}
-
-	private UserMission getUserMission(Long userMissionId) {
-		return userMissionRepository.findById(userMissionId).orElseThrow(
-			() -> new MissionException(USER_MISSION_NOT_FOUND));
-	}
-
-	// 자신과 매칭된 부모자녀 유저 조회
-	private User getMatchedUserWith(User user) {
-		return userRepository.findByIdAndParentchild(user.getId(), user.getParentchild()).orElseThrow(
-			() -> new ParentchildException(NOT_EXIST_PARENTCHILD_USER));
-	}
-
-	// 유저의 건강정보 조회 (주의사항 반영 의도)
-	private Health getHealthByUser(User user) {
-		return healthRepository.findByUser(user).orElseThrow(
-			() -> new HealthException(HEALTH_NOT_FOUND));
-	}
-
-	// 미션 히스토리 - 상대방의 오늘의 미션 미선정 시
-	private Mission getEmptyMission() {
-		return missionRepository.findMissionsByTarget(UserType.NONE).get(0);
-	}
-
-
-
 
 	// 데모데이용 더미 미션 히스토리 생성
 	@Transactional
 	public void demoHistory(final Long parentchildId) {
-		List<User> parentchildUsers = userRepository.findUsersByParentchildId(parentchildId);
+		List<User> parentchildUsers = userRetriever.getUsersByParentchildId(parentchildId);
 		if (parentchildUsers.size() == 2) {
 			createUserMissionHistoryDummy(parentchildUsers.get(0), parentchildUsers.get(1));
 		}
@@ -570,18 +528,20 @@ public class UserMissionService {
 		UserMission userMission = UserMission.builderForDemo()
 			.completedStatus(completedStatus)
 			.mission(getRandomSingleMission(getFilteredMissions(user)))
-			.missionQuest(getRandomMissionQuest())
+			.missionQuest(missionQuestRetriever.getRandomMissionQuest())
 			.user(user).build();
 
 		user.addUserMission(userMission);
-		userMissionRepository.save(userMission);
+		userMissionRetriever.saveUserMission(userMission);
 
 		userMission.updateImgUrl(imgUrl);
 		userMission.updateCreatedAt(createdAt);
 		userMission.updateUpdatedAt(createdAt);
 
-		userMissionRepository.save(userMission);
+		userMissionRetriever.saveUserMission(userMission);
 	}
+
+
 
 	private void createUserMissionHistoryDummy(User user, User matchedUser) {
 		createUserMission(user, "https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/um2.jpg", SUCCESS, LocalDateTime.of(2024, 1, 18, 12, 0, 0));
