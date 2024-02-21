@@ -1,4 +1,4 @@
-package sopt.org.motivoo.domain.config;
+package sopt.org.motivoo.api.config;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivoo.domain.auth.config.CustomAccessDeniedHandler;
 import sopt.org.motivoo.domain.auth.config.CustomJwtAuthenticationEntryPoint;
-import sopt.org.motivoo.domain.auth.config.JwtAuthenticationFilter;
+import sopt.org.motivoo.domain.auth.config.jwt.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity

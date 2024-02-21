@@ -20,7 +20,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import sopt.org.motivoo.domain.auth.config.CustomJwtAuthenticationEntryPoint;
-import sopt.org.motivoo.domain.auth.config.JwtTokenProvider;
+import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.config.RedisConfig;
 import sopt.org.motivoo.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivoo.domain.external.firebase.FirebaseService;

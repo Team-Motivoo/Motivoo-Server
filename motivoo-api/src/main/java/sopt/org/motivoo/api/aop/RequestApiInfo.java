@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
-import sopt.org.motivoo.domain.auth.config.JwtTokenProvider;
+import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 
 /**
  * Sentry 로그 수집 시 해당 AOP를 이용하여 트랜잭션 및 이벤트 적용

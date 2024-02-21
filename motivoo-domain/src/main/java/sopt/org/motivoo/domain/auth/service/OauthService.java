@@ -1,6 +1,7 @@
 package sopt.org.motivoo.domain.auth.service;
 
-import static sopt.org.motivoo.domain.auth.config.JwtTokenProvider.*;
+
+import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.*;
 
 import java.util.List;
 import java.util.Map;
@@ -15,8 +16,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import sopt.org.motivoo.domain.auth.config.JwtTokenProvider;
+
 import sopt.org.motivoo.domain.auth.config.UserAuthentication;
+import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.dto.request.OauthTokenCommand;
 import sopt.org.motivoo.domain.auth.dto.response.LoginResult;
 import sopt.org.motivoo.domain.auth.repository.TokenRedisRepository;

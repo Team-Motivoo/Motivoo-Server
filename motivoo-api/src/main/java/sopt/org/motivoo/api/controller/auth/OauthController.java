@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.slack.api.model.Login;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.api.controller.auth.dto.request.OauthTokenRequest;
@@ -20,7 +18,7 @@ import sopt.org.motivoo.api.controller.auth.dto.request.RefreshRequest;
 import sopt.org.motivoo.api.controller.auth.dto.response.LoginResponse;
 import sopt.org.motivoo.api.controller.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivoo.common.response.ApiResponse;
-import sopt.org.motivoo.domain.auth.config.JwtTokenProvider;
+import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.service.OauthService;
 import sopt.org.motivoo.domain.user.service.UserService;
 

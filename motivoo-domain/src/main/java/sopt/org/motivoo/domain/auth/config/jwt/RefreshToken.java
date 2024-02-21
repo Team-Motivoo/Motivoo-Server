@@ -1,4 +1,4 @@
-package sopt.org.motivoo.api.controller.auth.dto.redis;
+package sopt.org.motivoo.domain.auth.config.jwt;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,7 +1,7 @@
 package sopt.org.motivoo.api.controller.user;
 
 import static sopt.org.motivoo.common.response.SuccessType.*;
-import static sopt.org.motivoo.domain.auth.config.JwtTokenProvider.*;
+import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.*;
 
 import java.security.Principal;
 

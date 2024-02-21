@@ -1,4 +1,4 @@
-package sopt.org.motivoo.domain.auth.config;
+package sopt.org.motivoo.domain.auth.config.jwt;
 
 
 import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
@@ -19,6 +19,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.common.advice.BusinessException;
+import sopt.org.motivoo.domain.auth.config.UserAuthentication;
 
 @Slf4j
 @Component

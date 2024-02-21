@@ -1,4 +1,4 @@
-package sopt.org.motivoo.domain.auth.config;
+package sopt.org.motivoo.domain.auth.config.jwt;
 
 import static java.util.Objects.*;
 import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
@@ -25,11 +25,10 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.common.advice.BusinessException;
+import sopt.org.motivoo.domain.auth.config.UserAuthentication;
 import sopt.org.motivoo.domain.auth.dto.response.OauthTokenResult;
 import sopt.org.motivoo.domain.auth.repository.TokenRedisRepository;
-import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.exception.UserException;
-import sopt.org.motivoo.domain.user.repository.UserRepository;
 
 @Slf4j
 @Component
