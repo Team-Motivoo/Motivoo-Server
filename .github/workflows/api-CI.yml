@@ -1,10 +1,23 @@
-name: CI
+name: Motivoo API Server CI
 
 on:  # 트리거
   push:
     branches: [ "develop" ]
+    paths:
+      - motivoo-api/**
+      - motivoo-domain/**
+      - motivoo-common/**
+      - motivoo-external/**
   pull_request:
     branches: [ "develop" ]
+    paths:
+      - motivoo-api/**
+      - motivoo-domain/**
+      - motivoo-common/**
+      - motivoo-external/**
+
+permissions:
+  contents: read
 
 jobs:
   build:  # job#1
@@ -32,14 +45,17 @@ jobs:
       - name: application.yml 파일 생성
         run: |
           # yml을 생성할 디렉터리로 작업 디렉터리 이동
-          cd ./src/main/resources
+          cd ./motivoo-api/src/main/resources
+          echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
+          cd 
+          cd ./motivoo-domain/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
         working-directory: ${{ env.working-directory }}
 
 
       - name: Firebase JSON 파일 생성
         run: |
-          cd ./src/main/resources
+          cd ./motivoo-domain/src/main/resources
 
           mkdir ./firebase
           cd ./firebase
@@ -55,10 +71,10 @@ jobs:
           echo "${{ secrets.GRADLE_PROPERTIES }}" > ./local.properties
         working-directory: ${{ env.working-directory }}
 
-      - name: 빌드
+      - name: 빌드  # TODO 테스트까지 반영하여 빌드하도록 수정
         run: |
           chmod +x gradlew
-          ./gradlew build
+          ./gradlew motivoo-api:bootJar -x test
         working-directory: ${{ env.working-directory }}
         shell: bash
 

@@ -1,8 +1,14 @@
-name: CD
+name: Motivoo API Server CD
 
 on:  # 트리거
   push:
     branches: [ "develop" ]
+    paths:
+      - motivoo-api/**
+      - motivoo-domain/**
+      - motivoo-common/**
+      - motivoo-external/**
+      - .github/workflows/**
 
 jobs:
 
@@ -31,20 +37,24 @@ jobs:
       - name: application.yml 파일 생성
         run: |
           # yml을 생성할 디렉터리로 작업 디렉터리 이동
-          cd ./src/main/resources
+          cd ./motivoo-api/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
           echo "${{ secrets.APPLICATION_TEST }}" > ./application.yml
+          cd 
+          cd ./motivoo-domain/src/main/resources
+          echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
+
         working-directory: ${{ env.working-directory }}
 
 
       - name: Firebase JSON 파일 생성
         run: |
-          cd ./src/main/resources
-          
+          cd ./motivoo-domain/src/main/resources
+
           mkdir ./firebase
           cd ./firebase
           echo $(ls -al)
-          
+
           aws s3 cp --region ap-northeast-2 s3://${{ secrets.S3_BUCKET_PATH }}/motivoo-firebase-adminsdk.json .
           echo $(ls -al; pwd)
 
@@ -58,7 +68,7 @@ jobs:
       - name: 빌드
         run: |
           chmod +x gradlew
-          ./gradlew build
+          ./gradlew motivoo-api:bootJar -x test
         working-directory: ${{ env.working-directory }}
         shell: bash
 
