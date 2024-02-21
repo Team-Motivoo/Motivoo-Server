@@ -22,4 +22,8 @@ public class ParentchildRetriever {
 		return parentchildRepository.findByInviteCode(inviteCode).orElseThrow(
 			() -> new ParentchildException(INVITE_CODE_NOT_FOUND));
 	}
+
+	public void deleteById(Long parentchildId) {
+		parentchildRepository.deleteById(parentchildId);
+	}
 }

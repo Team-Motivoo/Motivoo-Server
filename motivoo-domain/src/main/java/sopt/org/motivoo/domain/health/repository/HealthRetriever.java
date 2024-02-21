@@ -28,8 +28,8 @@ public class HealthRetriever {
 			() -> new HealthException(HEALTH_NOT_FOUND));
 	}
 
-	public void deleteByUser(User u) {
-		healthRepository.deleteByUser(u);
+	public void deleteByUser(User user) {
+		healthRepository.deleteByUser(user);
 	}
 
 	public boolean existsHealthByUser(User user) {

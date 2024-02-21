@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import sopt.org.motivoo.domain.mission.entity.UserMission;
 import sopt.org.motivoo.domain.mission.entity.UserMissionChoices;
 import sopt.org.motivoo.domain.mission.exception.MissionException;
+import sopt.org.motivoo.domain.user.entity.User;
 
 @Component
 @RequiredArgsConstructor
@@ -41,4 +42,7 @@ public class UserMissionRetriever {
 		userMissionRepository.saveAll(userMissions);
 	}
 
+	public void deleteByUser(User user) {
+		userMissionRepository.deleteByUser(user);
+	}
 }

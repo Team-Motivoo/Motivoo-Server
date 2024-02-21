@@ -5,6 +5,7 @@ import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -61,6 +62,10 @@ public class UserRetriever {
 		return userRepository.findUserByParentchild(parentchild);
 	}
 
+	public List<User> getAllByParentchild(Parentchild parentchild) {
+		return userRepository.findByParentchild(parentchild);
+	}
+
 	public List<User> getUsersByIds(Long myUserId, Long opponentUserId) {
 		return userRepository.findAllByIds(Arrays.asList(myUserId, opponentUserId));
 	}
@@ -71,5 +76,17 @@ public class UserRetriever {
 
 	public Long getOpponentUserId(Parentchild parentchild, Long userId) {
 		return userRepository.getOpponentId(parentchild, userId);
+	}
+
+	public void deleteById(Long userId) {
+		userRepository.deleteById(userId);
+	}
+
+	public List<User> deleteExpiredUsers() {
+		return userRepository.deleteExpiredUser();
+	}
+
+	public Optional<User> getByIdAndParentchild(Long userId, Parentchild parentchild) {
+		return userRepository.findByIdAndParentchild(userId, parentchild);
 	}
 }
