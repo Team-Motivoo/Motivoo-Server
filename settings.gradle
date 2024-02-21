@@ -1,1 +1,6 @@
 rootProject.name = 'motivooServer'
+include 'motivoo-api'
+include 'motivoo-domain'
+include 'motivoo-external'
+include 'motivoo-common'
+
