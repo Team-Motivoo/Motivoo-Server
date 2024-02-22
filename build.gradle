@@ -1,13 +1,21 @@
 buildscript {
 	ext {
+		springBootVersion = '3.0.11'
 		restdocsApiSpecVersion = '0.18.2'
+		swaggerGeneratorVersion = '2.18.2'
+		sentryGradleVersion = '4.2.0'
+	}
+
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 	}
 }
 
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.0.11'
-	id 'io.spring.dependency-management' version '1.1.4'
 
 	id 'com.epages.restdocs-api-spec' version "${restdocsApiSpecVersion}"
 	id 'org.hidetake.swagger.generator' version '2.18.2'
@@ -15,181 +23,184 @@ plugins {
 	id "io.sentry.jvm.gradle" version "4.2.0"
 }
 
+subprojects {
 
-swaggerSources {
-	sample {
-		setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
-	}
-}
+	group = 'sopt.org.motivoo'
+	version = '0.0.1-SNAPSHOT'
+	apply plugin: "java-library"
+	apply plugin: "org.springframework.boot"
+	apply plugin: "io.spring.dependency-management"
+//	apply plugin: 'com.epages.restdocs-api-spec'+ ${restdocsApiSpecVersion}
+//	apply plugin: "org.hidetake.swagger.generator:2.18.2"
+//	apply plugin: "io.sentry.jvm.gradle:4.2.0"
 
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-// Sentry 연동을 위한 설정 정보
-sentry {
-	includeSourceContext = true
-
-	org = "motivooteam"
-	projectName = "motivoo-server"
-	authToken = properties["sentry.AUTH_TOKEN"]
-}
-
-// openapi3 스펙 생성 시 설정 정보
-openapi3 {
-	servers = [
-			{ url = properties["server.BASE_URL"] },
-			{ url = "http://localhost:8080" }
-	]
-	title = "모티부 API 명세서"
-	description = "Motivoo REST Docs with SwaggerUI"
-	version = "v0.0.1"
-	format = "yaml"
-}
-
-group = 'sopt.org'
-version = '0.0.1-SNAPSHOT'
-
-java {
 	sourceCompatibility = '17'
-}
 
-jar {
-	enabled = false
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+	swaggerSources {
+		sample {
+			setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
+		}
 	}
-}
 
+	Properties properties = new Properties()
+	properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
-repositories {
-	mavenCentral()
-}
+	// Sentry 연동을 위한 설정 정보
+	sentry {
+		includeSourceContext = true
 
-dependencies {
+		org = "motivooteam"
+		projectName = "motivoo-server"
+		authToken = properties["sentry.AUTH_TOKEN"]
+	}
 
+	// openapi3 스펙 생성 시 설정 정보
+	openapi3 {
+		servers = [
+				{ url = properties["server.BASE_URL"] },
+				{ url = "http://localhost:8080" }
+		]
+		title = "모티부 API 명세서"
+		description = "Motivoo REST Docs with SwaggerUI"
+		version = "v0.0.1"
+		format = "yaml"
+	}
 
-	// JPA
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	repositories {
+		mavenCentral()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
 
-	// MySQL
-	runtimeOnly 'com.mysql:mysql-connector-j'
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
 
-	// H2 (테스트용)
-	runtimeOnly 'com.h2database:h2'
-	testImplementation 'com.h2database:h2'
+	dependencies {
 
-	// Security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	testImplementation 'org.springframework.security:spring-security-test'
+		// JPA
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-	// Web
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+		// MySQL
+		runtimeOnly 'com.mysql:mysql-connector-j'
 
-	// Actuator
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+		// H2 (테스트용)
+		runtimeOnly 'com.h2database:h2'
+		testImplementation 'com.h2database:h2'
 
-	// lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
+		// Security
+		implementation 'org.springframework.boot:spring-boot-starter-security'
+		testImplementation 'org.springframework.security:spring-security-test'
 
-	// Spring Validatior
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation group: 'org.hibernate.validator', name: 'hibernate-validator'
+		// Web
+		implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	// Spring Scheduler Test
-	testImplementation 'org.awaitility:awaitility:4.2.0'
+		// Actuator
+		implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-	// Slack Webhook
-	implementation 'com.slack.api:slack-api-client:1.30.0'
-	implementation 'com.google.code.gson:gson:2.10.1'
+		// lombok
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+		testCompileOnly 'org.projectlombok:lombok'
+		testAnnotationProcessor 'org.projectlombok:lombok'
 
-	// Swagger+RestDocs
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
-	testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-	testImplementation 'io.rest-assured:rest-assured'
-//	swaggerUI 'org.webjars:swagger-ui:4.11.1'
+		// Spring Validatior
+		implementation 'org.springframework.boot:spring-boot-starter-validation'
+		implementation group: 'org.hibernate.validator', name: 'hibernate-validator'
 
-	// AWS sdk
-	implementation("software.amazon.awssdk:bom:2.21.0")
-	implementation("software.amazon.awssdk:s3:2.21.0")
+		// Spring Scheduler Test
+		testImplementation 'org.awaitility:awaitility:4.2.0'
 
-	// OAuth2
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+		// Slack Webhook
+		implementation 'com.slack.api:slack-api-client:1.30.0'
+		implementation 'com.google.code.gson:gson:2.10.1'
 
-	// jwt
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+		// Swagger+RestDocs
+		implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+		testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
+		testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+		testImplementation 'io.rest-assured:rest-assured'
+		//	swaggerUI 'org.webjars:swagger-ui:4.11.1'
 
-	// redis
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+		// AWS sdk
+		implementation("software.amazon.awssdk:bom:2.21.0")
+		implementation("software.amazon.awssdk:s3:2.21.0")
 
-	// Feign
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.7'
+		// OAuth2
+		implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+		implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-	// Firebase
-	implementation "com.google.firebase:firebase-admin:9.1.1"
+		// jwt
+		implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+		implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+		implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
-	// Sentry
-	implementation "io.sentry:sentry-spring-boot-starter:4.3.0"
+		// redis
+		implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-	// AOP
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
+		// Feign
+		implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.7'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		// Firebase
+		implementation "com.google.firebase:firebase-admin:9.1.1"
 
-}
+		// Sentry
+		implementation "io.sentry:sentry-spring-boot-starter:4.2.0"
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
+		// AOP
+		implementation 'org.springframework.boot:spring-boot-starter-aop'
 
-tasks.withType(GenerateSwaggerUI) {
-	dependsOn 'openapi3'
-	doFirst {
-		def swaggerUIFile = file("${openapi3.outputDirectory}/api-spec/openapi3.yaml")
-		def securitySchemesContent =  "  securitySchemes:\n" +  \
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	}
+
+	test {
+		useJUnitPlatform()
+	}
+
+	tasks.withType(GenerateSwaggerUI) {
+		dependsOn 'openapi3'
+		doFirst {
+			def swaggerUIFile = file("${openapi3.outputDirectory}/api-spec/openapi3.yaml")
+			def securitySchemesContent =  "  securitySchemes:\n" +  \
                                       "    APIKey:\n" +  \
                                       "      type: apiKey\n" +  \
                                       "      name: Authorization\n" +  \
                                       "      in: header\n" + \
                                       "security:\n" +
-				"  - APIKey: []  # Apply the security scheme here"
+					"  - APIKey: []  # Apply the security scheme here"
 
-		swaggerUIFile.append securitySchemesContent
+			swaggerUIFile.append securitySchemesContent
+		}
 	}
-}
 
-// openAPI 작성 자동화 => 패키징 전에 openapi3 태스크를 먼저 실행하도록 유발
-bootJar {
-//	dependsOn(':openapi3')
-//	dependsOn generateSwaggerUISample
-//	from("${generateSwaggerUISample.outputDir}") {
-//		into 'static/docs'
-//	}
-//	copy {
-//		from "build/resources/main/static/docs"
-//		into "src/main/resources/static/docs/"
-//	}
-}
+	// openAPI 작성 자동화 => 패키징 전에 openapi3 태스크를 먼저 실행하도록 유발
+	bootJar {
+	//	dependsOn(':openapi3')
+	//	dependsOn generateSwaggerUISample
+	//	from("${generateSwaggerUISample.outputDir}") {
+	//		into 'static/docs'
+	//	}
+	//	copy {
+	//		from "build/resources/main/static/docs"
+	//		into "src/main/resources/static/docs/"
+	//	}
+	}
 
-openapi3 {
-	servers = [
-			{ url = properties["server.BASE_URL"] },
-			{ url = "http://localhost:8080" }
-	]
-	title = "모티부 API 명세서"
-	description = "Motivoo REST Docs with SwaggerUI"
-	version = "v0.0.1"
-	format = "json"
-	outputFileNamePrefix = "open-api-3.0.1"
-	outputDirectory = 'build/resources/main/static/docs'
+	openapi3 {
+		servers = [
+				{ url = properties["server.BASE_URL"] },
+				{ url = "http://localhost:8080" }
+		]
+		title = "모티부 API 명세서"
+		description = "Motivoo REST Docs with SwaggerUI"
+		version = "v0.0.1"
+		format = "json"
+		outputFileNamePrefix = "open-api-3.0.1"
+		outputDirectory = 'build/resources/main/static/docs'
+	}
 }
