@@ -75,7 +75,7 @@ public class UserRetriever {
 	}
 
 	public Long getOpponentUserId(Parentchild parentchild, Long userId) {
-		return userRepository.getOpponentId(parentchild, userId);
+		return userRepository.findOpponentId(parentchild, userId);
 	}
 
 	public void deleteById(Long userId) {
