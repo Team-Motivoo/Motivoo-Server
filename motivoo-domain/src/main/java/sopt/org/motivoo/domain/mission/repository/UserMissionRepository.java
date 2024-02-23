@@ -33,7 +33,7 @@ public interface UserMissionRepository extends JpaRepository<UserMission, Long> 
 	boolean existsByUser(User user);
 
 	@Modifying
-	@Query("update UserMission um set um.mission=?1, um.missionQuest=?2 where um.user = :user and DATE(um.createdAt) = DATE(:date)")
+	@Query("UPDATE UserMission um SET um.mission = :mission, um.missionQuest = :quest WHERE um.user = :user AND DATE(um.createdAt) = DATE(:date)")
 	void updateValidTodayMission(Mission mission, MissionQuest quest, User user, LocalDate date);
 }
 

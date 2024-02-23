@@ -115,18 +115,19 @@ public class ParentchildService {
 
         // 매칭되지 않은 유저 - Parentchild 관계 존재
         if (existsParentchild(user)) {
-            int matchedCnt = userRetriever.getParentchildUserCnt(user.getParentchild());
-            if (user.getParentchild().validateParentchild(matchedCnt)) {
-                return new InviteSendResult(userId, true, null);  // 매칭 완료 시 초대코드 null로 반환
+            Parentchild myParentchild = user.getParentchild();
+            int matchedCnt = userRetriever.getParentchildUserCnt(myParentchild);
+            if (myParentchild.validateParentchild(matchedCnt)) {
+                return new InviteSendResult(userId, true, null, myParentchild.getId());  // 매칭 완료 시 초대코드 null로 반환
             }
 
-            return new InviteSendResult(userId, false, user.getParentchild().getInviteCode());
+            return new InviteSendResult(userId, false, myParentchild.getInviteCode(), myParentchild.getId());
         }
 
         // 첫 발급 - 새로운 Parentchild 관계 생성
         Parentchild parentchild = parentchildManager.createParentchild(user);
         parentchildRetriever.saveParentchild(parentchild);
-        return new InviteSendResult(userId, false, parentchild.getInviteCode());
+        return new InviteSendResult(userId, false, parentchild.getInviteCode(), parentchild.getId());
     }
 
     private boolean existsParentchild(User user) {

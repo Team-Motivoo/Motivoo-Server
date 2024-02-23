@@ -94,12 +94,16 @@ public class UserMissionService {
 	}
 
 	private Map<LocalDate, List<UserMission>> groupUserMissionsByDate(Long myUserId, Long opponentUserId) {
-		List<User> parentchildUsers = userRetriever.getUsersByIds(myUserId, opponentUserId);  // 둘 중 1명이 탈퇴할 경우를 대비, ID값으로만 조회
+		List<User> parentChildUsers = userRetriever.getUsersByIds(myUserId, opponentUserId);  // 둘 중 1명이 탈퇴할 경우를 대비, ID값으로만 조회
 		// List<UserMission> emptyUserMissions = userMissionManager.createEmptyDateMissions(parentchildUsers);
 		// userMissionRetriever.saveAll(emptyUserMissions);
 
+		log.info("성립된 부모자식 관계: {}-{} X {}-{}, 관계",
+			parentChildUsers.get(0).getNickname(), parentChildUsers.get(0).getType(),
+			parentChildUsers.get(1).getNickname(), parentChildUsers.get(1).getType());
+
 		// 그룹화
-		return userMissionManager.sortMissionsByDate(parentchildUsers);
+		return userMissionManager.sortMissionsByDate(parentChildUsers);
 	}
 
 	@Transactional
