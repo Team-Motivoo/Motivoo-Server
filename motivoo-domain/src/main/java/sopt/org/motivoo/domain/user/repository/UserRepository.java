@@ -32,7 +32,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select count(u.id) from User u where u.parentchild=?1")
     int countByParentchild(Parentchild parentchild);
 
-    @Query("select u.id from User u where u.parentchild=?1 and u.id!=?2")
+    @Query("select u.id from User u where u.parentchild = ?1 and u.id != ?2")
     Long findOpponentId(Parentchild parentchild, Long id);
 
     @Query("select u from User u where u.parentchild = ?1 and u.deleted=true")

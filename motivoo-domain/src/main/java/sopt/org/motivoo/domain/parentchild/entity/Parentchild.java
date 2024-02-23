@@ -1,5 +1,7 @@
 package sopt.org.motivoo.domain.parentchild.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sopt.org.motivoo.domain.common.BaseTimeEntity;
+import sopt.org.motivoo.domain.user.entity.User;
 
 @Getter
 @Entity
@@ -36,4 +39,14 @@ public class Parentchild extends BaseTimeEntity {
 		this.isMatched = true;
 	}
 
+	// TODO isMatched와 불일치 여부 테스트 후 하나만 남기기
+	public boolean validateParentchild(int userCnt) {
+
+		// 부모자식 관계에 대한 예외처리
+		if (userCnt != 2) {
+			return false;
+		}
+
+		return true;
+	}
 }

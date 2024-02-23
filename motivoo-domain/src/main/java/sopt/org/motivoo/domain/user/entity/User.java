@@ -171,24 +171,4 @@ public class User extends BaseTimeEntity {
 		// 처음 가입한 유저 TODO 온보딩 마치고 UserMission 1개 디폴트로 생성되도록 수정
 	}
 
-	public boolean validateParentchild(List<User> parentChildUsers) {
-
-		// 부모자식 관계에 대한 예외처리
-		if (parentChildUsers.isEmpty()) {
-			return false;
-		}
-
-		if (parentChildUsers.size() == 1) {
-			return false;
-		} else if (parentChildUsers.size() != 2) {
-			return false;
-		}
-
-		log.info("성립된 부모자식 관계: {}-{} X {}-{}, 관계",
-			parentChildUsers.get(0).nickname, parentChildUsers.get(0).type,
-			parentChildUsers.get(1).nickname, parentChildUsers.get(1).type);
-
-		return true;
-	}
-
 }

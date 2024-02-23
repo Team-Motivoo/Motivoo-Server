@@ -57,10 +57,6 @@ public class UserRetriever {
 		return userRepository.findUsersByParentchildId(parentchildId);
 	}
 
-	public List<User> getUserByParentchild(Parentchild parentchild) {
-		return userRepository.findUserByParentchild(parentchild);
-	}
-
 	public List<User> getAllByParentchild(Parentchild parentchild) {
 		return userRepository.findByParentchild(parentchild);
 	}
@@ -73,7 +69,7 @@ public class UserRetriever {
 		return users;
 	}
 
-	public int getMatchedCnt(Parentchild parentchild) {
+	public int getParentchildUserCnt(Parentchild parentchild) {
 		return userRepository.countByParentchild(parentchild);
 	}
 
