@@ -3,7 +3,6 @@ package sopt.org.motivoo.domain.health.entity;
 import static sopt.org.motivoo.domain.health.exception.HealthExceptionType.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -66,7 +65,7 @@ public class Health extends BaseTimeEntity {
 
 	@Builder
 	private Health(User user, boolean isExercise, ExerciseType exerciseType,
-				   ExerciseFrequency exerciseFrequency, ExerciseTime exerciseTime, List<HealthNote> healthNotes, ExerciseLevel exerciseLevel){
+				   ExerciseFrequency exerciseFrequency, ExerciseTime exerciseTime, Set<HealthNote> healthNotes, ExerciseLevel exerciseLevel){
 		validateIsExercise();
 		this.user = user;
 		this.isExercise = isExercise;

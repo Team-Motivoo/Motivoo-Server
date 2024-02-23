@@ -2,6 +2,7 @@ package sopt.org.motivoo.domain.health.entity;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
@@ -21,13 +22,13 @@ public enum HealthNote {
 
 	private final String value;
 
-	public static List<HealthNote> of(List<String> values) {
+	public static Set<HealthNote> of(List<String> values) {
 		return Arrays.stream(HealthNote.values())
 				.filter(healthNote -> values.contains(healthNote.value))
-				.collect(Collectors.toList());
+				.collect(Collectors.toSet());
 	}
 
-	public static List<HealthNote> of(String values) {
+	public static Set<HealthNote> of(String values) {
 		String[] strArr = values.split("\\s*,\\s*");
 		return of(Arrays.asList(strArr));
 	}

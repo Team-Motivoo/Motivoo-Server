@@ -108,7 +108,7 @@ public class UserMissionManager {
 
 		log.info("Mission 필터링 시작!");
 		for (Mission mission : missions) {
-			List<HealthNote> missionNotes = HealthNote.of(mission.getHealthNotes());
+			Set<HealthNote> missionNotes = HealthNote.of(mission.getHealthNotes());
 			boolean hasUserNotes = missionNotes.stream().anyMatch(userNotes::contains);
 			boolean hasExerciseLevel = MissionType.of(mission.getType()).containsLevel(exerciseLevel);
 
@@ -130,7 +130,7 @@ public class UserMissionManager {
 
 		return missions.parallelStream()
 			.filter(mission -> {
-				List<HealthNote> missionNotes = HealthNote.of(mission.getHealthNotes());
+				Set<HealthNote> missionNotes = HealthNote.of(mission.getHealthNotes());
 				boolean hasUserNotes = missionNotes.stream().anyMatch(userNotes::contains);
 				boolean hasExerciseLevel = MissionType.of(mission.getType()).containsLevel(exerciseLevel);
 				return !hasUserNotes && !hasExerciseLevel;
