@@ -6,12 +6,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import sopt.org.motivoo.domain.mission.entity.Mission;
+import sopt.org.motivoo.domain.mission.entity.MissionQuest;
 import sopt.org.motivoo.domain.mission.entity.UserMission;
-import sopt.org.motivoo.domain.mission.entity.UserMissionChoices;
 import sopt.org.motivoo.domain.mission.exception.MissionException;
 import sopt.org.motivoo.domain.user.entity.User;
 
@@ -20,6 +20,7 @@ import sopt.org.motivoo.domain.user.entity.User;
 public class UserMissionRetriever {
 
 	private final UserMissionRepository userMissionRepository;
+	private final UserMissionJdbcRepository userMissionJdbcRepository;
 
 	public List<UserMission> getUserMissionsByCreatedDt(LocalDate date) {
 		return userMissionRepository.findUserMissionsByCreatedAt(date);
@@ -44,5 +45,9 @@ public class UserMissionRetriever {
 
 	public void deleteByUser(User user) {
 		userMissionRepository.deleteByUser(user);
+	}
+
+	public void bulkSaveInitUserMission(List<User> users, LocalDate date, Mission mission, MissionQuest quest) {
+		userMissionJdbcRepository.bulkSave(users, date, mission, quest);
 	}
 }
