@@ -2,9 +2,10 @@ package sopt.org.motivoo.domain.health.entity;
 
 import static sopt.org.motivoo.domain.health.exception.HealthExceptionType.*;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -57,7 +58,7 @@ public class Health extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	@ElementCollection
-	private List<HealthNote> healthNotes = new ArrayList<>();
+	private Set<HealthNote> healthNotes = new HashSet<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
