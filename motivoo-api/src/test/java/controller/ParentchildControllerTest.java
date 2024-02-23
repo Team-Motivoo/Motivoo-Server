@@ -32,7 +32,8 @@ import sopt.org.motivoo.api.controller.health.dto.response.CheckOnboardingRespon
 import sopt.org.motivoo.api.controller.health.dto.response.OnboardingResponse;
 import sopt.org.motivoo.api.controller.parentchild.ParentChildController;
 import sopt.org.motivoo.api.controller.parentchild.dto.request.InviteRequest;
-import sopt.org.motivoo.api.controller.parentchild.dto.response.InviteResponse;
+import sopt.org.motivoo.api.controller.parentchild.dto.response.InviteReceiveResponse;
+import sopt.org.motivoo.api.controller.parentchild.dto.response.InviteSendResponse;
 import sopt.org.motivoo.api.controller.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivoo.common.response.ApiResponse;
 import sopt.org.motivoo.domain.parentchild.entity.Parentchild;
@@ -150,12 +151,12 @@ public class ParentchildControllerTest extends BaseControllerTest {
         //given
         Parentchild parentchild = ParentchildFixture.createParentchild();
         InviteRequest request = new InviteRequest(parentchild.getInviteCode());
-        InviteResponse response = new InviteResponse(1L, parentchild.isMatched(), false, false);
+        InviteReceiveResponse response = new InviteReceiveResponse(1L, 2L, parentchild.isMatched());
 
-        ResponseEntity<ApiResponse<InviteResponse>> result = ApiResponse.success(
+        ResponseEntity<ApiResponse<InviteReceiveResponse>> result = ApiResponse.success(
                 INPUT_INVITE_CODE_SUCCESS, response);
         //when
-        when(parentChildController.validateInviteCode(request, principal)).thenReturn(result);
+        when(parentChildController.matchParentchildRelation(request, principal)).thenReturn(result);
 
         //then
         mockMvc.perform(patch("/parentchild/match")

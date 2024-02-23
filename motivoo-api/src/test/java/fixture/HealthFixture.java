@@ -31,7 +31,7 @@ public class HealthFixture {
                 .exerciseType(EXERCISE_TYPE)
                 .exerciseFrequency(EXERCISE_FREQUENCY)
                 .exerciseTime(EXERCISE_TIME)
-                .healthNotes(Collections.singletonList(HEALTH_NOTE))
+                .healthNotes(Collections.singleton(HEALTH_NOTE))
                 .exerciseLevel(EXERCISE_LEVEL)
                 .build();
         return health;
@@ -39,7 +39,7 @@ public class HealthFixture {
 
     public static OnboardingRequest createOnboardingRequest(){
         val user = UserFixture.createUser();
-        user.addParentChild(ParentchildFixture.createParentchild());
+        user.updateParentchild(ParentchildFixture.createParentchild());
         val health = createHealthInfo(user);
         return new OnboardingRequest(user.getType().getValue(), 20, health.isExercise(), health.getExerciseType().getValue(),
             health.getExerciseFrequency().getValue(), health.getExerciseTime().getValue(), List.of("목"));
@@ -47,7 +47,7 @@ public class HealthFixture {
 
     public static OnboardingResponse createOnboardingResponse(){
         val user = UserFixture.createUser();
-        user.addParentChild(ParentchildFixture.createParentchild());
+        user.updateParentchild(ParentchildFixture.createParentchild());
         val health = HealthFixture.createHealthInfo(user);
         return new OnboardingResponse(1L, user.getParentchild().getInviteCode(), health.getExerciseLevel().getValue());
     }
