@@ -64,7 +64,7 @@ public class UserMission extends BaseTimeEntity {
 
 	@Builder(builderMethodName = "builderForEmpty")
 	private UserMission(CompletedStatus completedStatus, Mission mission, User user, MissionQuest missionQuest) {
-		this.completedStatus = completedStatus;
+		this.completedStatus = NONE;
 		this.mission = mission;
 		this.user = user;
 		this.missionQuest = missionQuest;
@@ -107,12 +107,16 @@ public class UserMission extends BaseTimeEntity {
 
 
 	public void updateMissionFromEmpty(final Mission mission) {
-		if (!this.getMission().getTarget().equals(UserType.NONE)) {
+		if (!isEmptyUserMission()) {
 			throw new MissionException(ALREADY_CHOICE_TODAY_MISSION);
 		}
 
 		this.mission = mission;
 		this.updateCompletedStatus(IN_PROGRESS);
+	}
+
+	public boolean isEmptyUserMission() {
+		return this.getMission().getTarget().equals(UserType.NONE);
 	}
 
 }

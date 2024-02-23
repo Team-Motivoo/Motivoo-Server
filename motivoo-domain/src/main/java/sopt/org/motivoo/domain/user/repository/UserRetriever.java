@@ -23,8 +23,7 @@ public class UserRetriever {
 
 	public User getUserById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(
-			() -> new UserException(USER_NOT_FOUND)
-		);
+			() -> new UserException(USER_NOT_FOUND));
 	}
 
 	public List<User> getUsersBySocialId(String socialId) {
@@ -67,7 +66,11 @@ public class UserRetriever {
 	}
 
 	public List<User> getUsersByIds(Long myUserId, Long opponentUserId) {
-		return userRepository.findAllByIds(Arrays.asList(myUserId, opponentUserId));
+		List<User> users = userRepository.findAllByIds(Arrays.asList(myUserId, opponentUserId));
+		if (users.size() != 2) {
+			throw new ParentchildException(INVALID_PARENTCHILD_RELATION);
+		}
+		return users;
 	}
 
 	public int getMatchedCnt(Parentchild parentchild) {

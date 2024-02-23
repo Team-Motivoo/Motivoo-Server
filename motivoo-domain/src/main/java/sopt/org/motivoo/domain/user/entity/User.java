@@ -79,8 +79,8 @@ public class User extends BaseTimeEntity {
 	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	private final List<UserMission> userMissions = new ArrayList<>();
 
-	@OneToMany(fetch = FetchType.EAGER)
-	private final List<UserMissionChoices> userMissionChoice = new ArrayList<>();
+	// @OneToMany(fetch = FetchType.EAGER)
+	// private final List<UserMissionChoices> userMissionChoice = new ArrayList<>();
 
 	@Builder
 	private User(String nickname, String socialId, SocialPlatform socialPlatform, String socialAccessToken,
@@ -116,7 +116,7 @@ public class User extends BaseTimeEntity {
 		this.refreshToken = refreshToken;
 	}
 
-	public void udpateDeleted(){
+	public void updateDeleted(){
 		this.deleted = true;
 	}
 
@@ -129,29 +129,33 @@ public class User extends BaseTimeEntity {
 		this.age = age;
 	}
 
-	public void addParentChild(Parentchild parentchild) {
-		this.parentchild=parentchild;
+	public void deleteSocialInfo() {
+		this.socialPlatform = SocialPlatform.WITHDRAW;
+		this.socialAccessToken = null;
+	}
+
+	public void updateParentchild(Parentchild parentchild) {
+		this.parentchild = parentchild;
 	}
 
 	public void setParentchildToNull(){
 		this.parentchild = null;
 	}
 	public void setUserMissionToNull(){
-		this.userMissions.stream()
-				.forEach(m -> m=null);
+		this.userMissions.stream().forEach(m -> m = null);
 	}
 
-	public void clearPreUserMissionChoice() {
-		this.userMissionChoice.clear();
-	}
+	// public void clearPreUserMissionChoice() {
+	// 	this.userMissionChoice.clear();
+	// }
 
-	public void setPreUserMissionChoice(List<UserMissionChoices> userMissionChoice) {
-		log.info("임시 UserMission 선택지(매일 자정 초기화 후, 메인 홈 첫 진입 시 업데이트: {}가지 / User-{}가지", userMissionChoice.size(), this.userMissionChoice.size());
-		if (this.userMissionChoice.isEmpty()) {
-			this.userMissionChoice.addAll(userMissionChoice);
-		}
-
-	}
+	// public void setPreUserMissionChoice(List<UserMissionChoices> userMissionChoice) {
+	// 	log.info("임시 UserMission 선택지(매일 자정 초기화 후, 메인 홈 첫 진입 시 업데이트: {}가지 / User-{}가지", userMissionChoice.size(), this.userMissionChoice.size());
+	// 	if (this.userMissionChoice.isEmpty()) {
+	// 		this.userMissionChoice.addAll(userMissionChoice);
+	// 	}
+	//
+	// }
 
 	// 가장 최근의 운동 미션 조회
 	public UserMission getCurrentUserMission() {
@@ -163,7 +167,28 @@ public class User extends BaseTimeEntity {
 
 		//TODO User 도메인에서 처리하는 로직인데 MissionException VS UserException 둘 중 어느 게 더 적합할지?
 		throw new MissionException(EMPTY_USER_MISSIONS);
-		// return null;
+
+		// 처음 가입한 유저 TODO 온보딩 마치고 UserMission 1개 디폴트로 생성되도록 수정
+	}
+
+	public boolean validateParentchild(List<User> parentChildUsers) {
+
+		// 부모자식 관계에 대한 예외처리
+		if (parentChildUsers.isEmpty()) {
+			return false;
+		}
+
+		if (parentChildUsers.size() == 1) {
+			return false;
+		} else if (parentChildUsers.size() != 2) {
+			return false;
+		}
+
+		log.info("성립된 부모자식 관계: {}-{} X {}-{}, 관계",
+			parentChildUsers.get(0).nickname, parentChildUsers.get(0).type,
+			parentChildUsers.get(1).nickname, parentChildUsers.get(1).type);
+
+		return true;
 	}
 
 }
