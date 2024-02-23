@@ -22,6 +22,7 @@ public class UserMissionRetriever {
 	private final UserMissionRepository userMissionRepository;
 	private final UserMissionJdbcRepository userMissionJdbcRepository;
 
+	//== READ ==//
 	public List<UserMission> getUserMissionsByCreatedDt(LocalDate date) {
 		return userMissionRepository.findUserMissionsByCreatedAt(date);
 	}
@@ -35,16 +36,27 @@ public class UserMissionRetriever {
 			() -> new MissionException(USER_MISSION_NOT_FOUND));
 	}
 
+	public boolean existsByUser(User user) {
+		return userMissionRepository.existsByUser(user);
+	}
+
+	//== DELETE ==//
+	public void deleteByUser(User user) {
+		userMissionRepository.deleteByUser(user);
+	}
+
+	//== UPDATE ==//
+	public void updateUserMission(User user, Mission mission, MissionQuest quest) {
+		userMissionRepository.updateValidTodayMission(mission, quest, user, LocalDate.now());
+	}
+
+	//== CREATE ==//
 	public void saveUserMission(UserMission userMission) {
 		userMissionRepository.save(userMission);
 	}
 	
 	public void saveAll(List<UserMission> userMissions) {
 		userMissionRepository.saveAll(userMissions);
-	}
-
-	public void deleteByUser(User user) {
-		userMissionRepository.deleteByUser(user);
 	}
 
 	public void bulkSaveInitUserMission(List<User> users, LocalDate date, Mission mission, MissionQuest quest) {
