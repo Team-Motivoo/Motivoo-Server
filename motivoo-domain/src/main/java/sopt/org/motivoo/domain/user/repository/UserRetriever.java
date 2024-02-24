@@ -73,8 +73,8 @@ public class UserRetriever {
 		return userRepository.countByParentchild(parentchild);
 	}
 
-	public Long getOpponentUserId(Parentchild parentchild, Long userId) {
-		return userRepository.findOpponentId(parentchild, userId);
+	public Long getOpponentUserId(Long userId) {
+		return userRepository.findOpponentId(userId);
 	}
 
 	public void deleteById(Long userId) {

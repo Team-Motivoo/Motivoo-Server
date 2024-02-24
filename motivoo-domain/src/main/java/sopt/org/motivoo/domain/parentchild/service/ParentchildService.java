@@ -79,28 +79,27 @@ public class ParentchildService {
     public InviteReceiveResult matchRelation(Long userId, InviteCommand request){
 
         User user = userRetriever.getUserById(userId);
+        checkOnboardingCompleted(user);
+
         Parentchild parentchild = parentchildRetriever.getByInviteCode(request.inviteCode());
+        Long opponentUserId = userRetriever.getOpponentUserId(userId);
+        log.info("매칭된 상대 유저의 ID: {}", opponentUserId);
 
-        // 이미 매칭이 완료된 경우에 대한 예외처리 -> TODO 양측에서 초대코드를 전송했을 때도 매칭이 가능해야 함
-        validateInviteRequest(user, parentchild);
-
-        if (!parentchild.isMatched()) {
-
-            completeMatching(user, parentchild);
-            Long opponentUserId = userRetriever.getOpponentUserId(parentchild, userId);
-
+        if (parentchild.isMatched()) {
             return new InviteReceiveResult(userId, opponentUserId, true);
         }
 
-        // 부모-부모이거나 자녀-자녀인 경우
-        // if(user.getType() == userRetriever.getUserByParentchild(parentchild).get(0).getType())
-        //     throw new ParentchildException(INVALID_PARENTCHILD_RELATION);
+        validateInviteRequest(user, parentchild);
+        completeMatching(user, parentchild);
 
-        throw new ParentchildException(FAIL_TO_MATCH_PARENTCHILD);
+        return new InviteReceiveResult(userId, opponentUserId, true);
     }
 
-
     private void validateInviteRequest(User user, Parentchild parentchild) {
+        if (user.getParentchild().equals(parentchild)) {
+            throw new ParentchildException(MY_PARENTCHILD_INVITE);
+        }
+
         int cntWithUser = userRetriever.getParentchildUserCnt(user.getParentchild());
         parentchildManager.validateUserRelation(user, cntWithUser);
         int cntWithInviteCode = userRetriever.getParentchildUserCnt(parentchild);
@@ -112,6 +111,7 @@ public class ParentchildService {
     public InviteSendResult inviteMatchUser(final Long userId) {
 
         User user = userRetriever.getUserById(userId);
+        checkOnboardingCompleted(user);
 
         // 매칭되지 않은 유저 - Parentchild 관계 존재
         if (existsParentchild(user)) {
@@ -130,9 +130,16 @@ public class ParentchildService {
         return new InviteSendResult(userId, false, parentchild.getInviteCode(), parentchild.getId());
     }
 
+    private void checkOnboardingCompleted(User user) {
+        if (!healthRetriever.existsHealthByUser(user)) {
+            throw new ParentchildException(USER_NOT_INPUT_ONBOARDING);
+        }
+    }
+
     private boolean existsParentchild(User user) {
         return user.getParentchild() != null;
     }
+
 
     public CheckOnboardingResult checkOnboardingInfo(Long userId){
         User user = userRetriever.getUserById(userId);
@@ -153,7 +160,7 @@ public class ParentchildService {
 
         int matchedCnt = userRetriever.getParentchildUserCnt(user.getParentchild());
         if (user.getParentchild().validateParentchild(matchedCnt)) {
-            Long opponentUserId = userRetriever.getOpponentUserId(user.getParentchild(), userId);
+            Long opponentUserId = userRetriever.getOpponentUserId(userId);
             return new MatchingResult(true, userId, opponentUserId);
         }
 

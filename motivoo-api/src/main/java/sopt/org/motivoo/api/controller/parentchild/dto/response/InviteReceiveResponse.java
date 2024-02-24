@@ -20,6 +20,7 @@ public record InviteReceiveResponse(
         public static InviteReceiveResponse of(InviteReceiveResult result) {
                 return InviteReceiveResponse.builder()
                         .userId(result.userId())
+                        .opponentUserId(result.opponentUserId())
                         .isMatched(result.isMatched()).build();
         }
 }
