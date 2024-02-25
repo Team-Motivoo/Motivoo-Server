@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -19,10 +20,13 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import sopt.org.motivoo.api.ApiApplication;
 import sopt.org.motivoo.domain.auth.config.CustomJwtAuthenticationEntryPoint;
-import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.config.RedisConfig;
+import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.repository.TokenRedisRepository;
+import sopt.org.motivoo.domain.auth.service.apple.AppleClaimsValidator;
+import sopt.org.motivoo.domain.auth.service.apple.AppleLoginService;
 import sopt.org.motivoo.domain.external.firebase.FirebaseService;
 import sopt.org.motivoo.domain.external.firebase.config.FirebaseConfig;
 import sopt.org.motivoo.domain.external.s3.S3Service;
@@ -31,6 +35,7 @@ import sopt.org.motivoo.domain.external.slack.SlackService;
 
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
+@ContextConfiguration(classes = ApiApplication.class)
 @ExtendWith({RestDocumentationExtension.class})
 @WebMvcTest(properties = "spring.config.location=classpath:/application.yml")
 public abstract class BaseControllerTest {
@@ -71,6 +76,12 @@ public abstract class BaseControllerTest {
 
 	@MockBean
 	private FirebaseService firebaseService;
+
+	@MockBean
+	private AppleLoginService appleLoginService;
+
+	@MockBean
+	private AppleClaimsValidator appleClaimsValidator;
 
 	@BeforeEach
 	void setUp(final RestDocumentationContextProvider restDocumentation) {
