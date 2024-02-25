@@ -2,9 +2,9 @@ package sopt.org.motivoo.domain.health.entity;
 
 import static sopt.org.motivoo.domain.health.exception.HealthExceptionType.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -57,7 +57,7 @@ public class Health extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	@ElementCollection
-	private List<HealthNote> healthNotes = new ArrayList<>();
+	private Set<HealthNote> healthNotes = new HashSet<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -65,7 +65,7 @@ public class Health extends BaseTimeEntity {
 
 	@Builder
 	private Health(User user, boolean isExercise, ExerciseType exerciseType,
-				   ExerciseFrequency exerciseFrequency, ExerciseTime exerciseTime, List<HealthNote> healthNotes, ExerciseLevel exerciseLevel){
+				   ExerciseFrequency exerciseFrequency, ExerciseTime exerciseTime, Set<HealthNote> healthNotes, ExerciseLevel exerciseLevel){
 		validateIsExercise();
 		this.user = user;
 		this.isExercise = isExercise;

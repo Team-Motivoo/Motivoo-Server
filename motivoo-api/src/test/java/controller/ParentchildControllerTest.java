@@ -32,7 +32,8 @@ import sopt.org.motivoo.api.controller.health.dto.response.CheckOnboardingRespon
 import sopt.org.motivoo.api.controller.health.dto.response.OnboardingResponse;
 import sopt.org.motivoo.api.controller.parentchild.ParentChildController;
 import sopt.org.motivoo.api.controller.parentchild.dto.request.InviteRequest;
-import sopt.org.motivoo.api.controller.parentchild.dto.response.InviteResponse;
+import sopt.org.motivoo.api.controller.parentchild.dto.response.InviteReceiveResponse;
+import sopt.org.motivoo.api.controller.parentchild.dto.response.InviteSendResponse;
 import sopt.org.motivoo.api.controller.parentchild.dto.response.MatchingResponse;
 import sopt.org.motivoo.common.response.ApiResponse;
 import sopt.org.motivoo.domain.parentchild.entity.Parentchild;
@@ -135,8 +136,8 @@ public class ParentchildControllerTest extends BaseControllerTest {
                                         .requestFields()
                                         .responseFields(
                                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
-                                                fieldWithPath("message").type(JsonFieldType.STRING).description("상태 메세지"),
-                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
                                                 fieldWithPath("data").description("응답 데이터"),
                                                 fieldWithPath("data.is_finished_onboarding").type(BOOLEAN).description("유저의 타입(PARENT|CHILD)"))
                                         .build()
@@ -150,12 +151,12 @@ public class ParentchildControllerTest extends BaseControllerTest {
         //given
         Parentchild parentchild = ParentchildFixture.createParentchild();
         InviteRequest request = new InviteRequest(parentchild.getInviteCode());
-        InviteResponse response = new InviteResponse(1L, parentchild.isMatched(), false, false);
+        InviteReceiveResponse response = new InviteReceiveResponse(1L, 2L, parentchild.isMatched());
 
-        ResponseEntity<ApiResponse<InviteResponse>> result = ApiResponse.success(
+        ResponseEntity<ApiResponse<InviteReceiveResponse>> result = ApiResponse.success(
                 INPUT_INVITE_CODE_SUCCESS, response);
         //when
-        when(parentChildController.validateInviteCode(request, principal)).thenReturn(result);
+        when(parentChildController.matchParentchildRelation(request, principal)).thenReturn(result);
 
         //then
         mockMvc.perform(patch("/parentchild/match")
@@ -172,21 +173,61 @@ public class ParentchildControllerTest extends BaseControllerTest {
                                         .tag(TAG)
                                         .description("초대 코드 입력 후 부모-자식 관계 매칭하는 API")
                                         .requestFields(
-                                                fieldWithPath("invite_code").type(JsonFieldType.STRING).description("제공받은 초대 코드")
+                                                fieldWithPath("invite_code").type(STRING).description("제공받은 초대 코드")
                                         )
                                         .responseFields(
                                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
-                                                fieldWithPath("message").type(JsonFieldType.STRING).description("상태 메세지"),
-                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("응답 성공 여부"),
+                                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                                fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
                                                 fieldWithPath("data").description("응답 데이터"),
                                                 fieldWithPath("data.user_id").type(NUMBER).description("유저 아이디"),
-                                                fieldWithPath("data.is_matched").type(BOOLEAN).description("매칭 여부"),
-                                                fieldWithPath("data.my_invite_code").type(BOOLEAN).description("내가 발급한 코드인지 판별"),
-                                                fieldWithPath("data.is_finished_onboarding").type(BOOLEAN).description("온보딩 정보했는지 여부"))
+                                                fieldWithPath("data.opponent_user_id").type(NUMBER).description("매칭 상대 유저 아이디"),
+                                                fieldWithPath("data.is_matched").type(BOOLEAN).description("매칭 성공 여부"))
 
                                 .build()
                         )
                 )).andExpect(MockMvcResultMatchers.status().isOk());
+
+    }
+
+    @Test
+    @DisplayName("초대 코드 보내기 테스트")
+    void sendInviteCode() throws Exception {
+        //given
+        Parentchild parentchild = ParentchildFixture.createParentchild();
+        InviteSendResponse response = new InviteSendResponse(1L, true, parentchild.getInviteCode());
+
+        ResponseEntity<ApiResponse<InviteSendResponse>> result = ApiResponse.success(
+            SEND_INVITE_CODE_SUCCESS, response);
+        //when
+        when(parentChildController.inviteParentchild(principal)).thenReturn(result);
+
+        //then
+        mockMvc.perform(post("/parentchild/invite")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .principal(principal)
+        ).andDo(
+            document("초대 코드 보내기 API 성공 Example",
+                getDocumentRequest(),
+                getDocumentResponse(),
+                resource(
+                    ResourceSnippetParameters.builder()
+                        .tag(TAG)
+                        .description("초대 코드 입력 후 부모-자식 관계 매칭하는 API")
+                        .requestFields()
+                        .responseFields(
+                            fieldWithPath("code").type(NUMBER).description("상태 코드"),
+                            fieldWithPath("message").type(STRING).description("상태 메세지"),
+                            fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
+                            fieldWithPath("data").description("응답 데이터"),
+                            fieldWithPath("data.user_id").type(NUMBER).description("유저 아이디"),
+                            fieldWithPath("data.is_matched").type(BOOLEAN).description("매칭 여부"),
+                            fieldWithPath("data.invite_code").type(STRING).description("초대 코드"))
+
+                        .build()
+                )
+            )).andExpect(MockMvcResultMatchers.status().isCreated());
 
     }
 

@@ -34,13 +34,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ap-northeast-2
 
-      - name: application.yml 파일 생성
+      - name: application.yml (API 모듈) 파일 생성
         run: |
           # yml을 생성할 디렉터리로 작업 디렉터리 이동
           cd ./motivoo-api/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
-          echo "${{ secrets.APPLICATION_TEST }}" > ./application.yml
-          cd ~
+
+        working-directory: ${{ env.working-directory }}
+
+      - name: application.yml (Domain 모듈) 파일 생성
+        run: |
           cd ./motivoo-domain/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
 
@@ -68,7 +71,7 @@ jobs:
       - name: 빌드
         run: |
           chmod +x gradlew
-          ./gradlew motivoo-api:bootJar -x test
+          ./gradlew motivoo-api:bootJar
         working-directory: ${{ env.working-directory }}
         shell: bash
 

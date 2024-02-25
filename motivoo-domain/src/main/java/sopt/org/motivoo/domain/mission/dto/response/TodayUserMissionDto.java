@@ -8,7 +8,7 @@ import sopt.org.motivoo.domain.mission.entity.UserMission;
 import sopt.org.motivoo.domain.mission.entity.UserMissionChoices;
 
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
+// @JsonInclude(JsonInclude.Include.NON_NULL)
 public record TodayUserMissionDto(
 	@JsonProperty("mission_id") Long missionId,
 	@JsonProperty("mission_content") String missionContent,

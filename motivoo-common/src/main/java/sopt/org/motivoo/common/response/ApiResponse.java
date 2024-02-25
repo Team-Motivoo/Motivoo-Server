@@ -50,6 +50,14 @@ public class ApiResponse<T> {
 				.success(true).build();
 	}
 
+	public static <T> ApiResponse<T> successV2(SuccessType successType, T data) {
+		return ApiResponse.<T>builder()
+			.code(successType.getHttpStatusCode())
+			.message(successType.getMessage())
+			.success(true)
+			.data(data).build();
+	}
+
 	// 실패
 	public static <T> ResponseEntity<ApiResponse<T>> fail(BusinessExceptionType exceptionType, T data) {
 		return ResponseEntity.status(exceptionType.status())

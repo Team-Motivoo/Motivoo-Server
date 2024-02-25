@@ -32,6 +32,12 @@ public class HealthRetriever {
 		healthRepository.deleteByUser(user);
 	}
 
+	public void validateHealthByUser(User user) {
+		if (healthRepository.findByUser(user).isPresent()) {
+			throw new HealthException(EXIST_ONBOARDING_INFO);
+		}
+	}
+
 	public boolean existsHealthByUser(User user) {
 		return healthRepository.findByUser(user).isPresent();
 	}

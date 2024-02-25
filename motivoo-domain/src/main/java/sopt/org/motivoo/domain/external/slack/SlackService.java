@@ -104,7 +104,7 @@ public class SlackService {
 	// 회원가입 성공 알림 LayoutBlock 생성
 	private List<LayoutBlock> generateSignInBlock(SuccessType successType) {
 		return Blocks.asBlocks(
-			getHeader("💨새로운 유저가 가입했습니다."),
+			getHeader("💙새로운 유저가 가입했습니다."),
 			Blocks.divider(),
 			getSection(generateSuccessMessage(successType)),
 			Blocks.divider(),
@@ -123,7 +123,7 @@ public class SlackService {
 	private String generateSignInMessage() {
 		sb.setLength(0);
 		sb.append("*[🧾유저 가입 정보]*" + NEW_LINE);
-		sb.append(userRepository.count() + "번째 유저가 모티부와 함께 합니다!♥");
+		sb.append(userRepository.count() + "번째 유저가 모티부와 가족이 되었어요👨‍👩‍👧‍👦");
 
 		return sb.toString();
 	}

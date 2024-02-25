@@ -1,7 +1,5 @@
 package sopt.org.motivoo.domain.user.service;
 
-import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
-
 import java.util.List;
 
 import org.springframework.http.HttpEntity;
@@ -22,7 +20,6 @@ import sopt.org.motivoo.domain.user.dto.response.MyHealthInfoResult;
 import sopt.org.motivoo.domain.user.dto.response.MyPageInfoResult;
 import sopt.org.motivoo.domain.user.entity.SocialPlatform;
 import sopt.org.motivoo.domain.user.entity.User;
-import sopt.org.motivoo.domain.user.exception.UserException;
 import sopt.org.motivoo.domain.user.repository.UserRetriever;
 
 @Slf4j
@@ -30,9 +27,12 @@ import sopt.org.motivoo.domain.user.repository.UserRetriever;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserService {
+
 	private final UserRetriever userRetriever;
 	private final HealthRetriever healthRetriever;
 	private final TokenRedisRepository tokenRedisRepository;
+
+	private final UserManager userManager;
 
 	public MyPageInfoResult getMyInfo(final Long userId) {
 		User user = userRetriever.getUserById(userId);
@@ -46,47 +46,22 @@ public class UserService {
 
 
 	@Transactional
-	public void deleteSocialAccount(Long userId){
-		deleteKakaoAccount(userId);
+	public void deleteSocialAccount(Long userId) {
+
+		User user = userRetriever.getUserById(userId);
+		List<User> sameSocialUsers = userRetriever.getUsersBySocialId(user.getSocialId());  // 동일한 소셜 계정으로 탈퇴-가입을 반복한 경우
+		userManager.deleteKakaoAccount(sameSocialUsers);
+		healthRetriever.deleteByUser(user);   // 온보딩 건강 정보 삭제
 
 		//TODO 애플 로그인 구현 후 리팩토링
-//		switch (){
-//			case "apple" ->
-//			case "kakao" -> deleteKakaoAccount(userId, accessToken);
-//		}
+/*		switch (){
+			case "apple" ->
+			case "kakao" -> deleteKakaoAccount(userId, accessToken);
+		}*/
 	}
 
-	@Transactional
-	public void deleteKakaoAccount(Long userId){
-		User user = userRetriever.getUserById(userId);
-		//탈퇴하려고 하는데 가입한 이력이 없는 경우 -> 30일이 지나서 영구탈퇴
-		if(user==null)
-			throw new UserException(ALREADY_WITHDRAW_USER);
 
-		String socialId = user.getSocialId();
-		log.info("socialId= "+socialId);
-		List<User> users = userRetriever.getUsersBySocialId(socialId);
-		boolean is_withdrawn = users.stream()
-				.filter(u -> !u.isDeleted())
-				.peek(u -> {
-					u.udpateDeleted();
-					u.updateDeleteAt();
-					healthRetriever.deleteByUser(u);
-					//온보딩 정보 지우기
-					log.info("유저 정보=" + u.isDeleted() + " " + u.getDeletedAt());
-					String accessToken = userRetriever.getAccessTokenById(u.getId());
-					String refreshToken = userRetriever.getRefreshTokenById(u.getId());
-					u.updateRefreshToken(null);
-				})
-				.findFirst()
-				.isPresent();
-
-		//이미 탈퇴한 경우
-		if(!is_withdrawn)
-			throw new UserException(ALREADY_WITHDRAW_USER);
-		//sendRevokeRequest(null, KAKAO, "FHdk_lLY2GObLpez2qGCdmqDlMBwwDk7FXgKPXTZAAABjRVYY2X6Fwx8Dt1GgQ"); //카카오 연결 해제
-	}
-
+	// TODO 혜연 언니한테 질문
 	private void sendRevokeRequest(String data, SocialPlatform socialPlatform, String accessToken) {
 		// String appleRevokeUrl = "https://appleid.apple.com/auth/revoke"; //TODO 추후 애플 로그인 구현 후
 		String kakaoRevokeUrl = "https://kapi.kakao.com/v1/user/unlink";

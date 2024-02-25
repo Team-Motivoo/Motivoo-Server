@@ -32,7 +32,6 @@ public class MissionRetriever {
 		missionRepository.saveAll(missions);
 	}
 
-
 	// 미션 히스토리 - 상대방의 오늘의 미션 미선정 시
 	public Mission getEmptyMission() {
 		return missionRepository.findMissionsByTarget(UserType.NONE).get(0);
@@ -46,6 +45,4 @@ public class MissionRetriever {
 		return missionRepository.findById(missionId).orElseThrow(
 			() -> new MissionException(MISSION_NOT_FOUND));
 	}
-
-
 }

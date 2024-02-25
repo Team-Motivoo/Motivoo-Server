@@ -19,11 +19,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.domain.external.s3.S3Service;
 import sopt.org.motivoo.domain.mission.entity.CompletedStatus;
+import sopt.org.motivoo.domain.mission.entity.Mission;
+import sopt.org.motivoo.domain.mission.entity.MissionQuest;
 import sopt.org.motivoo.domain.mission.entity.UserMission;
-import sopt.org.motivoo.domain.mission.repository.UserMissionRepository;
+import sopt.org.motivoo.domain.mission.repository.MissionQuestRetriever;
+import sopt.org.motivoo.domain.mission.repository.MissionRetriever;
+import sopt.org.motivoo.domain.mission.repository.UserMissionChoicesRetriever;
 import sopt.org.motivoo.domain.mission.repository.UserMissionRetriever;
 import sopt.org.motivoo.domain.user.entity.User;
-import sopt.org.motivoo.domain.user.repository.UserRepository;
 import sopt.org.motivoo.domain.user.repository.UserRetriever;
 
 @Slf4j
@@ -32,13 +35,19 @@ import sopt.org.motivoo.domain.user.repository.UserRetriever;
 public class UserMissionScheduler {
 
 	private final UserMissionRetriever userMissionRetriever;
+	private final UserMissionChoicesRetriever userMissionChoicesRetriever;
 	private final UserRetriever userRetriever;
+	private final MissionRetriever missionRetriever;
+	private final MissionQuestRetriever missionQuestRetriever;
+
+	private final UserMissionManager userMissionManager;
 
 	private final S3Service s3Service;
 	private final PlatformTransactionManager transactionManager;  // 수동 트랜잭션 처리를 위한 주입
 
 	@PersistenceContext
 	private EntityManager em;
+
 
 	// 1. 미션 달성 상태 반영
 	@Scheduled(cron = "@daily", zone = "Asia/Seoul")
@@ -92,7 +101,7 @@ public class UserMissionScheduler {
 
 	// 2. 오늘의 미션 선택지가 구성되었지만, 선정하지 않고 그냥 넘어간 경우
 	// @Scheduled(cron = "* */2 * * * *", zone = "Asia/Seoul")
-	@Scheduled(cron = "@daily", zone = "Asia/Seoul")
+	/*@Scheduled(cron = "@daily", zone = "Asia/Seoul")
 	public void setClearPreUserMissionChoices() {
 		log.info("미션 선택지 리스트 초기화 스케줄러 진입");
 
@@ -119,8 +128,30 @@ public class UserMissionScheduler {
 				}
 			}
 		}
+	}*/
 
+	// 자정마다 오늘의 미션 초기값 bulk insert
+	@Scheduled(cron = "@daily", zone = "Asia/Seoul")
+	// @Scheduled(cron = "* */2 * * * *", zone = "Asia/Seoul")
+	public void insertEmptyUserMission() {
+		List<User> users = userRetriever.findAll().stream()
+			.filter(user -> !user.isDeleted()).toList();
+		Mission emptyMission = missionRetriever.getEmptyMission();
+		MissionQuest missionQuest = missionQuestRetriever.getRandomMissionQuest();
+
+		userMissionRetriever.bulkSaveInitUserMission(users, LocalDate.now(), emptyMission, missionQuest);
 	}
+
+	// 자정마다 오늘의 미션 선택지 추가
+	// @Scheduled(cron = "@daily", zone = "Asia/Seoul")
+	// @Scheduled(cron = "* */2 * * * *", zone = "Asia/Seoul")
+	// public void insertTodayUserMissionChoices() {
+	// 	List<User> users = userRetriever.findAll().stream()
+	// 		.filter(user -> !user.isDeleted()).toList();
+	// 	Mission emptyMission = missionRetriever.getEmptyMission();
+	//
+	// 	userMissionChoicesRetriever.bulkSaveUserMissionChoices(users, LocalDate.now(), emptyMission);
+	// }
 
 	// 매일 새벽 4시마다 30일 이전의 사진은 버킷에서 삭제한다
 	@Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")

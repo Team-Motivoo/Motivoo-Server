@@ -20,8 +20,8 @@ public record TodayMissionResponse(
 		return TodayMissionResponse.builder()
 			.isChoiceFinished(result.isChoiceFinished())
 			.date(result.date())
-			.missionChoiceList(result.missionChoiceList().stream()
-				.map(TodayUserMissionResponse::of).toList())
+			.missionChoiceList(result.missionChoiceList() != null ? result.missionChoiceList().stream()
+				.map(TodayUserMissionResponse::of).toList() : null)
 			.todayMission(TodayUserMissionResponse.of(result.todayMission())).build();
 	}
 }

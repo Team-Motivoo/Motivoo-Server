@@ -75,10 +75,10 @@ jobs:
           echo "${{ secrets.GRADLE_PROPERTIES }}" > ./local.properties
         working-directory: ${{ env.working-directory }}
 
-      - name: 빌드  # TODO 테스트까지 반영하여 빌드하도록 수정
+      - name: 빌드
         run: |
           chmod +x gradlew
-          ./gradlew motivoo-api:bootJar -x test
+          ./gradlew motivoo-api:bootJar
         working-directory: ${{ env.working-directory }}
         shell: bash
 

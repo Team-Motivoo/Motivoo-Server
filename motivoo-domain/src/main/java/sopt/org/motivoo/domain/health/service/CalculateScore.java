@@ -7,28 +7,32 @@ import sopt.org.motivoo.domain.health.entity.ExerciseType;
 
 @Service
 public class CalculateScore {
-    public double calculate(boolean isExercise, ExerciseType type,
-                            ExerciseFrequency frequency, ExerciseTime time){
+    public double calculate(boolean isExercise, ExerciseType type, ExerciseFrequency frequency, ExerciseTime time){
+
         double exerciseScore = getExerciseScore(isExercise, type);
         double frequencyScore = getFrequencyScore(frequency);
         double timeScore = getTimeScore(time);
 
         return exerciseScore*frequencyScore*timeScore;
     }
+
     private double getExerciseScore(boolean isExercise, ExerciseType type) {
-        if(!isExercise){
+
+        if (!isExercise) {
             return switch (type) {
                 case HIGH_LEVEL_ACTIVE, HIGH_LEVEL_INACTIVE -> 4.2;
                 case MEDIUM_LEVEL_ACTIVE, MEDIUM_LEVEL_INACTIVE -> 2.1;
                 default -> 1.05;
             };
         }
+
         return switch (type) {
             case HIGH_LEVEL_ACTIVE, HIGH_LEVEL_INACTIVE -> 6;
             case MEDIUM_LEVEL_ACTIVE, MEDIUM_LEVEL_INACTIVE -> 3;
             default -> 1.5;
         };
     }
+
     private double getFrequencyScore(ExerciseFrequency frequency) {
         return switch (frequency) {
             case LESS_THAN_ONCE -> 1.0;
@@ -37,6 +41,7 @@ public class CalculateScore {
             default -> 4.0;
         };
     }
+
     private double getTimeScore(ExerciseTime time) {
         return switch (time) {
             case LESS_THAN_HALFHOUR -> 1.0;

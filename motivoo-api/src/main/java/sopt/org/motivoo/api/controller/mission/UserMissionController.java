@@ -54,7 +54,7 @@ public class UserMissionController {
 	@PostMapping("/today")
 	public ResponseEntity<ApiResponse<Object>> choiceTodayMission(@RequestBody final TodayMissionChoiceRequest request, final Principal principal) {
 		Long userMissionId = userMissionService.choiceTodayMission(request.toServiceDto(), getUserFromPrincipal(principal));
-		URI location = URI.create("/today" + userMissionId);
+		URI location = URI.create("/mission/today/" + userMissionId);
 
 		return ResponseEntity.created(location).body(ApiResponse.successV2(CHOICE_TODAY_MISSION_SUCCESS));
 	}

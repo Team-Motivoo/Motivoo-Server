@@ -2,6 +2,8 @@ package sopt.org.motivoo.domain.parentchild.exception;
 
 import org.springframework.http.HttpStatus;
 
+import com.google.api.Http;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivoo.common.advice.BusinessExceptionType;
@@ -14,6 +16,9 @@ public enum ParentchildExceptionType implements BusinessExceptionType {
 	 */
 	NOT_EXIST_PARENTCHILD_USER(HttpStatus.BAD_REQUEST, "해당 유저와 매칭된 부모-자녀 유저가 없습니다."),
 	INVALID_PARENTCHILD_RELATION(HttpStatus.BAD_REQUEST, "올바르지 않은 부모-자식 관계입니다."),
+	ALREADY_FINISHED_INVITE_CODE(HttpStatus.BAD_REQUEST, "이미 매칭이 완료된 초대코드입니다."),
+	USER_NOT_INPUT_ONBOARDING(HttpStatus.BAD_REQUEST, "아직 온보딩 정보를 입력하지 않았습니다."),
+	MY_PARENTCHILD_INVITE(HttpStatus.BAD_REQUEST, "자신이 보낸 초대코드이거나 이미 매칭에 성공한 초대코드입니다."),
 
 	/**
 	 * 404 Not Found

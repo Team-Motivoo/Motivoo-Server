@@ -16,13 +16,18 @@ public record TodayUserMissionResponse(
 	@JsonProperty("mission_quest") String missionQuest,
 	@JsonProperty("mission_icon_url") String missionIconUrl
 ) {
+
 	public static TodayUserMissionResponse of(TodayUserMissionDto userMission) {
-		return TodayUserMissionResponse.builder()
-			.missionId(userMission.missionId())
-			.missionContent(userMission.missionContent())
-			.missionDescription(userMission.missionDescription())
-			.missionStepCount(userMission.missionStepCount())
-			.missionQuest(userMission.missionQuest())
-			.missionIconUrl(userMission.missionIconUrl()).build();
+		if (userMission != null) {
+			return TodayUserMissionResponse.builder()
+				.missionId(userMission.missionId())
+				.missionContent(userMission.missionContent())
+				.missionDescription(userMission.missionDescription())
+				.missionStepCount(userMission.missionStepCount())
+				.missionQuest(userMission.missionQuest())
+				.missionIconUrl(userMission.missionIconUrl()).build();
+		}
+		return null;
 	}
+
 }
