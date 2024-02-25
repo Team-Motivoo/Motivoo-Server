@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.security.PublicKey;
 import java.util.Map;
-import sopt.org.motivooServer.domain.auth.controller.apple.AppleApiClient;
+
+import sopt.org.motivooServer.domain.auth.controller.apple.AppleClient;
 import sopt.org.motivooServer.domain.auth.dto.response.apple.ApplePublicKeys;
+import sopt.org.motivooServer.domain.auth.dto.response.apple.OAuthPlatformMemberResponse;
 import sopt.org.motivooServer.global.advice.BusinessException;
 
 import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INVALID_APPLE_CLAIMS;
@@ -16,21 +18,20 @@ import static sopt.org.motivooServer.domain.user.exception.UserExceptionType.INV
 @Service
 public class AppleLoginService {
 
-    private AppleApiClient appleApiClient;
+    private AppleClient appleClient;
     private final AppleJwtParser appleJwtParser;
     private final PublicKeyGenerator publicKeyGenerator;
     private final AppleClaimsValidator appleClaimsValidator;
 
-    public String getAppleId(String identityToken) {
+    public OAuthPlatformMemberResponse getApplePlatformMember(String identityToken) {
         Map<String, String> headers = appleJwtParser.parseHeaders(identityToken);
-        ApplePublicKeys applePublicKeys = appleApiClient.getApplePublicKeys();
+        ApplePublicKeys applePublicKeys = appleClient.getApplePublicKeys();
 
         PublicKey publicKey = publicKeyGenerator.generatePublicKey(headers, applePublicKeys);
 
         Claims claims = appleJwtParser.parsePublicKeyAndGetClaims(identityToken, publicKey);
         validateClaims(claims);
-        log.info("애플="+claims.getSubject());
-        return claims.getSubject();
+        return new OAuthPlatformMemberResponse(claims.getSubject(), claims.get("email", String.class));
     }
 
     private void validateClaims(Claims claims) {
