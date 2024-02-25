@@ -4,6 +4,7 @@ package sopt.org.motivoo.domain.mission.entity;
 import static sopt.org.motivoo.domain.mission.entity.CompletedStatus.*;
 import static sopt.org.motivoo.domain.mission.exception.MissionExceptionType.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -119,4 +120,7 @@ public class UserMission extends BaseTimeEntity {
 		return this.getMission().getTarget().equals(UserType.NONE);
 	}
 
+	public boolean isNowDate() {
+		return this.getCreatedAt().toLocalDate().equals(LocalDate.now());
+	}
 }

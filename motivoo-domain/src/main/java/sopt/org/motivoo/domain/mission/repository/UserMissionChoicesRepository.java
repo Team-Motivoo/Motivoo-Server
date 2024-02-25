@@ -16,5 +16,6 @@ public interface UserMissionChoicesRepository extends JpaRepository<UserMissionC
     @Query("SELECT umc FROM UserMissionChoices umc WHERE umc.user = :user AND DATE(umc.createdAt) = DATE(:date)")
     List<UserMissionChoices> findAllByUserAndCreatedAt(User user, LocalDate date);
 
-    boolean existsByUser(User user);
+    @Query("SELECT COUNT(umc.id) > 0 FROM UserMissionChoices umc WHERE umc.user=:user AND DATE(umc.createdAt) = DATE(:date)")
+    boolean existsByUserAndCreatedAt(User user, LocalDate date);
 }

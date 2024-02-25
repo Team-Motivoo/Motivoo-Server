@@ -316,7 +316,7 @@ public class UserMissionManager {
 
 	// 오늘의 미션에 대한 유효성 검사
 	public static boolean validateTodayDateMission(UserMission todayMission) {
-		if (!todayMission.getCreatedAt().toLocalDate().equals(LocalDate.now()) || todayMission.getCompletedStatus().equals(NONE)) {
+		if (!todayMission.isNowDate() || todayMission.isEmptyUserMission()) {
 			log.info("유효하지 않은 오늘의 미션! (아직 유저가 선택 X)");
 			return false;
 		}

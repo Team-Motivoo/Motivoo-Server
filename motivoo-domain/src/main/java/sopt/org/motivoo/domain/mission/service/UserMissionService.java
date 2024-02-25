@@ -33,6 +33,7 @@ import sopt.org.motivoo.domain.mission.exception.MissionException;
 import sopt.org.motivoo.domain.mission.repository.MissionQuestRetriever;
 import sopt.org.motivoo.domain.mission.repository.MissionRetriever;
 import sopt.org.motivoo.domain.mission.repository.UserMissionChoicesRetriever;
+import sopt.org.motivoo.domain.mission.repository.UserMissionRepository;
 import sopt.org.motivoo.domain.mission.repository.UserMissionRetriever;
 import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.repository.UserRetriever;
@@ -182,14 +183,12 @@ public class UserMissionService {
 		return isStepCountCompleted;
 	}
 
-	@Transactional  // TODO 여기 최대한 분리해보자
+	@Transactional
 	public TodayMissionResult getTodayMission(final Long userId) {
 		User user = userRetriever.getUserById(userId);
 		User opponentUser = userRetriever.getMatchedUserWith(user);
 
 		checkMatchedUserWithdraw(opponentUser);
-		log.info("TodayMissionChoices이 있을까, 없을까? {}개 있음 ㅋㅋ", userMissionChoicesRetriever.getUserMissionChoice(user).size());
-
 
 		/**
 		 * 아직 오늘의 미션이 선정되지 않은 경우
@@ -197,48 +196,28 @@ public class UserMissionService {
 		boolean existsUserMission = userMissionRetriever.existsByUser(user);
 		boolean isFiltered = userMissionChoicesRetriever.existsByUser(user);
 
-		// 1) 필터링 로직을 한 번 이상 거친 경우 -> 저장된 미션 선택지 가져오기
-		if (isFiltered) {
+		// 1) 처음 가입한 유저의 경우 -> 미션 선택지 세팅 완료
+		if (!existsUserMission) {
+			createEmptyMission(List.of(user, opponentUser));
+			return getMissionChoicesResult(user);
+		}
+
+		UserMission todayMission = user.getCurrentUserMission();
+
+		// 2) 필터링 로직을 한 번 이상 거친 경우 -> 저장된 미션 선택지 가져오기
+		if (isFiltered && todayMission.isEmptyUserMission()) {
 			List<UserMissionChoices> missionChoice = userMissionChoicesRetriever.getUserMissionChoice(user);
 			return TodayMissionResult.of(missionChoice);
 		}
 
-		// 2) 처음 가입한 유저의 경우 -> 미션 선택지 세팅 완료
-		if (!existsUserMission) {
-			return getMissionChoicesResult(user);
-		}
+		log.info("TodayMissionChoices이 있을까, 없을까? {}개 있음 ㅋㅋ", userMissionChoicesRetriever.getUserMissionChoice(user).size());
+		log.info("TodayMission의 상태: {} 타깃", todayMission.getCreatedAt() + " " + todayMission.getMission().getTarget());
 
 		// 3) 일반적인 경우 - 마션 선택지 필터링
-		UserMission todayMission = user.getCurrentUserMission();
-		if (validateTodayDateMission(todayMission) && todayMission.isEmptyUserMission()) {
+		if (todayMission.isNowDate() && todayMission.isEmptyUserMission()) {
+			log.info("필터링 GO");
 			return getMissionChoicesResult(user);
 		}
-		/*if (validateTodayDateMission(todayMission) && !todayMission.getMission().getTarget().equals(UserType.NONE)) {
-			// user.clearPreUserMissionChoice();
-			return TodayMissionResult.of(todayMission);
-		}
-
-		if (!validateTodayDateMission(todayMission) && !isFiltered) {
-			log.info("유저 {}의 UserMissions 선택지 리스트가 비어 있음", user.getNickname());
-
-			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
-			// user.setPreUserMissionChoice(todayMissionChoices);
-			log.info("유저 오늘의 미션 선택지 세팅 완료! : {}", todayMissionChoices.size());
-			return TodayMissionResult.of(todayMissionChoices);
-		}
-
-		if (!validateTodayDateMission(todayMission) && !userMissionChoicesRetriever.getUserMissionChoice(user).isEmpty()) {
-			log.info("오늘의 미션 선택지가 세팅된 상태: {}", userMissionChoicesRetriever.getUserMissionChoice(user).size());
-			return TodayMissionResult.of(userMissionChoicesRetriever.getUserMissionChoice(user));
-		}
-
-		// 상대 측에서 미션 히스토리를 먼저 조회한 경우
-		if (userMissionChoicesRetriever.getUserMissionChoice(user).isEmpty() && todayMission.getMission().getTarget().equals(UserType.NONE)) {
-			List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
-			// user.setPreUserMissionChoice(todayMissionChoices);
-			log.info("유저 오늘의 미션 선택지 세팅 완료! : {}", todayMissionChoices.size());
-			return TodayMissionResult.of(todayMissionChoices);
-		}*/
 
 		/**
 		 * 	오늘의 미션이 선정된 경우
@@ -268,6 +247,22 @@ public class UserMissionService {
 		userMissionChoicesRetriever.saveAll(filteredMissionChoices);
 		return filteredMissionChoices;
 	}
+
+	public void createEmptyMission(List<User> users) {
+		Mission emptyMission = missionRetriever.getEmptyMission();
+		MissionQuest missionQuest = missionQuestRetriever.getRandomMissionQuest();
+
+		userMissionRetriever.bulkSaveInitUserMission(users, LocalDate.now(), emptyMission, missionQuest);
+
+	}
+
+	// public void updateGoalStepCount(Long userId) {
+	// 	User user = userRetriever.getUserById(userId);
+	// 	UserMission userMission = user.getCurrentUserMission();
+	//
+	// 	int stepCount = userMission.getMission().getStepCount();
+	// 	userMissionRetriever.updateUserMission();
+	// }
 
 	// 오늘의 미션 걸음 수 달성 상태 확인
 	private void checkMissionStepComplete(UserMission todayMission) {
