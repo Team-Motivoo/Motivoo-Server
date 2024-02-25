@@ -17,9 +17,11 @@ import sopt.org.motivoo.domain.external.firebase.FirebaseService;
 import sopt.org.motivoo.domain.external.s3.PreSignedUrlResponse;
 import sopt.org.motivoo.domain.health.entity.Health;
 import sopt.org.motivoo.domain.health.repository.HealthRetriever;
+import sopt.org.motivoo.domain.mission.dto.request.GoalStepCommand;
 import sopt.org.motivoo.domain.mission.dto.request.MissionImgUrlCommand;
 import sopt.org.motivoo.domain.mission.dto.request.MissionStepStatusCommand;
 import sopt.org.motivoo.domain.mission.dto.request.TodayMissionChoiceCommand;
+import sopt.org.motivoo.domain.mission.dto.response.GoalStepResult;
 import sopt.org.motivoo.domain.mission.dto.response.MissionHistoryResult;
 import sopt.org.motivoo.domain.mission.dto.response.MissionImgUrlResult;
 import sopt.org.motivoo.domain.mission.dto.response.MissionStepStatusResult;
@@ -256,13 +258,18 @@ public class UserMissionService {
 
 	}
 
-	// public void updateGoalStepCount(Long userId) {
-	// 	User user = userRetriever.getUserById(userId);
-	// 	UserMission userMission = user.getCurrentUserMission();
-	//
-	// 	int stepCount = userMission.getMission().getStepCount();
-	// 	userMissionRetriever.updateUserMission();
-	// }
+	@Transactional
+	public GoalStepResult updateGoalStepCount(final GoalStepCommand request, Long userId) {
+		User user = userRetriever.getUserById(userId);
+		UserMission todayMission = user.getCurrentUserMission();
+
+		if (validateTodayDateMission(todayMission)) {
+			int stepCount = todayMission.getMission().getStepCount();
+			missionRetriever.updateStepCount(request.goalStepCount(), todayMission.getMission());
+			return GoalStepResult.of(stepCount, request.goalStepCount());
+		}
+		throw new MissionException(FAIL_TO_UPDATE_GOAL_STEP_COUNT);
+	}
 
 	// 오늘의 미션 걸음 수 달성 상태 확인
 	private void checkMissionStepComplete(UserMission todayMission) {
