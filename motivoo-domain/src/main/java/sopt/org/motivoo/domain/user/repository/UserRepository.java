@@ -20,6 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Soft Delete 사용을 위한 deleted 필드 체크 추가
     @Query("select u from User u where u.id=?1 and u.deleted=false")
     Optional<User> findById(Long id);
+
     @Query("select u from User u where u.socialId=?1 and u.deleted = false")
     List<User> findBySocialId(String socialId);
 

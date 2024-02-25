@@ -131,8 +131,8 @@ public class UserMissionScheduler {
 	}*/
 
 	// 자정마다 오늘의 미션 초기값 bulk insert
-	// @Scheduled(cron = "@daily", zone = "Asia/Seoul")
-	@Scheduled(cron = "* */2 * * * *", zone = "Asia/Seoul")
+	@Scheduled(cron = "@daily", zone = "Asia/Seoul")
+	// @Scheduled(cron = "* */2 * * * *", zone = "Asia/Seoul")
 	public void insertEmptyUserMission() {
 		List<User> users = userRetriever.findAll().stream()
 			.filter(user -> !user.isDeleted()).toList();
