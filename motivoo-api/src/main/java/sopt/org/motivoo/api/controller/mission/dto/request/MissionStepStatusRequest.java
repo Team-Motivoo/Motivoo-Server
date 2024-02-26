@@ -11,6 +11,7 @@ public record MissionStepStatusRequest(
 
 	public MissionStepStatusCommand toServiceDto() {
 		return MissionStepStatusCommand.builder()
-			.myStepCount(myStepCount).build();
+			.myStepCount(myStepCount)
+			.opponentStepCount(opponentStepCount).build();
 	}
 }
