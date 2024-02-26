@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import sopt.org.motivoo.api.controller.mission.dto.request.GoalStepRequest;
 import sopt.org.motivoo.api.controller.mission.dto.request.MissionImgUrlRequest;
 import sopt.org.motivoo.api.controller.mission.dto.request.TodayMissionChoiceRequest;
+import sopt.org.motivoo.api.controller.mission.dto.response.GoalStepResponse;
 import sopt.org.motivoo.api.controller.mission.dto.response.MissionHistoryResponse;
 import sopt.org.motivoo.api.controller.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivoo.api.controller.mission.dto.response.OpponentGoalStepsResponse;
@@ -63,5 +65,11 @@ public class UserMissionController {
 	public ResponseEntity<ApiResponse<OpponentGoalStepsResponse>> getOpponentGoalSteps(final Principal principal) {
 		return ApiResponse.success(GET_TODAY_OPPONENT_GOAL_STEP_COUNT,
 			OpponentGoalStepsResponse.of(userMissionService.getOpponentGoalSteps(getUserFromPrincipal(principal))));
+	}
+
+	@PatchMapping("/step")
+	public ResponseEntity<ApiResponse<GoalStepResponse>> changeStepCount(@RequestBody final GoalStepRequest request, final Principal principal) {
+		return ApiResponse.success(UPDATE_STEP_COUNT,
+			GoalStepResponse.of(userMissionService.updateGoalStepCount(request.toServiceDto(), getUserFromPrincipal(principal))));
 	}
 }
