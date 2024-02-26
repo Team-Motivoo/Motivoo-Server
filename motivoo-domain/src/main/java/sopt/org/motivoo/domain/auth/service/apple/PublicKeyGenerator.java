@@ -47,4 +47,6 @@ public class PublicKeyGenerator {
             throw new BusinessException(CREATE_PUBLIC_KEY_EXCEPTION);
         }
     }
+
+
 }
