@@ -45,4 +45,8 @@ public class MissionRetriever {
 		return missionRepository.findById(missionId).orElseThrow(
 			() -> new MissionException(MISSION_NOT_FOUND));
 	}
+
+	public void updateStepCount(int stepCount, Mission mission) {
+		missionRepository.updateStepCountById(stepCount, mission.getId());
+	}
 }

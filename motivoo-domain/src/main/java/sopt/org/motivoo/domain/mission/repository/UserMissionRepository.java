@@ -1,4 +1,4 @@
-package sopt.org.motivooServer.domain.mission.repository;
+package sopt.org.motivoo.domain.mission.repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -6,14 +6,18 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import sopt.org.motivooServer.domain.mission.entity.UserMission;
-import sopt.org.motivooServer.domain.user.entity.User;
+import sopt.org.motivoo.domain.mission.entity.Mission;
+import sopt.org.motivoo.domain.mission.entity.MissionQuest;
+import sopt.org.motivoo.domain.mission.entity.UserMission;
+import sopt.org.motivoo.domain.user.entity.User;
 
 public interface UserMissionRepository extends JpaRepository<UserMission, Long> {
 
+	//== READ ==//
 	List<UserMission> findUserMissionsByUserOrderByCreatedAt(User user);
 
 	Optional<UserMission> findFirstByUserOrderByCreatedAt(User user);
@@ -22,7 +26,19 @@ public interface UserMissionRepository extends JpaRepository<UserMission, Long> 
 	@Query("SELECT um FROM UserMission um WHERE DATE(um.createdAt) = DATE(:date)")
 	List<UserMission> findUserMissionsByCreatedAt(LocalDate date);
 
-	void deleteByUser(User user);
 	@Query("SELECT um FROM UserMission um WHERE um.createdAt < :date")
-	List<UserMission> findUserMissionsByCreatedAtBefore(@Param("date") LocalDateTime date);}
+	List<UserMission> findUserMissionsByCreatedAtBefore(@Param("date") LocalDateTime date);
+
+	boolean existsByUser(User user);
+
+
+	//== DELETE ==//
+	void deleteByUser(User user);
+
+
+	//== UPDATE ==//
+	@Modifying
+	@Query("UPDATE UserMission um SET um.mission = :mission, um.missionQuest = :quest WHERE um.user = :user AND DATE(um.createdAt) = DATE(:date)")
+	void updateValidTodayMission(Mission mission, MissionQuest quest, User user, LocalDate date);
+}
 

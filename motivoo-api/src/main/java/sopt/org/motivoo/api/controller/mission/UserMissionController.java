@@ -1,7 +1,7 @@
-package sopt.org.motivooServer.domain.mission.controller;
+package sopt.org.motivoo.api.controller.mission;
 
-import static sopt.org.motivooServer.domain.auth.config.JwtTokenProvider.*;
-import static sopt.org.motivooServer.global.response.SuccessType.*;
+import static sopt.org.motivoo.common.response.SuccessType.*;
+import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.*;
 
 import java.net.URI;
 import java.security.Principal;
@@ -16,14 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import sopt.org.motivooServer.domain.mission.dto.request.MissionImgUrlRequest;
-import sopt.org.motivooServer.domain.mission.dto.request.TodayMissionChoiceRequest;
-import sopt.org.motivooServer.domain.mission.dto.response.MissionHistoryResponse;
-import sopt.org.motivooServer.domain.mission.dto.response.MissionImgUrlResponse;
-import sopt.org.motivooServer.domain.mission.dto.response.OpponentGoalStepsResponse;
-import sopt.org.motivooServer.domain.mission.dto.response.TodayMissionResponse;
-import sopt.org.motivooServer.domain.mission.service.UserMissionService;
-import sopt.org.motivooServer.global.response.ApiResponse;
+import sopt.org.motivoo.api.controller.mission.dto.request.GoalStepRequest;
+import sopt.org.motivoo.api.controller.mission.dto.request.MissionImgUrlRequest;
+import sopt.org.motivoo.api.controller.mission.dto.request.TodayMissionChoiceRequest;
+import sopt.org.motivoo.api.controller.mission.dto.response.GoalStepResponse;
+import sopt.org.motivoo.api.controller.mission.dto.response.MissionHistoryResponse;
+import sopt.org.motivoo.api.controller.mission.dto.response.MissionImgUrlResponse;
+import sopt.org.motivoo.api.controller.mission.dto.response.OpponentGoalStepsResponse;
+import sopt.org.motivoo.api.controller.mission.dto.response.TodayMissionResponse;
+import sopt.org.motivoo.common.response.ApiResponse;
+import sopt.org.motivoo.domain.mission.service.UserMissionService;
 
 @RestController
 @RequestMapping("/mission")
@@ -35,30 +37,39 @@ public class UserMissionController {
 	@PatchMapping("/image")
 	public ResponseEntity<ApiResponse<MissionImgUrlResponse>> getMissionImgUrl(@Valid @RequestBody final MissionImgUrlRequest request, final Principal principal) {
 		return ApiResponse.success(GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS,
-			userMissionService.getMissionImgUrl(request, getUserFromPrincipal(principal)));
+			MissionImgUrlResponse.of(userMissionService.getMissionImgUrl(request.toServiceDto(), getUserFromPrincipal(principal))));
 	}
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<MissionHistoryResponse>> getUserMissionHistory(final Principal principal) {
-		return ApiResponse.success(GET_MISSION_HISTORY_SUCCESS, userMissionService.getUserMissionHistory(getUserFromPrincipal(principal)));
+		return ApiResponse.success(GET_MISSION_HISTORY_SUCCESS,
+			MissionHistoryResponse.of(userMissionService.getUserMissionHistory(getUserFromPrincipal(principal))));
 	}
 
 	@PostMapping("/today/choice")
 	public ResponseEntity<ApiResponse<TodayMissionResponse>> getTodayMission(final Principal principal) {
 		//TODO location 지정 & 상태코드 반영
-		return ApiResponse.success(GET_TODAY_MISSION_SUCCESS, userMissionService.getTodayMission(getUserFromPrincipal(principal)));
+		return ApiResponse.success(GET_TODAY_MISSION_SUCCESS,
+			TodayMissionResponse.of(userMissionService.getTodayMission(getUserFromPrincipal(principal))));
 	}
 
 	@PostMapping("/today")
 	public ResponseEntity<ApiResponse<Object>> choiceTodayMission(@RequestBody final TodayMissionChoiceRequest request, final Principal principal) {
-		Long userMissionId = userMissionService.choiceTodayMission(request, getUserFromPrincipal(principal));
-		URI location = URI.create("/today" + userMissionId);
+		Long userMissionId = userMissionService.choiceTodayMission(request.toServiceDto(), getUserFromPrincipal(principal));
+		URI location = URI.create("/mission/today/" + userMissionId);
 
 		return ResponseEntity.created(location).body(ApiResponse.successV2(CHOICE_TODAY_MISSION_SUCCESS));
 	}
 
 	@GetMapping("/opponent")
 	public ResponseEntity<ApiResponse<OpponentGoalStepsResponse>> getOpponentGoalSteps(final Principal principal) {
-		return ApiResponse.success(GET_TODAY_OPPONENT_GOAL_STEP_COUNT, userMissionService.getOpponentGoalSteps(getUserFromPrincipal(principal)));
+		return ApiResponse.success(GET_TODAY_OPPONENT_GOAL_STEP_COUNT,
+			OpponentGoalStepsResponse.of(userMissionService.getOpponentGoalSteps(getUserFromPrincipal(principal))));
+	}
+
+	@PatchMapping("/step")
+	public ResponseEntity<ApiResponse<GoalStepResponse>> changeStepCount(@RequestBody final GoalStepRequest request, final Principal principal) {
+		return ApiResponse.success(UPDATE_STEP_COUNT,
+			GoalStepResponse.of(userMissionService.updateGoalStepCount(request.toServiceDto(), getUserFromPrincipal(principal))));
 	}
 }
