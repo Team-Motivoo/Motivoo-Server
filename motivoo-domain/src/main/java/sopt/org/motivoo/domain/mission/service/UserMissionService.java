@@ -220,6 +220,11 @@ public class UserMissionService {
 			log.info("필터링 GO");
 			return getMissionChoicesResult(user);
 		}
+		// 3-1) TODO DB 초기화 하고 삭제해도 됨!
+		if (!validateTodayDateMission(todayMission)) {
+			createEmptyMission(List.of(user));
+			return getMissionChoicesResult(user);
+		}
 
 		/**
 		 * 	오늘의 미션이 선정된 경우
