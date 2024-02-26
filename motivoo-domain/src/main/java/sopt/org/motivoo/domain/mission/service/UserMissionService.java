@@ -197,9 +197,11 @@ public class UserMissionService {
 		 */
 		boolean existsUserMission = userMissionRetriever.existsByUser(user);
 		boolean isFiltered = userMissionChoicesRetriever.existsByUser(user);
+		log.info("User {}의 UserMission이 비어있니? {} ", user.getNickname(), existsUserMission);
 
 		// 1) 처음 가입한 유저의 경우 -> 미션 선택지 세팅 완료
 		if (!existsUserMission) {
+			log.info("첫 가입 유저 미션 필터링 진입");
 			createEmptyMission(List.of(user, opponentUser));
 			return getMissionChoicesResult(user);
 		}
@@ -260,7 +262,7 @@ public class UserMissionService {
 		MissionQuest missionQuest = missionQuestRetriever.getRandomMissionQuest();
 
 		List<User> filteredUsers = users.stream()
-			.filter(user -> !user.getCurrentUserMission().isNowDate())
+			.filter(user -> !user.getUserMissions().isEmpty() && !user.getCurrentUserMission().isNowDate())
 			.toList();
 		userMissionRetriever.bulkSaveInitUserMission(filteredUsers, LocalDate.now(), emptyMission, missionQuest);
 	}

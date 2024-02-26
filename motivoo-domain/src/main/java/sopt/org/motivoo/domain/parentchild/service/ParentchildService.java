@@ -88,6 +88,9 @@ public class ParentchildService {
         if (parentchild.isMatched()) {
             return new InviteReceiveResult(userId, opponentUserId, true);
         }
+        if (user.getParentchild() != null) {
+            validateInviteRequest(user, parentchild);
+        }
 
         validateInviteRequest(user, parentchild);
         completeMatching(user, parentchild);

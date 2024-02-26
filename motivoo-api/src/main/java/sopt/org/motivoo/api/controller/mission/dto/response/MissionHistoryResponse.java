@@ -21,8 +21,8 @@ public record MissionHistoryResponse(
 		return MissionHistoryResponse.builder()
 			.userType(result.userType())
 			.todayMission(TodayUserMissionResponse.of(result.todayMission()))
-			.missionHistory(result.missionHistory().stream().map(ParentchildMissionResponse::of)
-				.collect(Collectors.toList())).build();
+			.missionHistory(result.missionHistory() != null ? result.missionHistory().stream().map(ParentchildMissionResponse::of)
+				.collect(Collectors.toList()) : null).build();
 	}
 
 }
