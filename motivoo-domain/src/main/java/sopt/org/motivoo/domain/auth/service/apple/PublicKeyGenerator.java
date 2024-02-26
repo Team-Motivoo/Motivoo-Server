@@ -1,6 +1,9 @@
 package sopt.org.motivoo.domain.auth.service.apple;
 
-import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
+import org.springframework.stereotype.Component;
+import sopt.org.motivoo.common.advice.BusinessException;
+import sopt.org.motivoo.external.auth.apple.response.ApplePublicKey;
+import sopt.org.motivoo.external.auth.apple.response.ApplePublicKeys;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
@@ -11,11 +14,7 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 import java.util.Map;
 
-import org.springframework.stereotype.Component;
-
-import sopt.org.motivoo.common.advice.BusinessException;
-import sopt.org.motivoo.domain.auth.dto.response.apple.ApplePublicKey;
-import sopt.org.motivoo.domain.auth.dto.response.apple.ApplePublicKeys;
+import static sopt.org.motivoo.domain.user.exception.UserExceptionType.CREATE_PUBLIC_KEY_EXCEPTION;
 
 @Component
 public class PublicKeyGenerator {

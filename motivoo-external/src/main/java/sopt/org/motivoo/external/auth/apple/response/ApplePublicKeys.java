@@ -1,7 +1,6 @@
-package sopt.org.motivoo.api.controller.auth.dto.response.apple;
+package sopt.org.motivoo.external.auth.apple.response;
 
 
-import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
 
 import java.util.List;
 
@@ -10,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sopt.org.motivoo.common.advice.BusinessException;
-import sopt.org.motivoo.domain.auth.dto.response.apple.ApplePublicKey;
+import sopt.org.motivoo.domain.user.exception.UserExceptionType;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -24,7 +23,7 @@ public class ApplePublicKeys {
                 .stream()
                 .filter(k -> k.getAlg().equals(alg) && k.getKid().equals(kid))
                 .findFirst()
-                .orElseThrow(() -> new BusinessException(INVALID_APPLE_PUBLIC_KEY));
+                .orElseThrow(() -> new BusinessException(UserExceptionType.INVALID_APPLE_PUBLIC_KEY));
     }
 
 }

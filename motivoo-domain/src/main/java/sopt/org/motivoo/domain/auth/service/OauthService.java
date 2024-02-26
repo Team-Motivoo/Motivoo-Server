@@ -1,25 +1,19 @@
 package sopt.org.motivoo.domain.auth.service;
 
-
-import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.*;
-
-import java.util.List;
-import java.util.Map;
-
+import feign.FeignException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import feign.FeignException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
+import sopt.org.motivoo.api.controller.auth.dto.request.OauthTokenRequest;
+import sopt.org.motivoo.api.controller.auth.dto.response.LoginResponse;
+import sopt.org.motivoo.api.controller.user.apple.OAuthPlatformMemberResponse;
 import sopt.org.motivoo.domain.auth.config.UserAuthentication;
 import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
-import sopt.org.motivoo.domain.auth.dto.request.OauthTokenCommand;
 import sopt.org.motivoo.domain.auth.dto.response.LoginResult;
 import sopt.org.motivoo.domain.auth.repository.TokenRedisRepository;
 import sopt.org.motivoo.domain.auth.service.apple.AppleLoginService;
@@ -29,39 +23,61 @@ import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.entity.UserType;
 import sopt.org.motivoo.domain.user.exception.UserException;
 import sopt.org.motivoo.domain.user.exception.UserExceptionType;
-import sopt.org.motivoo.domain.user.repository.UserRetriever;
+import sopt.org.motivoo.domain.user.repository.UserRepository;
+
+import java.util.List;
+import java.util.Map;
+
+import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.getAuthenticatedUser;
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OauthService {
-
     private final InMemoryClientRegistrationRepository inMemoryRepository;
-    private final UserRetriever userRetriever;
+    private final UserRepository userRepository;
     private final TokenRedisRepository tokenRedisRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
     private final AppleLoginService appleLoginService;
 
     @Transactional
-    public LoginResult login(OauthTokenCommand tokenRequest) {
+    public LoginResponse login(OauthTokenRequest tokenRequest) {
         String providerName = tokenRequest.tokenType();
-
-        //카카오
-        ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
-
+        log.info("소셜플랫폼="+providerName);
+        SocialPlatform socialPlatform = SocialPlatform.of(providerName);
         String refreshToken = jwtTokenProvider.createRefreshToken();
-        User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
-        log.info("유저 아이디="+user.getId());
 
-        String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(), null, null));
-        tokenRedisRepository.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
-        return LoginResult.of(user, accessToken, refreshToken);
+        if(socialPlatform.equals(SocialPlatform.KAKAO)){
+            ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
+
+            User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
+            log.info("유저 아이디="+user.getId());
+
+            String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(), null, null));
+            tokenRedisRepository.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
+            LoginResult loginResult= LoginResult.of(user, accessToken, refreshToken);
+            return LoginResponse.of(loginResult);
+        }
+
+        OAuthPlatformMemberResponse applePlatformMember = appleLoginService.getApplePlatformMember(tokenRequest.accessToken());
+
+        List<User> userEntity = userRepository.findBySocialId(applePlatformMember.getPlatformId());
+        //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
+        if(userEntity==null || isWithdrawn(userEntity)){
+            saveUser(null, applePlatformMember.getPlatformId(), socialPlatform, tokenRequest, refreshToken);
+        }
+
+        //로그인
+        updateRefreshToken(userEntity.get(0), refreshToken);
+        String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(userEntity.get(0).getId(),null,null));
+        LoginResult loginResult = LoginResult.of(userEntity.get(0), accessToken, refreshToken);
+        return LoginResponse.of(loginResult);
 
     }
 
-    public User getUserProfile(String providerName, OauthTokenCommand tokenRequest, ClientRegistration provider, String refreshToken) {
+
+    public User getUserProfile(String providerName, OauthTokenRequest tokenRequest, ClientRegistration provider, String refreshToken) {
         Map<String, Object> userAttributes = getUserAttributes(provider, tokenRequest);
         OAuth2UserInfo oAuth2UserInfo = getOAuth2UserInfo(providerName, userAttributes);
         SocialPlatform socialPlatform = getSocialPlatform(providerName);
@@ -69,7 +85,7 @@ public class OauthService {
         String providerId = oAuth2UserInfo.getProviderId();
         String nickName = oAuth2UserInfo.getNickName();
 
-        List<User> userEntity = userRetriever.getUsersBySocialId(providerId);
+        List<User> userEntity = userRepository.findBySocialId(providerId);
 
         //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
         if(userEntity==null || isWithdrawn(userEntity)){
@@ -118,7 +134,7 @@ public class OauthService {
         userEntity.updateRefreshToken(refreshToken);
     }
 
-    public User saveUser(String nickName, String providerId, SocialPlatform socialPlatform, OauthTokenCommand tokenRequest, String refreshToken) {
+    public User saveUser(String nickName, String providerId, SocialPlatform socialPlatform, OauthTokenRequest tokenRequest, String refreshToken) {
         User newUser = User.builder()
                 .nickname(nickName)
                 .socialId(providerId)
@@ -128,11 +144,11 @@ public class OauthService {
                 .type(UserType.NONE)
                 .deleted(Boolean.FALSE)
                 .build();
-        userRetriever.saveUser(newUser);
+        userRepository.save(newUser);
         return newUser;
     }
 
-    private Map<String, Object> getUserAttributes(ClientRegistration provider, OauthTokenCommand tokenRequest) {
+    private Map<String, Object> getUserAttributes(ClientRegistration provider, OauthTokenRequest tokenRequest) {
         return WebClient.create()
                 .get()
                 .uri(provider.getProviderDetails().getUserInfoEndpoint().getUri())
@@ -145,7 +161,7 @@ public class OauthService {
 
     @Transactional
     public void logout(String accessToken) {
-        String refreshToken = userRetriever.getRefreshTokenById(getAuthenticatedUser());
+        String refreshToken = userRepository.findRefreshTokenById(getAuthenticatedUser());
 
         tokenRedisRepository.saveBlockedToken(accessToken);
         tokenRedisRepository.deleteRefreshToken(refreshToken);
