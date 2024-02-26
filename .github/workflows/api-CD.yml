@@ -4,6 +4,7 @@ on:  # 트리거
   push:
     branches: [ "develop" ]
     paths:
+      - ./
       - motivoo-api/**
       - motivoo-domain/**
       - motivoo-common/**
