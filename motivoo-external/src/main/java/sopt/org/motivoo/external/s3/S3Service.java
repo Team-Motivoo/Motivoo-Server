@@ -1,7 +1,7 @@
-package sopt.org.motivoo.domain.external.s3;
+package sopt.org.motivoo.external.s3;
 
 import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
-import static sopt.org.motivoo.domain.external.s3.S3ExceptionType.*;
+import static sopt.org.motivoo.external.s3.S3ExceptionType.*;
 
 import java.io.IOException;
 import java.net.URL;

@@ -1,4 +1,4 @@
-package sopt.org.motivoo.domain.external.s3;
+package sopt.org.motivoo.external.s3;
 
 public record PreSignedUrlResponse(
 	String fileName,

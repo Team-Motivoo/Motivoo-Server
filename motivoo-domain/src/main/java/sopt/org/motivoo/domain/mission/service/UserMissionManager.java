@@ -40,7 +40,6 @@ import sopt.org.motivoo.domain.mission.entity.UserMission;
 import sopt.org.motivoo.domain.mission.entity.UserMissionChoices;
 import sopt.org.motivoo.domain.mission.exception.MissionException;
 import sopt.org.motivoo.domain.user.entity.User;
-import sopt.org.motivoo.domain.user.entity.UserType;
 import sopt.org.motivoo.domain.user.exception.UserException;
 
 @Slf4j

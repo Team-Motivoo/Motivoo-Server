@@ -35,7 +35,6 @@ import sopt.org.motivoo.domain.mission.exception.MissionException;
 import sopt.org.motivoo.domain.mission.repository.MissionQuestRetriever;
 import sopt.org.motivoo.domain.mission.repository.MissionRetriever;
 import sopt.org.motivoo.domain.mission.repository.UserMissionChoicesRetriever;
-import sopt.org.motivoo.domain.mission.repository.UserMissionRepository;
 import sopt.org.motivoo.domain.mission.repository.UserMissionRetriever;
 import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.repository.UserRetriever;

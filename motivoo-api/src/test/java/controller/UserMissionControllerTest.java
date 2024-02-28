@@ -7,7 +7,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static sopt.org.motivoo.common.response.SuccessType.*;
-import static sopt.org.motivoo.domain.external.s3.S3BucketDirectory.*;
+import static sopt.org.motivoo.external.s3.S3BucketDirectory.*;
 import static util.ApiDocumentUtil.*;
 
 import java.security.Principal;
