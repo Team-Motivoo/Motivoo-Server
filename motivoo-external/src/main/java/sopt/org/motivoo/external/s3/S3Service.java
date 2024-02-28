@@ -107,35 +107,6 @@ public class S3Service {
 		}
 	}
 
-	// imageKey 기반으로 실제 S3 URL 도출
-	public String getURL(final String url) {
-
-		int index = url.indexOf(AWS_DOMAIN);
-		String imageKey = "";
-		if (index != -1) {
-			imageKey = url.substring(index + AWS_DOMAIN.length());
-			log.info("imageKey substring으로 가져옴: {}", imageKey);
-		} else {
-			log.error("imageKey substring으로 가져오기 실패");
-		}
-
-		try {
-			GetUrlRequest request = GetUrlRequest.builder()
-				.bucket(bucketName)
-				.key(imageKey)
-				.build();
-
-			URL imageUrl = s3Client.utilities().getUrl(request);
-
-			String urlWithKey = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/" + imageKey;
-			if (urlWithKey.equals(imageUrl.toString())) {
-				return imageUrl.toString();
-			}
-			throw new BusinessException(S3_BUCKET_GET_IMAGE_ERROR);
-		} catch (S3Exception e) {
-			throw new BusinessException(e.getMessage(), S3_BUCKET_GET_IMAGE_ERROR);
-		}
-	}
 
 	private String getKeyByUrl(String imgUrl) {
 
@@ -151,8 +122,28 @@ public class S3Service {
 		return imageKey;
 	}
 
-	public String getImgByFileName(String prefix, String fileName) {
-		return "https://"+bucketName+".s3.ap-northeast-2.amazonaws.com/"+prefix+fileName;
+	// 파일명으로부터 S3 Bucket URL 조회
+	public String getS3ImgUrl(S3BucketDirectory prefix, String fileName) {
+
+		String imageKey = prefix.value() + fileName;
+
+		try {
+			GetUrlRequest request = GetUrlRequest.builder()
+				.bucket(bucketName)
+				.key(imageKey)
+				.build();
+
+			URL imageUrl = s3Client.utilities().getUrl(request);
+
+			String urlWithKey = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/" + imageKey;
+			if (urlWithKey.equals(imageUrl.toString())) {
+				log.info("S3에 저장된 이미지 Url: {}", imageUrl);
+				return imageUrl.toString();
+			}
+			throw new BusinessException(S3_BUCKET_GET_IMAGE_ERROR);
+		} catch (S3Exception e) {
+			throw new BusinessException(S3_BUCKET_GET_IMAGE_ERROR);
+		}
 	}
 
 	private String generateImageFileName() {

@@ -2,6 +2,7 @@ package sopt.org.motivoo.api.controller.mission;
 
 import static sopt.org.motivoo.common.response.SuccessType.*;
 import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.*;
+import static sopt.org.motivoo.external.s3.S3BucketDirectory.*;
 
 import java.net.URI;
 import java.security.Principal;
@@ -18,14 +19,17 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivoo.api.controller.mission.dto.request.GoalStepRequest;
 import sopt.org.motivoo.api.controller.mission.dto.request.MissionImgUrlRequest;
+import sopt.org.motivoo.api.controller.mission.dto.request.MissionStatusRequest;
 import sopt.org.motivoo.api.controller.mission.dto.request.TodayMissionChoiceRequest;
 import sopt.org.motivoo.api.controller.mission.dto.response.GoalStepResponse;
 import sopt.org.motivoo.api.controller.mission.dto.response.MissionHistoryResponse;
-import sopt.org.motivoo.api.controller.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivoo.api.controller.mission.dto.response.OpponentGoalStepsResponse;
 import sopt.org.motivoo.api.controller.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivoo.common.response.ApiResponse;
 import sopt.org.motivoo.domain.mission.service.UserMissionService;
+import sopt.org.motivoo.external.s3.PreSignedUrlResponse;
+import sopt.org.motivoo.external.s3.S3BucketDirectory;
+import sopt.org.motivoo.external.s3.S3Service;
 
 @RestController
 @RequestMapping("/mission")
@@ -33,11 +37,19 @@ import sopt.org.motivoo.domain.mission.service.UserMissionService;
 public class UserMissionController {
 
 	private final UserMissionService userMissionService;
+	private final S3Service s3Service;
+
+	@GetMapping("/image")
+	public ResponseEntity<ApiResponse<PreSignedUrlResponse>> getMissionImgUrl(@Valid @RequestBody final MissionImgUrlRequest request) {
+		return ApiResponse.success(GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS,
+			s3Service.getUploadPreSignedUrl(S3BucketDirectory.of(request.imgPrefix())));
+	}
 
 	@PatchMapping("/image")
-	public ResponseEntity<ApiResponse<MissionImgUrlResponse>> getMissionImgUrl(@Valid @RequestBody final MissionImgUrlRequest request, final Principal principal) {
-		return ApiResponse.success(GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS,
-			MissionImgUrlResponse.of(userMissionService.getMissionImgUrl(request.toServiceDto(), getUserFromPrincipal(principal))));
+	public ResponseEntity<ApiResponse<Void>> updateMissionStatus(@Valid @RequestBody final MissionStatusRequest request, final Principal principal) {
+		String imgUrl = s3Service.getS3ImgUrl(MISSION_PREFIX, request.fileName());
+		userMissionService.updateMissionSuccess(imgUrl, getUserFromPrincipal(principal));
+		return ApiResponse.success(GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS);
 	}
 
 	@GetMapping

@@ -1,7 +1,9 @@
 package sopt.org.motivoo.external.s3;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public record PreSignedUrlResponse(
-	String fileName,
+	@JsonProperty("file_name") String fileName,
 	String url
 ) {
 

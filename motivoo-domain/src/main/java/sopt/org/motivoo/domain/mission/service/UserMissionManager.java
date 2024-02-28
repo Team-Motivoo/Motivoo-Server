@@ -23,13 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.common.advice.BusinessException;
-
 import sopt.org.motivoo.domain.health.entity.ExerciseLevel;
 import sopt.org.motivoo.domain.health.entity.Health;
 import sopt.org.motivoo.domain.health.entity.HealthNote;
-import sopt.org.motivoo.domain.mission.dto.request.MissionImgUrlCommand;
-import sopt.org.motivoo.domain.mission.dto.response.MissionStepStatusResult;
 import sopt.org.motivoo.domain.mission.dto.response.OpponentGoalStepsResult;
+import sopt.org.motivoo.domain.mission.dto.response.StepStatusResult;
 import sopt.org.motivoo.domain.mission.entity.CompletedStatus;
 import sopt.org.motivoo.domain.mission.entity.Mission;
 import sopt.org.motivoo.domain.mission.entity.MissionQuest;
@@ -39,9 +37,6 @@ import sopt.org.motivoo.domain.mission.entity.UserMissionChoices;
 import sopt.org.motivoo.domain.mission.exception.MissionException;
 import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.exception.UserException;
-import sopt.org.motivoo.external.s3.PreSignedUrlResponse;
-import sopt.org.motivoo.external.s3.S3BucketDirectory;
-import sopt.org.motivoo.external.s3.S3Service;
 
 @Slf4j
 @Component
@@ -49,22 +44,16 @@ import sopt.org.motivoo.external.s3.S3Service;
 @Transactional(readOnly = true)
 public class UserMissionManager {
 
-	private final S3Service s3Service;
-
 	private static final int MAX_MISSION_CHOICES = 2;
 
 	@Transactional
-	public PreSignedUrlResponse getMissionSuccessImgUrl(UserMission todayMission, final MissionImgUrlCommand request) {
-		PreSignedUrlResponse preSignedUrl = s3Service.getUploadPreSignedUrl(
-			S3BucketDirectory.of(request.imgPrefix()));  // TODO AWS CloutFront 연동
+	public void updateMissionSuccess(UserMission todayMission, final String imgUrl) {
 
-		todayMission.updateImgUrl(s3Service.getImgByFileName(request.imgPrefix(), preSignedUrl.fileName()));
+		todayMission.updateImgUrl(imgUrl);
 		todayMission.updateCompletedStatus(CompletedStatus.SUCCESS);
-
-		return preSignedUrl;
 	}
 
-	public MissionStepStatusResult updateStepStatusResult(User myUser, User opponentUser, int myStep) {
+	public StepStatusResult updateStepStatusResult(User myUser, User opponentUser, int myStep) {
 		int myGoalStep = 0;
 		int opponentGoalStep = 0;
 
@@ -74,7 +63,7 @@ public class UserMissionManager {
 		boolean opponentUserMissionsEmpty = opponentUser.getUserMissions().isEmpty();
 
 		if (myUserMissionsEmpty && opponentUserMissionsEmpty) {
-			return MissionStepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
+			return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
 		}
 
 		if (!opponentUserMissionsEmpty) {
@@ -87,16 +76,16 @@ public class UserMissionManager {
 		if (!myUserMissionsEmpty) {
 			UserMission todayMission = myUser.getCurrentUserMission();
 			if (!validateTodayDateMission(todayMission)) {
-				return MissionStepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
+				return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
 			}
 			myGoalStep = todayMission.getMission().getStepCount();
 			boolean stepCountCompleted = myStep >= todayMission.getMission().getStepCount();
 
-			return MissionStepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted,
+			return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted,
 				todayMission.getImgUrl() != null);
 		}
 
-		return MissionStepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
+		return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
 	}
 
 	@NotNull
@@ -237,7 +226,7 @@ public class UserMissionManager {
 			log.info("missionsByDate.get(localDateTime) size: {}-{}", missionsByDate.get(localDateTime).size(), localDateTime);
 
 			// 인증에 성공하지 못한 UserMission 이미지 Null로 처리
-			missionsByDate.get(localDateTime).stream()
+			/*missionsByDate.get(localDateTime).stream()
 				.filter(um -> um.getImgUrl() != null)
 				.forEach(um -> {
 					try {
@@ -248,7 +237,7 @@ public class UserMissionManager {
 						log.error(e.getMessage());
 						um.updateImgUrl(null);
 					}
-				});
+				});*/
 
 			if (!localDateTime.equals(LocalDate.now())) {
 				missionsByDate.get(localDateTime).stream()

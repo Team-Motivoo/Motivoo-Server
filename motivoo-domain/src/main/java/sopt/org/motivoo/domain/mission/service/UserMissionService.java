@@ -17,14 +17,12 @@ import sopt.org.motivoo.domain.external.firebase.FirebaseService;
 import sopt.org.motivoo.domain.health.entity.Health;
 import sopt.org.motivoo.domain.health.repository.HealthRetriever;
 import sopt.org.motivoo.domain.mission.dto.request.GoalStepCommand;
-import sopt.org.motivoo.domain.mission.dto.request.MissionImgUrlCommand;
-import sopt.org.motivoo.domain.mission.dto.request.MissionStepStatusCommand;
+import sopt.org.motivoo.domain.mission.dto.request.StepStatusCommand;
 import sopt.org.motivoo.domain.mission.dto.request.TodayMissionChoiceCommand;
 import sopt.org.motivoo.domain.mission.dto.response.GoalStepResult;
 import sopt.org.motivoo.domain.mission.dto.response.MissionHistoryResult;
-import sopt.org.motivoo.domain.mission.dto.response.MissionImgUrlResult;
-import sopt.org.motivoo.domain.mission.dto.response.MissionStepStatusResult;
 import sopt.org.motivoo.domain.mission.dto.response.OpponentGoalStepsResult;
+import sopt.org.motivoo.domain.mission.dto.response.StepStatusResult;
 import sopt.org.motivoo.domain.mission.dto.response.TodayMissionResult;
 import sopt.org.motivoo.domain.mission.entity.Mission;
 import sopt.org.motivoo.domain.mission.entity.MissionQuest;
@@ -37,7 +35,6 @@ import sopt.org.motivoo.domain.mission.repository.UserMissionChoicesRetriever;
 import sopt.org.motivoo.domain.mission.repository.UserMissionRetriever;
 import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.repository.UserRetriever;
-import sopt.org.motivoo.external.s3.PreSignedUrlResponse;
 
 @Slf4j
 @Service
@@ -57,7 +54,7 @@ public class UserMissionService {
 	private final FirebaseService firebaseService;
 
 	@Transactional
-	public MissionImgUrlResult getMissionImgUrl(final MissionImgUrlCommand request, final Long userId) {
+	public void updateMissionSuccess(final String imgUrl, final Long userId) {
 		User user = userRetriever.getUserById(userId);
 		User opponentUser = userRetriever.getMatchedUserWith(user);
 
@@ -67,9 +64,8 @@ public class UserMissionService {
 		UserMission todayMission = user.getCurrentUserMission();
 		userMissionManager.checkMissionChoice(todayMission);
 		// checkMissionStepComplete(todayMission);
-		PreSignedUrlResponse preSignedUrl = userMissionManager.getMissionSuccessImgUrl(todayMission, request);
 
-		return MissionImgUrlResult.of(preSignedUrl.url(), preSignedUrl.fileName());
+		userMissionManager.updateMissionSuccess(todayMission, imgUrl);
 	}
 
 	@Transactional
@@ -147,7 +143,7 @@ public class UserMissionService {
 	}
 
 	@Transactional
-	public MissionStepStatusResult getMissionCompleted(final MissionStepStatusCommand request, final Long userId) {
+	public StepStatusResult getMissionCompleted(final StepStatusCommand request, final Long userId) {
 		User myUser = userRetriever.getUserById(userId);
 		User opponentUser = userRetriever.getMatchedUserWith(myUser);
 

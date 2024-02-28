@@ -6,7 +6,7 @@ import lombok.Builder;
 import sopt.org.motivoo.domain.user.entity.User;
 
 @Builder
-public record MissionStepStatusResult(
+public record StepStatusResult(
 	@JsonProperty("user_type") String userType,
 	@JsonProperty("user_id") Long userId,
 	@JsonProperty("user_goal_step_count") Integer userGoalStepCount,
@@ -17,8 +17,8 @@ public record MissionStepStatusResult(
 	@JsonProperty("is_mission_img_completed") Boolean isMissionImgCompleted
 ) {
 
-	public static MissionStepStatusResult of(User user, User opponentUser, int myGoalStep, int opponentGoalStep, Boolean status, Boolean imgCompleted) {
-		return MissionStepStatusResult.builder()
+	public static StepStatusResult of(User user, User opponentUser, int myGoalStep, int opponentGoalStep, Boolean status, Boolean imgCompleted) {
+		return StepStatusResult.builder()
 			.userType(user.getType().getValue())
 			.userId(user.getId())
 			.userGoalStepCount(myGoalStep)

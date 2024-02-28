@@ -23,8 +23,8 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.api.controller.mission.HomeController;
-import sopt.org.motivoo.api.controller.mission.dto.request.MissionStepStatusRequest;
-import sopt.org.motivoo.api.controller.mission.dto.response.MissionStepStatusResponse;
+import sopt.org.motivoo.api.controller.mission.dto.request.StepStatusRequest;
+import sopt.org.motivoo.api.controller.mission.dto.response.StepStatusResponse;
 import sopt.org.motivoo.common.response.ApiResponse;
 
 @Slf4j
@@ -46,8 +46,8 @@ public class HomeControllerTest extends BaseControllerTest{
 	void getMissionCompleted() throws Exception {
 
 		// given
-		MissionStepStatusRequest request = new MissionStepStatusRequest(14000, 3000);
-		MissionStepStatusResponse response =  MissionStepStatusResponse.builder()
+		StepStatusRequest request = new StepStatusRequest(14000, 3000);
+		StepStatusResponse response =  StepStatusResponse.builder()
 			.userType("CHILD")
 			.userId(2L)
 			.userGoalStepCount(10000)
@@ -57,7 +57,7 @@ public class HomeControllerTest extends BaseControllerTest{
 			.isOpponentUserWithdraw(false)
 			.isMissionImgCompleted(false).build();
 
-		ResponseEntity<ApiResponse<MissionStepStatusResponse>> result = ApiResponse.success(
+		ResponseEntity<ApiResponse<StepStatusResponse>> result = ApiResponse.success(
 			GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS, response);
 
 		// when
