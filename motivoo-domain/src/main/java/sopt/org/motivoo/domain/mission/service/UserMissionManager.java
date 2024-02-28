@@ -1,9 +1,9 @@
 package sopt.org.motivoo.domain.mission.service;
 
-import static sopt.org.motivoo.domain.external.s3.S3BucketDirectory.*;
 import static sopt.org.motivoo.domain.mission.entity.CompletedStatus.*;
 import static sopt.org.motivoo.domain.mission.exception.MissionExceptionType.*;
 import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
+import static sopt.org.motivoo.external.s3.S3BucketDirectory.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,9 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.common.advice.BusinessException;
-import sopt.org.motivoo.domain.external.s3.PreSignedUrlResponse;
-import sopt.org.motivoo.domain.external.s3.S3BucketDirectory;
-import sopt.org.motivoo.domain.external.s3.S3Service;
+
 import sopt.org.motivoo.domain.health.entity.ExerciseLevel;
 import sopt.org.motivoo.domain.health.entity.Health;
 import sopt.org.motivoo.domain.health.entity.HealthNote;
@@ -41,6 +39,9 @@ import sopt.org.motivoo.domain.mission.entity.UserMissionChoices;
 import sopt.org.motivoo.domain.mission.exception.MissionException;
 import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.exception.UserException;
+import sopt.org.motivoo.external.s3.PreSignedUrlResponse;
+import sopt.org.motivoo.external.s3.S3BucketDirectory;
+import sopt.org.motivoo.external.s3.S3Service;
 
 @Slf4j
 @Component

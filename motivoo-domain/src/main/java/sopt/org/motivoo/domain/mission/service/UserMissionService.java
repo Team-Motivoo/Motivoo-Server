@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.domain.external.firebase.FirebaseService;
-import sopt.org.motivoo.domain.external.s3.PreSignedUrlResponse;
 import sopt.org.motivoo.domain.health.entity.Health;
 import sopt.org.motivoo.domain.health.repository.HealthRetriever;
 import sopt.org.motivoo.domain.mission.dto.request.GoalStepCommand;
@@ -38,6 +37,7 @@ import sopt.org.motivoo.domain.mission.repository.UserMissionChoicesRetriever;
 import sopt.org.motivoo.domain.mission.repository.UserMissionRetriever;
 import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.repository.UserRetriever;
+import sopt.org.motivoo.external.s3.PreSignedUrlResponse;
 
 @Slf4j
 @Service

@@ -3,6 +3,7 @@ jar { enabled = true }
 
 dependencies {
     implementation project(path: ':motivoo-common')
+    implementation project(path: ':motivoo-external')
 
     // JPA & Database
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
