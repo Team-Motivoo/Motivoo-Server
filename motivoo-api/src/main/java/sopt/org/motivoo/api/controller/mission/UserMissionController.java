@@ -49,7 +49,7 @@ public class UserMissionController {
 	public ResponseEntity<ApiResponse<Void>> updateMissionStatus(@Valid @RequestBody final MissionStatusRequest request, final Principal principal) {
 		String imgUrl = s3Service.getS3ImgUrl(MISSION_PREFIX, request.fileName());
 		userMissionService.updateMissionSuccess(imgUrl, getUserFromPrincipal(principal));
-		return ApiResponse.success(GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS);
+		return ApiResponse.success(UPDATE_MISSION_STATUS_SUCCESS);
 	}
 
 	@GetMapping

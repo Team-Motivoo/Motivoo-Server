@@ -62,7 +62,7 @@ public class UserMissionService {
 		checkMatchedUserWithdraw(opponentUser);
 
 		UserMission todayMission = user.getCurrentUserMission();
-		userMissionManager.checkMissionChoice(todayMission);
+		// userMissionManager.checkMissionChoice(todayMission);
 		// checkMissionStepComplete(todayMission);
 
 		userMissionManager.updateMissionSuccess(todayMission, imgUrl);
