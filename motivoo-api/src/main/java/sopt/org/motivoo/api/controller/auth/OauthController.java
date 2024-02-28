@@ -33,7 +33,7 @@ public class OauthController {
     @PostMapping("/oauth/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody OauthTokenRequest tokenRequest) {
         return ApiResponse.success(LOGIN_SUCCESS,
-            oauthService.login(tokenRequest.toServiceDto()));
+            LoginResponse.of(oauthService.login(tokenRequest.toServiceDto())));
     }
 
     @PostMapping("/oauth/reissue")

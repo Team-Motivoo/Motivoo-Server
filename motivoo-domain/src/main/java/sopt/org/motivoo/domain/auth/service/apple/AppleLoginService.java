@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.api.controller.user.apple.OAuthPlatformMemberResponse;
 import sopt.org.motivoo.common.advice.BusinessException;
+import sopt.org.motivoo.domain.auth.dto.response.OAuthPlatformMemberResult;
 import sopt.org.motivoo.external.AppleClient;
 import sopt.org.motivoo.external.auth.apple.response.ApplePublicKeys;
 
@@ -25,7 +26,7 @@ public class AppleLoginService {
     private final PublicKeyGenerator publicKeyGenerator;
     private final AppleClaimsValidator appleClaimsValidator;
 
-    public OAuthPlatformMemberResponse getApplePlatformMember(String identityToken) {
+    public OAuthPlatformMemberResult getApplePlatformMember(String identityToken) {
         Map<String, String> headers = appleJwtParser.parseHeaders(identityToken);
         ApplePublicKeys applePublicKeys = appleClient.getApplePublicKeys();
 
@@ -33,7 +34,7 @@ public class AppleLoginService {
 
         Claims claims = appleJwtParser.parsePublicKeyAndGetClaims(identityToken, publicKey);
         validateClaims(claims);
-        return new OAuthPlatformMemberResponse(claims.getSubject(), claims.get("email", String.class));
+        return new OAuthPlatformMemberResult(claims.getSubject(), claims.get("email", String.class));
     }
 
     private void validateClaims(Claims claims) {

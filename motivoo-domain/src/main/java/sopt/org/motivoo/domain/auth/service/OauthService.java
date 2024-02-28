@@ -9,14 +9,13 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import sopt.org.motivoo.api.controller.auth.dto.request.OauthTokenRequest;
-import sopt.org.motivoo.api.controller.auth.dto.response.LoginResponse;
 import sopt.org.motivoo.api.controller.user.apple.OAuthPlatformMemberResponse;
 import sopt.org.motivoo.domain.auth.config.UserAuthentication;
 import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.dto.request.OauthTokenCommand;
 import sopt.org.motivoo.domain.auth.dto.response.LoginResult;
-import sopt.org.motivoo.domain.auth.repository.TokenRedisRepository;
+import sopt.org.motivoo.domain.auth.dto.response.OAuthPlatformMemberResult;
+import sopt.org.motivoo.domain.auth.repository.TokenRedisRetriever;
 import sopt.org.motivoo.domain.auth.service.apple.AppleLoginService;
 import sopt.org.motivoo.domain.user.dto.request.KakaoUserProfile;
 import sopt.org.motivoo.domain.user.entity.SocialPlatform;
@@ -24,7 +23,7 @@ import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.entity.UserType;
 import sopt.org.motivoo.domain.user.exception.UserException;
 import sopt.org.motivoo.domain.user.exception.UserExceptionType;
-import sopt.org.motivoo.domain.user.repository.UserRepository;
+import sopt.org.motivoo.domain.user.repository.UserRetriever;
 
 import java.util.List;
 import java.util.Map;
@@ -37,13 +36,13 @@ import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.getAuthen
 @RequiredArgsConstructor
 public class OauthService {
     private final InMemoryClientRegistrationRepository inMemoryRepository;
-    private final UserRepository userRepository;
-    private final TokenRedisRepository tokenRedisRepository;
+    private final UserRetriever userRetriever;
+    private final TokenRedisRetriever tokenRedisRetriever;
     private final JwtTokenProvider jwtTokenProvider;
     private final AppleLoginService appleLoginService;
 
     @Transactional
-    public LoginResponse login(OauthTokenCommand tokenRequest) {
+    public LoginResult login(OauthTokenCommand tokenRequest) {
         String providerName = tokenRequest.tokenType();
         log.info("소셜플랫폼="+providerName);
         SocialPlatform socialPlatform = SocialPlatform.of(providerName);
@@ -56,25 +55,25 @@ public class OauthService {
             log.info("유저 아이디="+user.getId());
 
             String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(), null, null));
-            tokenRedisRepository.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
-            LoginResult loginResult= LoginResult.of(user, accessToken, refreshToken);
-            return LoginResponse.of(loginResult);
+            tokenRedisRetriever.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
+            return LoginResult.of(user, accessToken, refreshToken);
         }
 
-        OAuthPlatformMemberResponse applePlatformMember = appleLoginService.getApplePlatformMember(tokenRequest.accessToken());
+        else if(socialPlatform.equals(SocialPlatform.APPLE)){
+            OAuthPlatformMemberResult applePlatformMember = appleLoginService.getApplePlatformMember(tokenRequest.accessToken());
 
-        List<User> userEntity = userRepository.findBySocialId(applePlatformMember.getPlatformId());
-        //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
-        if(userEntity==null || isWithdrawn(userEntity)){
-            saveUser(null, applePlatformMember.getPlatformId(), socialPlatform, tokenRequest, refreshToken);
+            List<User> userEntity = userRetriever.getUsersBySocialId(applePlatformMember.platformId());
+            //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
+            if(userEntity==null || isWithdrawn(userEntity)){
+                saveUser(null, applePlatformMember.platformId(), socialPlatform, tokenRequest, refreshToken);
+            }
+
+            //로그인
+            updateRefreshToken(userEntity.get(0), refreshToken);
+            String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(userEntity.get(0).getId(),null,null));
+            return LoginResult.of(userEntity.get(0), accessToken, refreshToken);
         }
-
-        //로그인
-        updateRefreshToken(userEntity.get(0), refreshToken);
-        String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(userEntity.get(0).getId(),null,null));
-        LoginResult loginResult = LoginResult.of(userEntity.get(0), accessToken, refreshToken);
-        return LoginResponse.of(loginResult);
-
+        return null;
     }
 
 
@@ -86,14 +85,12 @@ public class OauthService {
         String providerId = oAuth2UserInfo.getProviderId();
         String nickName = oAuth2UserInfo.getNickName();
 
-        List<User> userEntity = userRepository.findBySocialId(providerId);
+        List<User> userEntity = userRetriever.getUsersBySocialId(providerId);
 
-        //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
         if(userEntity==null || isWithdrawn(userEntity)){
             return saveUser(nickName, providerId, socialPlatform, tokenRequest, refreshToken);
         }
 
-        //로그인
         updateRefreshToken(userEntity.get(0), refreshToken);
         return userEntity.get(0);
     }
@@ -145,7 +142,7 @@ public class OauthService {
                 .type(UserType.NONE)
                 .deleted(Boolean.FALSE)
                 .build();
-        userRepository.save(newUser);
+        userRetriever.saveUser(newUser);
         return newUser;
     }
 
@@ -162,9 +159,9 @@ public class OauthService {
 
     @Transactional
     public void logout(String accessToken) {
-        String refreshToken = userRepository.findRefreshTokenById(getAuthenticatedUser());
+        String refreshToken = userRetriever.getRefreshTokenById(getAuthenticatedUser());
 
-        tokenRedisRepository.saveBlockedToken(accessToken);
-        tokenRedisRepository.deleteRefreshToken(refreshToken);
+        tokenRedisRetriever.saveBlockedToken(accessToken);
+        tokenRedisRetriever.deleteRefreshToken(refreshToken);
     }
 }
