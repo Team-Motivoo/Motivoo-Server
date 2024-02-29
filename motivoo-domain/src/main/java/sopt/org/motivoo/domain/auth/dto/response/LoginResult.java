@@ -1,7 +1,5 @@
 package sopt.org.motivoo.domain.auth.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Builder;
 import sopt.org.motivoo.domain.user.entity.User;
 
@@ -9,12 +7,9 @@ import sopt.org.motivoo.domain.user.entity.User;
 public record LoginResult(
     String id,
     String nickname,
-    @JsonProperty("token_type")
     String tokenType,
 
-    @JsonProperty("access_token")
     String accessToken,
-    @JsonProperty("refresh_token")
     String refreshToken
 ){
 

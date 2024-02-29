@@ -6,18 +6,16 @@ import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Locale;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Builder;
 import sopt.org.motivoo.domain.mission.entity.UserMission;
 import sopt.org.motivoo.domain.mission.entity.UserMissionChoices;
 
 @Builder
 public record TodayMissionResult(
-	@JsonProperty("is_choice_finished") Boolean isChoiceFinished,
+	Boolean isChoiceFinished,
 	String date,
-	@JsonProperty("mission_choice_list") List<TodayUserMissionDto> missionChoiceList,
-	@JsonProperty("today_mission") TodayUserMissionDto todayMission
+	List<TodayUserMissionDto> missionChoiceList,
+	TodayUserMissionDto todayMission
 ) {
 
 	public static TodayMissionResult of(List<UserMissionChoices> missionChoiceList) {

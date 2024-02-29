@@ -9,17 +9,15 @@ import java.util.stream.IntStream;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Builder;
 import sopt.org.motivoo.domain.mission.entity.UserMission;
 import sopt.org.motivoo.domain.user.entity.User;
 
 @Builder
 public record MissionHistoryResult(
-	@JsonProperty("user_type") String userType,
-	@JsonProperty("today_mission") TodayUserMissionDto todayMission,
-	@JsonProperty("mission_history") List<ParentchildMissionDto> missionHistory
+	String userType,
+	TodayUserMissionDto todayMission,
+	List<ParentchildMissionDto> missionHistory
 ) {
 
 
