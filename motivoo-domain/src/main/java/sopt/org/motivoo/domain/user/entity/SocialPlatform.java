@@ -10,9 +10,9 @@ import sopt.org.motivoo.domain.user.exception.UserException;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum SocialPlatform {
-	KAKAO("카카오"),
-	APPLE("애플"),
-	WITHDRAW("탈퇴한 유저");
+	KAKAO("kakao"),
+	APPLE("apple"),
+	WITHDRAW("withdraw");
 
 	private final String value;
 
