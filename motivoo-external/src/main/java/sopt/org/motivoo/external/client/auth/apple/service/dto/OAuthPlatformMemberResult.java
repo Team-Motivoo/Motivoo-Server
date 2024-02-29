@@ -1,4 +1,4 @@
-package sopt.org.motivoo.domain.auth.dto.response;
+package sopt.org.motivoo.external.client.auth.apple.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

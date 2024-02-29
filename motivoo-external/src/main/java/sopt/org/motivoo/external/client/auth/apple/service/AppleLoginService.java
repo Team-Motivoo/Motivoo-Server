@@ -1,6 +1,7 @@
-package sopt.org.motivoo.domain.auth.service.apple;
+package sopt.org.motivoo.external.client.auth.apple.service;
 
-import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
+
+import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
 
 import java.security.PublicKey;
 import java.util.Map;
@@ -10,11 +11,10 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import sopt.org.motivoo.api.controller.user.apple.OAuthPlatformMemberResponse;
 import sopt.org.motivoo.common.advice.BusinessException;
-import sopt.org.motivoo.domain.auth.dto.response.OAuthPlatformMemberResult;
-import sopt.org.motivoo.external.AppleClient;
-import sopt.org.motivoo.external.auth.apple.response.ApplePublicKeys;
+import sopt.org.motivoo.external.client.auth.apple.AppleClient;
+import sopt.org.motivoo.external.client.auth.apple.ApplePublicKeys;
+import sopt.org.motivoo.external.client.auth.apple.service.dto.OAuthPlatformMemberResult;
 
 @Slf4j
 @RequiredArgsConstructor

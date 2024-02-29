@@ -9,14 +9,13 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import sopt.org.motivoo.api.controller.user.apple.OAuthPlatformMemberResponse;
 import sopt.org.motivoo.domain.auth.config.UserAuthentication;
 import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.dto.request.OauthTokenCommand;
 import sopt.org.motivoo.domain.auth.dto.response.LoginResult;
-import sopt.org.motivoo.domain.auth.dto.response.OAuthPlatformMemberResult;
+import sopt.org.motivoo.external.client.auth.apple.service.dto.OAuthPlatformMemberResult;
 import sopt.org.motivoo.domain.auth.repository.TokenRedisRetriever;
-import sopt.org.motivoo.domain.auth.service.apple.AppleLoginService;
+import sopt.org.motivoo.external.client.auth.apple.service.AppleLoginService;
 import sopt.org.motivoo.domain.user.dto.request.KakaoUserProfile;
 import sopt.org.motivoo.domain.user.entity.SocialPlatform;
 import sopt.org.motivoo.domain.user.entity.User;
