@@ -1,4 +1,4 @@
-package sopt.org.motivoo.controller.auth.dto.response.apple;
+package sopt.org.motivoo.external.client.auth.apple;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

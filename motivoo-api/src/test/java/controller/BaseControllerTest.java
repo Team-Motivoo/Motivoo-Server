@@ -25,12 +25,12 @@ import sopt.org.motivoo.domain.auth.config.CustomJwtAuthenticationEntryPoint;
 import sopt.org.motivoo.domain.auth.config.RedisConfig;
 import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.repository.TokenRedisRepository;
-import sopt.org.motivoo.domain.auth.service.apple.AppleClaimsValidator;
-import sopt.org.motivoo.domain.auth.service.apple.AppleLoginService;
+import sopt.org.motivoo.external.client.auth.apple.service.AppleClaimsValidator;
+import sopt.org.motivoo.external.client.auth.apple.service.AppleLoginService;
 import sopt.org.motivoo.domain.external.firebase.FirebaseService;
 import sopt.org.motivoo.domain.external.firebase.config.FirebaseConfig;
-import sopt.org.motivoo.domain.external.s3.S3Service;
-import sopt.org.motivoo.domain.external.s3.config.AWSConfig;
+import sopt.org.motivoo.external.s3.S3Service;
+import sopt.org.motivoo.external.s3.config.AWSConfig;
 import sopt.org.motivoo.domain.external.slack.SlackService;
 
 @AutoConfigureMockMvc

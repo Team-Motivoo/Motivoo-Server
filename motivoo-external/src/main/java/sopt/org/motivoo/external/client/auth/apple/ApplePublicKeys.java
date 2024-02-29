@@ -1,6 +1,6 @@
-package sopt.org.motivoo.domain.auth.dto.response.apple;
+package sopt.org.motivoo.external.client.auth.apple;
 
-import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
+import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
 
 import java.util.List;
 

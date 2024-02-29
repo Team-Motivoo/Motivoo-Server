@@ -1,28 +1,21 @@
 package sopt.org.motivoo.domain.auth.service;
 
-
-import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.*;
-
-import java.util.List;
-import java.util.Map;
-
+import feign.FeignException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import feign.FeignException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import sopt.org.motivoo.domain.auth.config.UserAuthentication;
 import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.dto.request.OauthTokenCommand;
 import sopt.org.motivoo.domain.auth.dto.response.LoginResult;
-import sopt.org.motivoo.domain.auth.repository.TokenRedisRepository;
-import sopt.org.motivoo.domain.auth.service.apple.AppleLoginService;
+import sopt.org.motivoo.external.client.auth.apple.service.dto.OAuthPlatformMemberResult;
+import sopt.org.motivoo.domain.auth.repository.TokenRedisRetriever;
+import sopt.org.motivoo.external.client.auth.apple.service.AppleLoginService;
 import sopt.org.motivoo.domain.user.dto.request.KakaoUserProfile;
 import sopt.org.motivoo.domain.user.entity.SocialPlatform;
 import sopt.org.motivoo.domain.user.entity.User;
@@ -31,35 +24,59 @@ import sopt.org.motivoo.domain.user.exception.UserException;
 import sopt.org.motivoo.domain.user.exception.UserExceptionType;
 import sopt.org.motivoo.domain.user.repository.UserRetriever;
 
+import java.util.List;
+import java.util.Map;
+
+import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.getAuthenticatedUser;
+import static sopt.org.motivoo.domain.user.entity.SocialPlatform.*;
+import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
+
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OauthService {
-
     private final InMemoryClientRegistrationRepository inMemoryRepository;
     private final UserRetriever userRetriever;
-    private final TokenRedisRepository tokenRedisRepository;
+    private final TokenRedisRetriever tokenRedisRetriever;
     private final JwtTokenProvider jwtTokenProvider;
-
     private final AppleLoginService appleLoginService;
 
     @Transactional
     public LoginResult login(OauthTokenCommand tokenRequest) {
         String providerName = tokenRequest.tokenType();
-
-        //카카오
-        ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
-
+        log.info("소셜플랫폼="+providerName);
+        SocialPlatform socialPlatform = SocialPlatform.of(providerName);
         String refreshToken = jwtTokenProvider.createRefreshToken();
-        User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
-        log.info("유저 아이디="+user.getId());
 
-        String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(), null, null));
-        tokenRedisRepository.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
-        return LoginResult.of(user, accessToken, refreshToken);
+        if (socialPlatform.equals(KAKAO)) {
+            ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
 
+            User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
+            log.info("유저 아이디="+user.getId());
+
+            String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(), null, null));
+            tokenRedisRetriever.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
+            return LoginResult.of(user, accessToken, refreshToken);
+        }
+
+        if (socialPlatform.equals(APPLE)) {
+            OAuthPlatformMemberResult applePlatformMember = appleLoginService.getApplePlatformMember(tokenRequest.accessToken());
+
+            List<User> userEntity = userRetriever.getUsersBySocialId(applePlatformMember.platformId());
+            //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
+            if (userEntity == null || isWithdrawn(userEntity)) {
+                saveUser(null, applePlatformMember.platformId(), socialPlatform, tokenRequest, refreshToken);
+            }
+
+            //로그인
+            updateRefreshToken(userEntity.get(0), refreshToken);
+            String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(userEntity.get(0).getId(),null,null));
+            return LoginResult.of(userEntity.get(0), accessToken, refreshToken);
+        }
+        throw new UserException(INVALID_SOCIAL_PLATFORM);
     }
+
 
     public User getUserProfile(String providerName, OauthTokenCommand tokenRequest, ClientRegistration provider, String refreshToken) {
         Map<String, Object> userAttributes = getUserAttributes(provider, tokenRequest);
@@ -71,12 +88,10 @@ public class OauthService {
 
         List<User> userEntity = userRetriever.getUsersBySocialId(providerId);
 
-        //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
         if(userEntity==null || isWithdrawn(userEntity)){
             return saveUser(nickName, providerId, socialPlatform, tokenRequest, refreshToken);
         }
 
-        //로그인
         updateRefreshToken(userEntity.get(0), refreshToken);
         return userEntity.get(0);
     }
@@ -94,22 +109,18 @@ public class OauthService {
         if (providerName.equals("kakao")) {
             return new KakaoUserProfile(userAttributes);
         }
-        throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
+        throw new UserException(INVALID_SOCIAL_PLATFORM);
     }
 
     private SocialPlatform getSocialPlatform(String providerName) {
         try {
-            switch (providerName){
-                case "kakao":
-                    return SocialPlatform.KAKAO;
-                case "apple":
-                    return SocialPlatform.APPLE;
-                default:
-                    throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
-
-            }
-        }catch (FeignException e){
-            throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
+            return switch (providerName) {
+                case "kakao" -> KAKAO;
+                case "apple" -> APPLE;
+                default -> throw new UserException(INVALID_SOCIAL_PLATFORM);
+            };
+        } catch (FeignException e){
+            throw new UserException(INVALID_SOCIAL_PLATFORM);
         }
 
     }
@@ -147,7 +158,7 @@ public class OauthService {
     public void logout(String accessToken) {
         String refreshToken = userRetriever.getRefreshTokenById(getAuthenticatedUser());
 
-        tokenRedisRepository.saveBlockedToken(accessToken);
-        tokenRedisRepository.deleteRefreshToken(refreshToken);
+        tokenRedisRetriever.saveBlockedToken(accessToken);
+        tokenRedisRetriever.deleteRefreshToken(refreshToken);
     }
 }
