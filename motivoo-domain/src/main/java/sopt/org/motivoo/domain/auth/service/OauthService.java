@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.getAuthenticatedUser;
+import static sopt.org.motivoo.domain.user.entity.SocialPlatform.*;
+import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
 
 @Slf4j
 @Service
@@ -47,7 +49,7 @@ public class OauthService {
         SocialPlatform socialPlatform = SocialPlatform.of(providerName);
         String refreshToken = jwtTokenProvider.createRefreshToken();
 
-        if(socialPlatform.equals(SocialPlatform.KAKAO)){
+        if (socialPlatform.equals(KAKAO)) {
             ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
 
             User user = getUserProfile(providerName, tokenRequest, provider, refreshToken);
@@ -58,12 +60,12 @@ public class OauthService {
             return LoginResult.of(user, accessToken, refreshToken);
         }
 
-        else if(socialPlatform.equals(SocialPlatform.APPLE)){
+        if (socialPlatform.equals(APPLE)) {
             OAuthPlatformMemberResult applePlatformMember = appleLoginService.getApplePlatformMember(tokenRequest.accessToken());
 
             List<User> userEntity = userRetriever.getUsersBySocialId(applePlatformMember.platformId());
             //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
-            if(userEntity==null || isWithdrawn(userEntity)){
+            if (userEntity == null || isWithdrawn(userEntity)) {
                 saveUser(null, applePlatformMember.platformId(), socialPlatform, tokenRequest, refreshToken);
             }
 
@@ -72,7 +74,7 @@ public class OauthService {
             String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(userEntity.get(0).getId(),null,null));
             return LoginResult.of(userEntity.get(0), accessToken, refreshToken);
         }
-        return null;
+        throw new UserException(INVALID_SOCIAL_PLATFORM);
     }
 
 
@@ -107,22 +109,18 @@ public class OauthService {
         if (providerName.equals("kakao")) {
             return new KakaoUserProfile(userAttributes);
         }
-        throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
+        throw new UserException(INVALID_SOCIAL_PLATFORM);
     }
 
     private SocialPlatform getSocialPlatform(String providerName) {
         try {
-            switch (providerName){
-                case "kakao":
-                    return SocialPlatform.KAKAO;
-                case "apple":
-                    return SocialPlatform.APPLE;
-                default:
-                    throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
-
-            }
-        }catch (FeignException e){
-            throw new UserException(UserExceptionType.INVALID_SOCIAL_PLATFORM);
+            return switch (providerName) {
+                case "kakao" -> KAKAO;
+                case "apple" -> APPLE;
+                default -> throw new UserException(INVALID_SOCIAL_PLATFORM);
+            };
+        } catch (FeignException e){
+            throw new UserException(INVALID_SOCIAL_PLATFORM);
         }
 
     }
