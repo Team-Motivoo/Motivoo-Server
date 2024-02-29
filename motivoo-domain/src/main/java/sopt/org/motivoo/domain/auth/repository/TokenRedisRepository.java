@@ -56,7 +56,7 @@ public class TokenRedisRepository {
         setExpirationInRedis(key, expiration);
     }
 
-    private Date getExpirationFromToken(String accessToken) {
+    public Date getExpirationFromToken(String accessToken) {
         try {
             accessToken = accessToken.replaceAll("\\s+", "");
             accessToken = accessToken.replace(BEARER_TYPE, "");
