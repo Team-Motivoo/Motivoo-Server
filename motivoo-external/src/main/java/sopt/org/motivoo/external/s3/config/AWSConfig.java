@@ -1,4 +1,4 @@
-package sopt.org.motivoo.domain.external.s3.config;
+package sopt.org.motivoo.external.s3.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
