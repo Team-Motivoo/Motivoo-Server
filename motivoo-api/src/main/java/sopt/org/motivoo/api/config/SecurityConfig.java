@@ -25,6 +25,7 @@ public class SecurityConfig {
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private static final String[] AUTH_WHITELIST = {
 		"/", "/**", "/oauth/**", "/api/**", "/actuator/health","/withdraw", "/mission/**", "/home",
+		"/mission/image",
 		"/swagger/**", "/swagger-ui/**", "/v3/api-docs/**", "/docs/**", "/swagger-ui.html"
 };
 

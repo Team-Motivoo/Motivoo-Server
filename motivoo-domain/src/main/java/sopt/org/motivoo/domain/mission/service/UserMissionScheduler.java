@@ -17,7 +17,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import sopt.org.motivoo.domain.external.s3.S3Service;
+
 import sopt.org.motivoo.domain.mission.entity.CompletedStatus;
 import sopt.org.motivoo.domain.mission.entity.Mission;
 import sopt.org.motivoo.domain.mission.entity.MissionQuest;
@@ -28,6 +28,7 @@ import sopt.org.motivoo.domain.mission.repository.UserMissionChoicesRetriever;
 import sopt.org.motivoo.domain.mission.repository.UserMissionRetriever;
 import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.repository.UserRetriever;
+import sopt.org.motivoo.external.s3.S3Service;
 
 @Slf4j
 @Component

@@ -7,7 +7,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static sopt.org.motivoo.common.response.SuccessType.*;
-import static sopt.org.motivoo.domain.external.s3.S3BucketDirectory.*;
+import static sopt.org.motivoo.external.s3.S3BucketDirectory.*;
 import static util.ApiDocumentUtil.*;
 
 import java.security.Principal;
@@ -28,9 +28,9 @@ import sopt.org.motivoo.api.controller.mission.UserMissionController;
 import sopt.org.motivoo.api.controller.mission.dto.request.MissionImgUrlRequest;
 import sopt.org.motivoo.api.controller.mission.dto.request.TodayMissionChoiceRequest;
 import sopt.org.motivoo.api.controller.mission.dto.response.MissionHistoryResponse;
-import sopt.org.motivoo.api.controller.mission.dto.response.MissionImgUrlResponse;
 import sopt.org.motivoo.api.controller.mission.dto.response.TodayMissionResponse;
 import sopt.org.motivoo.common.response.ApiResponse;
+import sopt.org.motivoo.external.s3.PreSignedUrlResponse;
 
 @Slf4j
 @DisplayName("UserMissionController 테스트")
@@ -52,15 +52,15 @@ public class UserMissionControllerTest extends BaseControllerTest{
 
 		// given
 		MissionImgUrlRequest request = new MissionImgUrlRequest(MISSION_PREFIX.value());
-		MissionImgUrlResponse response = new MissionImgUrlResponse(
+		PreSignedUrlResponse response = new PreSignedUrlResponse(
 			"https://motivoo-server-bucket.s3.ap-northeast-2.amazonaws.com/mission/39e545f4-9ad8-4c05-a8cb-960d0787e776.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240109T051832Z&X-Amz-SignedHeaders=host&X-Amz-Expires=60&X-Amz-Credential=AKIASRIQXMUZKAKLJQGJ%2F20240109%2Fap-northeast-2%2Fs3%2Faws4_request&X-Amz-Signature=0c98a5efeaea9bbf607becaaeb511495b68e83b9897b193ef542fa4a8c352dd4",
 			"39e545f4-9ad8-4c05-a8cb-960d0787e776.jpg");
 
-		ResponseEntity<ApiResponse<MissionImgUrlResponse>> result = ApiResponse.success(
+		ResponseEntity<ApiResponse<PreSignedUrlResponse>> result = ApiResponse.success(
 			GET_MISSION_IMAGE_PRE_SIGNED_URL_SUCCESS, response);
 
 		// when
-		when(userMissionController.getMissionImgUrl(request, principal)).thenReturn(result);
+		when(userMissionController.getMissionImgUrl(request)).thenReturn(result);
 
 		// then
 		mockMvc.perform(patch(DEFAULT_URL + "/image")

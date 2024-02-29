@@ -1,6 +1,6 @@
-package sopt.org.motivoo.domain.external.s3;
+package sopt.org.motivoo.external.s3;
 
-import static sopt.org.motivoo.domain.health.exception.HealthExceptionType.*;
+import static sopt.org.motivoo.external.s3.S3ExceptionType.*;
 
 import java.util.Arrays;
 
@@ -24,6 +24,6 @@ public enum S3BucketDirectory {
 		return Arrays.stream(S3BucketDirectory.values())
 			.filter(prefix -> value.equals(prefix.name))
 			.findFirst()
-			.orElseThrow(() -> new BusinessException(INVALID_HEALTH_NOTE));
+			.orElseThrow(() -> new BusinessException(INVALID_BUCKET_PREFIX));
 	}
 }

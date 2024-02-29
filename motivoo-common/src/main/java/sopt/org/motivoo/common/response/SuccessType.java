@@ -2,6 +2,8 @@ package sopt.org.motivoo.common.response;
 
 import org.springframework.http.HttpStatus;
 
+import com.google.api.Http;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public enum SuccessType {
 	GET_MISSION_HISTORY_SUCCESS(HttpStatus.OK, "이전 운동 미션 히스토리를 조회하는 데 성공했습니다."),
 	GET_TODAY_OPPONENT_GOAL_STEP_COUNT(HttpStatus.OK, "오늘의 상대 목표 걸음 수를 조회하는 데 성공했습니다."),
 	UPDATE_STEP_COUNT(HttpStatus.OK, "목표 걸음 수 변경에 성공했습니다."),
+	UPDATE_MISSION_STATUS_SUCCESS(HttpStatus.OK, "미션 인증 사진 등록 및 성공 상태 업데이트에 성공했습니다."),
 
 	//유저
 	GET_MYINFO_SUCCESS(HttpStatus.OK, "마이페이지 나의 정보 조회에 성공했습니다."),

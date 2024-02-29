@@ -1,7 +1,7 @@
-package sopt.org.motivoo.domain.external.s3;
+package sopt.org.motivoo.external.s3;
 
 import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
-import static sopt.org.motivoo.domain.external.s3.S3ExceptionType.*;
+import static sopt.org.motivoo.external.s3.S3ExceptionType.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -95,9 +95,9 @@ public class S3Service {
 		}
 	}
 
-
 	// S3 버킷에 업로드된 이미지 삭제
-	public void deleteImage(String key) {
+	public void deleteImage(String url) {
+		String key = getKeyByUrl(url);
 		try {
 			s3Client.deleteObject((DeleteObjectRequest.Builder builder) ->
 				builder.bucket(bucketName)
@@ -107,17 +107,25 @@ public class S3Service {
 		}
 	}
 
-	// imageKey 기반으로 실제 S3 URL 도출
-	public String getURL(final String url) {
 
-		int index = url.indexOf(AWS_DOMAIN);
+	private String getKeyByUrl(String imgUrl) {
+
+		int index = imgUrl.indexOf(AWS_DOMAIN);
 		String imageKey = "";
 		if (index != -1) {
-			imageKey = url.substring(index + AWS_DOMAIN.length());
+			imageKey = imgUrl.substring(index + AWS_DOMAIN.length());
 			log.info("imageKey substring으로 가져옴: {}", imageKey);
 		} else {
 			log.error("imageKey substring으로 가져오기 실패");
 		}
+
+		return imageKey;
+	}
+
+	// 파일명으로부터 S3 Bucket URL 조회
+	public String getS3ImgUrl(S3BucketDirectory prefix, String fileName) {
+
+		String imageKey = prefix.value() + fileName;
 
 		try {
 			GetUrlRequest request = GetUrlRequest.builder()
@@ -129,16 +137,13 @@ public class S3Service {
 
 			String urlWithKey = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/" + imageKey;
 			if (urlWithKey.equals(imageUrl.toString())) {
+				log.info("S3에 저장된 이미지 Url: {}", imageUrl);
 				return imageUrl.toString();
 			}
 			throw new BusinessException(S3_BUCKET_GET_IMAGE_ERROR);
 		} catch (S3Exception e) {
-			throw new BusinessException(e.getMessage(), S3_BUCKET_GET_IMAGE_ERROR);
+			throw new BusinessException(S3_BUCKET_GET_IMAGE_ERROR);
 		}
-	}
-
-	public String getImgByFileName(String prefix, String fileName) {
-		return "https://"+bucketName+".s3.ap-northeast-2.amazonaws.com/"+prefix+fileName;
 	}
 
 	private String generateImageFileName() {

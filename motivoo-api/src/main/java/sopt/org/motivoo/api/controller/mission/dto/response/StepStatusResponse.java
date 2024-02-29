@@ -3,10 +3,10 @@ package sopt.org.motivoo.api.controller.mission.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
-import sopt.org.motivoo.domain.mission.dto.response.MissionStepStatusResult;
+import sopt.org.motivoo.domain.mission.dto.response.StepStatusResult;
 
 @Builder
-public record MissionStepStatusResponse(
+public record StepStatusResponse(
 	@JsonProperty("user_type") String userType,
 	@JsonProperty("user_id") Long userId,
 	@JsonProperty("user_goal_step_count") Integer userGoalStepCount,
@@ -17,8 +17,8 @@ public record MissionStepStatusResponse(
 	@JsonProperty("is_mission_img_completed") Boolean isMissionImgCompleted
 ) {
 
-	public static MissionStepStatusResponse of(MissionStepStatusResult result) {
-		return MissionStepStatusResponse.builder()
+	public static StepStatusResponse of(StepStatusResult result) {
+		return StepStatusResponse.builder()
 			.userType(result.userType())
 			.userId(result.userId())
 			.userGoalStepCount(result.userGoalStepCount())

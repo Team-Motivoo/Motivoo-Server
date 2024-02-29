@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 @Builder
-public record MissionStepStatusCommand(
+public record StepStatusCommand(
 	@JsonProperty("my_step_count") Integer myStepCount,
 	@JsonProperty("opponent_step_count") Integer opponentStepCount
 ) {
