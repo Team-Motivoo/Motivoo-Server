@@ -110,7 +110,6 @@ public class UserMissionService {
 		User opponentUser = userRetriever.getMatchedUserWith(user);
 
 		checkMatchedUserWithdraw(opponentUser);
-
 		validateTodayMissionRequest(request.missionId(), user);
 
 		Mission mission = missionRetriever.getMissionById(request.missionId());
@@ -124,12 +123,9 @@ public class UserMissionService {
 		}
 
 		MissionQuest missionQuest = missionQuestRetriever.getRandomMissionQuest();
-		// UserMission userMission = userMissionManager.createTodayUserMission(mission, user, missionQuest);
 		userMissionRetriever.updateUserMission(user, mission, missionQuest);
-		// userMissionRetriever.saveUserMission(userMission);
 		UserMission todayMission = user.getCurrentUserMission();
-
-		// user.clearPreUserMissionChoice();  // 오늘의 미션을 선정했다면, 선택지 리스트는 비워주기
+		todayMission.updateCompletedStatus(IN_PROGRESS);
 		return todayMission.getId();
 	}
 
