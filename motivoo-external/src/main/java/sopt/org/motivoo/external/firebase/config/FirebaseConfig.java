@@ -1,4 +1,4 @@
-package sopt.org.motivoo.batch.config;
+package sopt.org.motivoo.external.firebase.config;
 
 import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
 

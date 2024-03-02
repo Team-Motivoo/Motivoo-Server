@@ -1,7 +1,7 @@
-package sopt.org.motivoo.batch.service.firebase;
+package sopt.org.motivoo.external.firebase;
 
-import static sopt.org.motivoo.batch.config.FirebaseConfig.*;
 import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
+import static sopt.org.motivoo.external.firebase.config.FirebaseConfig.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +20,6 @@ import com.google.firebase.database.ValueEventListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.common.advice.BusinessException;
-import sopt.org.motivoo.domain.user.repository.UserRepository;
 
 @Slf4j
 @Service
@@ -28,24 +27,18 @@ import sopt.org.motivoo.domain.user.repository.UserRepository;
 public class FirebaseService {
 
 	public static final String COLLECTION_NAME = "Users";
-	private final UserRepository userRepository;
 
 
-	public void insertUserStep() {
-		Map<String, Integer> userSteps = new HashMap<>();
-		userRepository.findAll()
-				.forEach(user -> userSteps.put(user.getId().toString(), 0));
+	public void insertFBData(Map<String, Integer> values) {
 
-		ref.setValueAsync(userSteps);
-
+		ref.setValueAsync(values);
 		log.info("모든 활성 유저의 데이터 insert 성공!");
 	}
 
-	public void insertUserStepById(Long id) {
-		Map<String, Object> userSteps = new HashMap<>();
-		userSteps.put(id.toString(), 0);
-
-		ref.updateChildrenAsync(userSteps);
+	public void updateFBData(Long id) {
+		Map<String, Object> values = new HashMap<>();
+		values.put(id.toString(), 0);
+		ref.updateChildrenAsync(values);
 
 		log.info("새로 가입한 유저의 데이터 insert 성공!");
 	}
@@ -54,7 +47,7 @@ public class FirebaseService {
 		readAllData(ref);
 	}
 
-	public Map<String, Integer> selectUserStep(List<Long> ids) {
+	public Map<String, Integer> selectFBData(List<Long> ids) {
 		try {
 			ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
 			return readDataByIds(ids.stream().map(Object::toString)
@@ -110,11 +103,8 @@ public class FirebaseService {
 		});
 	}
 
-	public void deleteUserStep(Long id) {
-		Map<String, Object> userSteps = new HashMap<>();
-		userSteps.put(id.toString(), null);  // null을 전달하면 지정된 위치에서 데이터가 삭제됨
-
-		ref.updateChildrenAsync(userSteps);
+	public void deleteUserStep(Map<String, Object> values) {
+		ref.updateChildrenAsync(values);
 
 		log.info("탈퇴한 유저의 데이터 delete 성공!");
 	}
