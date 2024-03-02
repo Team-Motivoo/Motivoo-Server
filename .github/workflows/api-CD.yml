@@ -120,4 +120,3 @@ jobs:
             cp ./api-server/scripts/api/deploy.sh ./deploy-api.sh
             ./deploy-api.sh
             docker image prune -f
-            docker-compose up -d --remove-orphans
