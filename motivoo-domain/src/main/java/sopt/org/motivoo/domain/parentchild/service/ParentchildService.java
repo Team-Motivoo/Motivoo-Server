@@ -5,15 +5,12 @@ import static sopt.org.motivoo.domain.parentchild.exception.ParentchildException
 import static sopt.org.motivoo.domain.parentchild.service.ParentchildManager.*;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import sopt.org.motivoo.domain.external.firebase.FirebaseService;
 import sopt.org.motivoo.domain.external.slack.SlackService;
 import sopt.org.motivoo.domain.health.dto.request.OnboardingCommand;
 import sopt.org.motivoo.domain.health.dto.response.CheckOnboardingResult;
@@ -42,7 +39,6 @@ public class ParentchildService {
 
     private final ParentchildManager parentchildManager;
 
-    private final FirebaseService firebaseService;
     private final SlackService slackService;
 
     @Transactional
@@ -57,11 +53,12 @@ public class ParentchildService {
         sendSlackUserEntry();
 
         // TODO 온보딩을 마친 유저의 걸음 수 데이터 DB에 추가 (Firebase 연동)
-        try {
-            firebaseService.insertUserStepById(userId);
+        /*try {
+            log.error("온보딩 입력 완료 후 FB에 데이터 추가 - 성공!");
+            // firebaseService.insertUserStepById(userId);
         } catch (CannotCreateTransactionException e) {
             log.error("온보딩 입력 완료 후 FB에 데이터 추가 - 트랜잭션 처리 실패!");
-        }
+        }*/
 
         return OnboardingResult.of(user, health);
     }
