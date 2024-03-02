@@ -50,6 +50,18 @@ jobs:
 
         working-directory: ${{ env.working-directory }}
 
+      - name: Firebase JSON 파일 생성
+        run: |
+          cd ./motivoo-api/src/main/resources
+
+          mkdir ./firebase
+          cd ./firebase
+          echo $(ls -al)
+
+          aws s3 cp --region ap-northeast-2 s3://${{ secrets.S3_BUCKET_PATH }}/motivoo-firebase-adminsdk.json .
+          echo $(ls -al; pwd)
+
+        shell: bash
 
       - name: Gradle Properties 파일 생성
         run: |
