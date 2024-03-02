@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.domain.health.entity.ExerciseLevel;
 import sopt.org.motivoo.domain.health.entity.Health;
 import sopt.org.motivoo.domain.health.entity.HealthNote;
+import sopt.org.motivoo.domain.mission.dto.request.StepStatusCommand;
 import sopt.org.motivoo.domain.mission.dto.response.OpponentGoalStepsResult;
 import sopt.org.motivoo.domain.mission.dto.response.StepStatusResult;
 import sopt.org.motivoo.domain.mission.entity.CompletedStatus;
@@ -54,7 +55,11 @@ public class UserMissionManager {
 		todayMission.updateCompletedStatus(CompletedStatus.SUCCESS);
 	}
 
-	public StepStatusResult updateStepStatusResult(User myUser, User opponentUser, int myStep, int opponentStep) {
+	public StepStatusResult updateStepStatusResult(User myUser, User opponentUser, StepStatusCommand request) {
+
+		int myStep = request.myStepCount();
+		int opponentStep = request.opponentStepCount();
+
 		int myGoalStep = 0;
 		int opponentGoalStep = 0;
 
@@ -69,24 +74,23 @@ public class UserMissionManager {
 
 		if (!opponentUserMissionsEmpty) {
 			UserMission opponentCurrentUserMission = opponentUser.getCurrentUserMission();
-			opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ? opponentCurrentUserMission.getMission().getStepCount() : 0;
+			opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ?
+				opponentCurrentUserMission.getMission().getStepCount() : 0;
 			assert opponentCurrentUserMission != null;
 			isStepCountCompleted(opponentStep, opponentCurrentUserMission);
 		}
 
 		if (!myUserMissionsEmpty) {
 			UserMission todayMission = myUser.getCurrentUserMission();
-			if (!validateTodayDateMission(todayMission)) {
-				return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
-			}
 			myGoalStep = todayMission.getMission().getStepCount();
-			boolean stepCountCompleted = isStepCountCompleted(myStep, myUser.getCurrentUserMission());
+			boolean stepCountCompleted = isStepCountCompleted(myStep, todayMission);
 
-			return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted,
+			return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, todayMission.getCompletedStatus().equals(STEP_COMPLETED),
 				todayMission.getImgUrl() != null);
 		}
 
-		return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
+		throw new MissionException(FAIL_TO_GET_MISSION_STATUS);
+		// return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
 	}
 
 	private boolean isStepCountCompleted(int currentStepCount, UserMission todayMission) {

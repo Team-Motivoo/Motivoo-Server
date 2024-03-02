@@ -140,20 +140,7 @@ public class UserMissionService {
 		User myUser = userRetriever.getUserById(userId);
 		User opponentUser = userRetriever.getMatchedUserWith(myUser);
 
-		int myStep = request.myStepCount();
-		int opponentStep = request.opponentStepCount();
-
-		// TODO 파이어베이스 DB에 접근하도록 수정
-		/*try {
-			Map<String, Integer> userNowStepCounts = firebaseService.selectUserStep(List.of(myUser.getId(), opponentUser.getId()));
-			log.info("userNowStepCount Map - size: {}, 1번: {}", userNowStepCounts.size(), userNowStepCounts.get(userId.toString()));
-			myStep = userNowStepCounts.get(myUser.getId().toString());
-			opponentStep =  userNowStepCounts.get(opponentUser.getId().toString());
-		} catch (CannotCreateTransactionException | NullPointerException e) {
-			log.error("트랜잭션 처리 실패! - 유저 미션 달성 상태 업데이트를 위한 FB 조회");
-		}*/
-
-		return userMissionManager.updateStepStatusResult(myUser, opponentUser, myStep, opponentStep);
+		return userMissionManager.updateStepStatusResult(myUser, opponentUser, request);
 	}
 
 	// 유저-목표 걸음수(오늘의 미션을 선정한 경우에 한하여)
