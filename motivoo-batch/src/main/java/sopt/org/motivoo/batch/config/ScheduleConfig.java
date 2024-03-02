@@ -1,4 +1,4 @@
-package sopt.org.motivoo.domain.config;
+package sopt.org.motivoo.batch.config;
 
 import java.util.concurrent.ThreadPoolExecutor;
 

@@ -6,9 +6,9 @@ services:
     ports:
       - "6379:6379"
 
-  blue:
-    container_name: blue
-    image: yejunpark1/motivoo-server
+  blue-api:
+    container_name: blue-api
+    image: yejunpark1/motivoo-api-server
     expose:
       - 8080
     ports:
@@ -18,14 +18,39 @@ services:
     depends_on:
       - redis
 
+  blue-batch:
+    container_name: blue-batch
+    image: yejunpark1/motivoo-batch-server
+    expose:
+      - 8081
+    ports:
+      - "8081:8081"
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - redis
 
-  green:
-    container_name: green
-    image: yejunpark1/motivoo-server
+
+  green-api:
+    container_name: green-api
+    image: yejunpark1/motivoo-api-server
     expose:
       - 8080
     ports:
-      - "8081:8080"
+      - "8082:8080"
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - redis
+
+
+  green-batch:
+    container_name: green-batch
+    image: yejunpark1/motivoo-batch-server
+    expose:
+      - 8081
+    ports:
+      - "8083:8081"
     environment:
       - TZ=Asia/Seoul
     depends_on:

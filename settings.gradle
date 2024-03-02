@@ -3,4 +3,5 @@ include 'motivoo-api'
 include 'motivoo-domain'
 include 'motivoo-external'
 include 'motivoo-common'
+include 'motivoo-batch'
 

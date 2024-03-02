@@ -1,4 +1,4 @@
-name: Motivoo API Server CD
+name: Motivoo Batch Server CD
 
 on:  # 트리거
   push:
@@ -36,14 +36,27 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ap-northeast-2
 
-      - name: application.yml (API 모듈) 파일 생성
+      - name: application.yml (Batch 모듈) 파일 생성
         run: |
           # yml을 생성할 디렉터리로 작업 디렉터리 이동
-          cd ./motivoo-api/src/main/resources
+          cd ./motivoo-batch/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
 
         working-directory: ${{ env.working-directory }}
 
+
+      - name: Firebase JSON 파일 생성
+        run: |
+          cd ./motivoo-batch/src/main/resources
+
+          mkdir ./firebase
+          cd ./firebase
+          echo $(ls -al)
+
+          aws s3 cp --region ap-northeast-2 s3://${{ secrets.S3_BUCKET_PATH }}/motivoo-firebase-adminsdk.json .
+          echo $(ls -al; pwd)
+
+        shell: bash
 
       - name: Gradle Properties 파일 생성
         run: |
@@ -53,7 +66,7 @@ jobs:
       - name: 빌드
         run: |
           chmod +x gradlew
-          ./gradlew motivoo-api:bootJar
+          ./gradlew motivoo-batch:bootJar
         working-directory: ${{ env.working-directory }}
         shell: bash
 
@@ -68,8 +81,8 @@ jobs:
 
       - name: Docker Image 빌드 및 푸시
         run: |
-          docker build --platform linux/amd64 -t yejunpark1/motivoo-api-server .
-          docker push yejunpark1/motivoo-api-server
+          docker build --platform linux/amd64 -t yejunpark1/motivoo-batch-server .
+          docker push yejunpark1/motivoo-batch-server
 
       - name: deploy.sh EC2 인스턴스로 전송
         uses: appleboy/scp-action@master
@@ -103,7 +116,7 @@ jobs:
           key: ${{ secrets.RELEASE_SERVER_KEY }}
           script: | 
             cd ~
-            sudo docker pull yejunpark1/motivoo-api-server
+            sudo docker pull yejunpark1/motivoo-batch-server
             sudo chmod 777 ./deploy.sh
             cp ./scripts/deploy.sh ./deploy.sh
             ./deploy.sh

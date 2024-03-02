@@ -21,7 +21,6 @@ import sopt.org.motivoo.api.controller.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivoo.common.response.ApiResponse;
 import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.service.OauthService;
-import sopt.org.motivoo.domain.user.service.UserService;
 
 @Slf4j
 @RestController
@@ -29,7 +28,6 @@ import sopt.org.motivoo.domain.user.service.UserService;
 public class OauthController {
     private final OauthService oauthService;
     private final JwtTokenProvider tokenProvider;
-    private final UserService userService;
 
     @PostMapping("/oauth/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody OauthTokenRequest tokenRequest) {

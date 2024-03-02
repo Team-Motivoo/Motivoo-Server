@@ -142,30 +142,30 @@ public class User extends BaseTimeEntity {
 		this.parentchild = null;
 	}
 	public void setUserMissionToNull(){
-		this.userMissions.stream().forEach(m -> m = null);
+		this.userMissions.clear();
 	}
 
-	// public void clearPreUserMissionChoice() {
-	// 	this.userMissionChoice.clear();
-	// }
+	public void setUserMissionChoiceToNull(){
+		this.userMissionChoice.clear();
+	}
 
 	public void addTodayUserMissionChoice(List<UserMissionChoices> userMissionChoice) {
 		log.info("UserMission 선택지(매일 자정 초기화 후, 메인 홈 첫 진입 시 업데이트: {}가지 / User-{}가지", userMissionChoice.size(), this.userMissionChoice.size());
 		this.userMissionChoice.addAll(userMissionChoice);
+		userMissionChoice.forEach(umc -> {
+			if (umc.getUser() != this) {
+				umc.setUser(this);
+			}
+		});
 	}
 
 	// 가장 최근의 운동 미션 조회
 	public UserMission getCurrentUserMission() {
-		log.info("userMissions.size(): {}", userMissions.size());
 		if (!userMissions.isEmpty()) {
 			int lastIndex = userMissions.size() - 1;
 			return userMissions.get(lastIndex);
 		}
 
-		//TODO User 도메인에서 처리하는 로직인데 MissionException VS UserException 둘 중 어느 게 더 적합할지?
 		throw new MissionException(EMPTY_USER_MISSIONS);
-
-		// 처음 가입한 유저 TODO 온보딩 마치고 UserMission 1개 디폴트로 생성되도록 수정
 	}
-
 }

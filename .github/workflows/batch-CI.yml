@@ -1,17 +1,17 @@
-name: Motivoo API Server CI
+name: Motivoo Batch Server CI
 
 on:  # 트리거
   push:
     branches: [ "develop" ]
     paths:
-      - motivoo-api/**
+      - motivoo-batch/**
       - motivoo-domain/**
       - motivoo-common/**
       - motivoo-external/**
   pull_request:
     branches: [ "develop" ]
     paths:
-      - motivoo-api/**
+      - motivoo-batch/**
       - motivoo-domain/**
       - motivoo-common/**
       - motivoo-external/**
@@ -42,14 +42,26 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ap-northeast-2
 
-      - name: application.yml (API 모듈) 파일 생성
+      - name: application.yml (Batch 모듈) 파일 생성
         run: |
           # yml을 생성할 디렉터리로 작업 디렉터리 이동
-          cd ./motivoo-api/src/main/resources
+          cd ./motivoo-batch/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
 
         working-directory: ${{ env.working-directory }}
 
+      - name: Firebase JSON 파일 생성
+        run: |
+          cd ./motivoo-batch/src/main/resources
+
+          mkdir ./firebase
+          cd ./firebase
+          echo $(ls -al)
+
+          aws s3 cp --region ap-northeast-2 s3://${{ secrets.S3_BUCKET_PATH }}/motivoo-firebase-adminsdk.json .
+          echo $(ls -al; pwd)
+
+        shell: bash
 
       - name: Gradle Properties 파일 생성
         run: |
@@ -59,7 +71,7 @@ jobs:
       - name: 빌드
         run: |
           chmod +x gradlew
-          ./gradlew motivoo-api:bootJar
+          ./gradlew motivoo-batch:bootJar
         working-directory: ${{ env.working-directory }}
         shell: bash
 
