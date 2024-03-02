@@ -34,4 +34,14 @@ public class UserManager {
 
 		//sendRevokeRequest(null, KAKAO, "FHdk_lLY2GObLpez2qGCdmqDlMBwwDk7FXgKPXTZAAABjRVYY2X6Fwx8Dt1GgQ"); //카카오 연결 해제
 	}
+
+	@Transactional
+	public void withdrawUser(User user) {
+
+		user.updateRefreshToken(null);
+		user.deleteSocialInfo();
+		user.updateDeleted();
+		user.updateDeleteAt();
+		//sendRevokeRequest(null, KAKAO, "FHdk_lLY2GObLpez2qGCdmqDlMBwwDk7FXgKPXTZAAABjRVYY2X6Fwx8Dt1GgQ"); //카카오 연결 해제
+	}
 }

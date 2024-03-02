@@ -49,7 +49,7 @@ public class ParentchildService {
 
         User user = userRetriever.getUserById(userId);
         Health health = parentchildManager.onboardInput(user, request);
-        // healthRetriever.validateHealthByUser(user);   // TODO API 중복 호출 예외처리
+        healthRetriever.validateHealthByUser(user);   // TODO API 중복 호출 예외처리
         healthRetriever.save(health);
 
         // Slack 신규 유저 알림 전송
@@ -82,18 +82,18 @@ public class ParentchildService {
         checkOnboardingCompleted(user);
 
         Parentchild parentchild = parentchildRetriever.getByInviteCode(request.inviteCode());
+        int count = userRetriever.getParentchildUserCnt(parentchild);
+        if (count == 1) {
+            // validateInviteRequest(user, parentchild);
+            completeMatching(user, parentchild);
+        }
         Long opponentUserId = userRetriever.getOpponentUserId(userId);
         log.info("매칭된 상대 유저의 ID: {}", opponentUserId);
 
         if (parentchild.isMatched()) {
             return new InviteReceiveResult(userId, opponentUserId, true);
         }
-        if (user.getParentchild() != null) {
-            validateInviteRequest(user, parentchild);
-        }
-
         validateInviteRequest(user, parentchild);
-        completeMatching(user, parentchild);
 
         return new InviteReceiveResult(userId, opponentUserId, true);
     }
