@@ -50,13 +50,6 @@ jobs:
 
         working-directory: ${{ env.working-directory }}
 
-      - name: application.yml (Domain 모듈) 파일 생성
-        run: |
-          cd ./motivoo-domain/src/main/resources
-          echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
-
-        working-directory: ${{ env.working-directory }}
-
 
       - name: Gradle Properties 파일 생성
         run: |
