@@ -12,6 +12,8 @@ import org.springframework.core.io.ClassPathResource;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,9 @@ public class FirebaseConfig {
 
 	@Value("${firebase.database}")
 	private String FIREBASE_DB;
+
+	public static DatabaseReference ref;
+	public static final String COLLECTION_NAME = "Users";
 
 	@PostConstruct
 	public void init() {
@@ -42,8 +47,8 @@ public class FirebaseConfig {
 				.build();
 
 			FirebaseApp.initializeApp(options);
-
 			log.info("파이어베이스 연결에 성공했습니다.");
+			ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
 
 		} catch (IOException e) {
 			log.error("파이어베이스 서버와의 연결에 실패했습니다.");

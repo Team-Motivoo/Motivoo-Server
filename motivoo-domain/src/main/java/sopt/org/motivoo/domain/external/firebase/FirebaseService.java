@@ -1,6 +1,7 @@
 package sopt.org.motivoo.domain.external.firebase;
 
 import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
+import static sopt.org.motivoo.domain.external.firebase.config.FirebaseConfig.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import lombok.RequiredArgsConstructor;
@@ -29,11 +29,16 @@ public class FirebaseService {
 	public static final String COLLECTION_NAME = "Users";
 	private final UserRepository userRepository;
 
-	public void insertUserStep() {
-		DatabaseReference ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
+	// private DatabaseReference ref;
 
+	/*@PostConstruct
+	public void init() {
+		ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
+	}*/
+
+	public void insertUserStep() {
 		Map<String, Integer> userSteps = new HashMap<>();
-		userRepository.findAllByDeleted(false)
+		userRepository.findAll()
 				.forEach(user -> userSteps.put(user.getId().toString(), 0));
 
 		ref.setValueAsync(userSteps);
@@ -42,25 +47,20 @@ public class FirebaseService {
 	}
 
 	public void insertUserStepById(Long id) {
-		DatabaseReference ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
-
-		Map<String, Integer> userSteps = new HashMap<>();
+		Map<String, Object> userSteps = new HashMap<>();
 		userSteps.put(id.toString(), 0);
 
-		ref.setValueAsync(userSteps);
+		ref.updateChildrenAsync(userSteps);
 
 		log.info("새로 가입한 유저의 데이터 insert 성공!");
 	}
 
 	public void selectAllUserStep() {
-		DatabaseReference ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
 		readAllData(ref);
 	}
 
 	public Map<String, Integer> selectUserStep(List<Long> ids) {
 		try {
-			DatabaseReference ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
-
 			return readDataByIds(ids.stream().map(Object::toString)
 				.collect(Collectors.toList()), ref);
 		} catch (InterruptedException e) {
@@ -115,12 +115,10 @@ public class FirebaseService {
 	}
 
 	public void deleteUserStep(Long id) {
-		DatabaseReference ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
-
-		Map<String, Integer> userSteps = new HashMap<>();
+		Map<String, Object> userSteps = new HashMap<>();
 		userSteps.put(id.toString(), null);  // null을 전달하면 지정된 위치에서 데이터가 삭제됨
 
-		ref.setValueAsync(userSteps);
+		ref.updateChildrenAsync(userSteps);
 
 		log.info("탈퇴한 유저의 데이터 delete 성공!");
 	}
