@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import sopt.org.motivoo.common.advice.BusinessException;
 import sopt.org.motivoo.domain.health.entity.ExerciseLevel;
 import sopt.org.motivoo.domain.health.entity.Health;
 import sopt.org.motivoo.domain.health.entity.HealthNote;
@@ -49,11 +48,13 @@ public class UserMissionManager {
 	@Transactional
 	public void updateMissionSuccess(UserMission todayMission, final String imgUrl) {
 
+		checkMissionStepCompleted(todayMission);
+
 		todayMission.updateImgUrl(imgUrl);
 		todayMission.updateCompletedStatus(CompletedStatus.SUCCESS);
 	}
 
-	public StepStatusResult updateStepStatusResult(User myUser, User opponentUser, int myStep) {
+	public StepStatusResult updateStepStatusResult(User myUser, User opponentUser, int myStep, int opponentStep) {
 		int myGoalStep = 0;
 		int opponentGoalStep = 0;
 
@@ -70,7 +71,7 @@ public class UserMissionManager {
 			UserMission opponentCurrentUserMission = opponentUser.getCurrentUserMission();
 			opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ? opponentCurrentUserMission.getMission().getStepCount() : 0;
 			assert opponentCurrentUserMission != null;
-			// isStepCountCompleted(opponentStep, opponentCurrentUserMission);
+			isStepCountCompleted(opponentStep, opponentCurrentUserMission);
 		}
 
 		if (!myUserMissionsEmpty) {
@@ -79,13 +80,28 @@ public class UserMissionManager {
 				return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
 			}
 			myGoalStep = todayMission.getMission().getStepCount();
-			boolean stepCountCompleted = myStep >= todayMission.getMission().getStepCount();
+			boolean stepCountCompleted = isStepCountCompleted(myStep, myUser.getCurrentUserMission());
 
 			return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, stepCountCompleted,
 				todayMission.getImgUrl() != null);
 		}
 
 		return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, false, false);
+	}
+
+	private boolean isStepCountCompleted(int currentStepCount, UserMission todayMission) {
+		boolean isStepCountCompleted = currentStepCount >= todayMission.getMission().getStepCount();
+		if (isStepCountCompleted) {
+			todayMission.updateCompletedStatus(STEP_COMPLETED);
+		}
+		return isStepCountCompleted;
+	}
+
+	// 오늘의 미션 걸음 수 달성 상태 확인
+	private void checkMissionStepCompleted(UserMission todayMission) {
+		if (!todayMission.getCompletedStatus().equals(STEP_COMPLETED)) {
+			throw new MissionException(NOT_COMPLETE_MISSION_STEPS_SUCCESS);
+		}
 	}
 
 	@NotNull

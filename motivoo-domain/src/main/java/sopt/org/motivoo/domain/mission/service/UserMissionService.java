@@ -1,10 +1,10 @@
 package sopt.org.motivoo.domain.mission.service;
 
-import static sopt.org.motivoo.domain.mission.entity.CompletedStatus.*;
 import static sopt.org.motivoo.domain.mission.exception.MissionExceptionType.*;
 import static sopt.org.motivoo.domain.mission.service.UserMissionManager.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -151,12 +151,22 @@ public class UserMissionService {
 			Map<String, Integer> userNowStepCounts = firebaseService.selectUserStep(List.of(myUser.getId(), opponentUser.getId()));
 			log.info("userNowStepCount Map - size: {}, 1번: {}", userNowStepCounts.size(), userNowStepCounts.get(userId.toString()));
 			myStep = userNowStepCounts.get(myUser.getId().toString());
-			opponentStep = userNowStepCounts.get(opponentUser.getId().toString());
+			opponentStep =  userNowStepCounts.get(opponentUser.getId().toString());
 		} catch (CannotCreateTransactionException | NullPointerException e) {
 			log.error("트랜잭션 처리 실패! - 유저 미션 달성 상태 업데이트를 위한 FB 조회");
 		}
 
-		return userMissionManager.updateStepStatusResult(myUser, opponentUser, myStep);
+		return userMissionManager.updateStepStatusResult(myUser, opponentUser, myStep, opponentStep);
+	}
+
+	// 유저-목표 걸음수(오늘의 미션을 선정한 경우에 한하여)
+	public Map<User, Integer> getUsersGoalStep() {
+		Map<User, Integer> goalSteps = new HashMap<>();
+		userRetriever.findAll().stream()
+			.filter(u -> !u.getUserMissions().isEmpty() && validateTodayDateMission(u.getCurrentUserMission()))
+			.forEach(u -> goalSteps.put(u, u.getCurrentUserMission().getMission().getStepCount()));
+
+		return goalSteps;
 	}
 
 	public OpponentGoalStepsResult getOpponentGoalSteps(final Long userId) {
@@ -164,15 +174,6 @@ public class UserMissionService {
 		User opponentUser = userRetriever.getMatchedUserWith(myUser);
 
 		return getOpponentGoalStepsResult(opponentUser);
-	}
-
-	private boolean isStepCountCompleted(int currentStepCount, UserMission todayMission) {
-		boolean isStepCountCompleted = currentStepCount >= todayMission.getMission().getStepCount();
-		if (isStepCountCompleted) {
-			todayMission.updateCompletedStatus(SUCCESS);
-			log.info("오늘의 미션 달성 완료로 DB 업데이트 반영!");
-		}
-		return isStepCountCompleted;
 	}
 
 	@Transactional
@@ -266,13 +267,6 @@ public class UserMissionService {
 			return GoalStepResult.of(stepCount, request.goalStepCount());
 		}
 		throw new MissionException(FAIL_TO_UPDATE_GOAL_STEP_COUNT);
-	}
-
-	// 오늘의 미션 걸음 수 달성 상태 확인
-	private void checkMissionStepComplete(UserMission todayMission) {
-		if (!todayMission.getCompletedStatus().equals(SUCCESS)) {
-			throw new MissionException(NOT_COMPLETE_MISSION_STEPS_SUCCESS);
-		}
 	}
 
 	// 데모데이용 더미 미션 히스토리 생성
