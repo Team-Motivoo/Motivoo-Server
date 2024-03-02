@@ -117,7 +117,7 @@ jobs:
           script: | 
             cd ~
             sudo docker pull yejunpark1/motivoo-batch-server
-            sudo chmod 777 ./batch-server/deploy-batch.sh
-            cp ./scripts/deploy-batch.sh ./batch-server/deploy.sh
+            sudo chmod 777 ./deploy-batch.sh
+            cp ./batch-server/scripts/batch/deploy.sh ./deploy-batch.sh 
             ./deploy-batch.sh
             docker image prune -f

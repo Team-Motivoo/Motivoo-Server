@@ -104,7 +104,7 @@ jobs:
           script: | 
             cd ~
             sudo docker pull yejunpark1/motivoo-api-server
-            sudo chmod 777 ./api-server/deploy.sh
-            cp ./scripts/deploy-api.sh ./api-server/deploy.sh
+            sudo chmod 777 ./deploy-api.sh
+            cp ./api-server/scripts/api/deploy.sh ./deploy-api.sh
             ./deploy-api.sh
             docker image prune -f
