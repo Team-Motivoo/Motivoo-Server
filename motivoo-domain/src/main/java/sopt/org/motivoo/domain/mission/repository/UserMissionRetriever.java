@@ -43,7 +43,7 @@ public class UserMissionRetriever {
 
 	//== DELETE ==//
 	public void deleteByUser(User user) {
-		userMissionRepository.deleteByUser(user);
+		userMissionRepository.deleteAllByUser(user);
 	}
 
 	//== UPDATE ==//

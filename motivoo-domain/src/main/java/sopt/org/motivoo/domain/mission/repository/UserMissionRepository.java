@@ -34,7 +34,7 @@ public interface UserMissionRepository extends JpaRepository<UserMission, Long> 
 
 
 	//== DELETE ==//
-	void deleteByUser(User user);
+	void deleteAllByUser(User user);
 
 
 	//== UPDATE ==//
