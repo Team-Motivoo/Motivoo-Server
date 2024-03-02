@@ -23,11 +23,11 @@ if [ -z "$IS_REDIS_ACTIVATE" ];then
 fi
 
 # 실행 중인 서버 포트 확인
-if [ ${RUNNING_CONTAINER_NAME} == "blue" ]; then
-    echo "[$NOW_TIME] 실행 중인 서버 포트: blue (:8081)"
+if [ ${RUNNING_CONTAINER_NAME} == "blue-batch" ]; then
+    echo "[$NOW_TIME] 실행 중인 서버 포트: blue-batch (:8081)"
     RUNNING_SERVER_PORT=8081
-elif [ ${RUNNING_CONTAINER_NAME} == "green" ]; then
-    echo "[$NOW_TIME] 실행 중인 서버 포트: green (:8083)"
+elif [ ${RUNNING_CONTAINER_NAME} == "green-batch" ]; then
+    echo "[$NOW_TIME] 실행 중인 서버 포트: green-batch (:8083)"
     RUNNING_SERVER_PORT=8083
 else
   echo "[$NOW_TIME] 실행 중인 서버 포트: 없음"
@@ -54,9 +54,9 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
   CURRENT_SERVER_PORT=8083
 
   echo "[$NOW_TIME] Green 도커 이미지 pull"
-  docker-compose pull green
+  docker-compose pull green-batch
   echo "[$NOW_TIME] Green 컨테이너 Up (빌드 & 실행)"
-  docker-compose up -d green
+  docker-compose up -d green-batch
   echo "[$NOW_TIME] 10초 후 Health Check 시작"
   sleep 10
 
@@ -90,7 +90,7 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
   sudo nginx -s reload
   echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url-batch.inc)"
   echo "[$NOW_TIME] Blue 컨테이너 중단"
-  docker-compose stop blue
+  docker-compose stop blue-batch
 
 # Blue Up
 else
@@ -100,9 +100,9 @@ else
   CURRENT_SERVER_PORT=8081
 
   echo "[$NOW_TIME] Blue 도커 이미지 pull"
-  docker-compose pull blue
+  docker-compose pull blue-batch
   echo "[$NOW_TIME] Blue 컨테이너 Up (빌드 & 실행)"
-  docker-compose up -d blue
+  docker-compose up -d blue-batch
   echo "[$NOW_TIME] 10초 후 Health Check 시작"
   sleep 10
 
@@ -137,7 +137,7 @@ else
   sudo nginx -s reload
   echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url-batch.inc)"
   echo "[$NOW_TIME] Green 컨테이너 중단"
-  docker-compose stop green
+  docker-compose stop green-batch
 fi
 
 echo "----------------------------------------------------------------------"

@@ -23,11 +23,11 @@ if [ -z "$IS_REDIS_ACTIVATE" ];then
 fi
 
 # 실행 중인 서버 포트 확인
-if [ ${RUNNING_CONTAINER_NAME} == "blue" ]; then
-    echo "[$NOW_TIME] 실행 중인 서버 포트: blue (:8080)"
+if [ ${RUNNING_CONTAINER_NAME} == "blue-api" ]; then
+    echo "[$NOW_TIME] 실행 중인 서버 포트: blue-api (:8080)"
     RUNNING_SERVER_PORT=8080
-elif [ ${RUNNING_CONTAINER_NAME} == "green" ]; then
-    echo "[$NOW_TIME] 실행 중인 서버 포트: green (:8082)"
+elif [ ${RUNNING_CONTAINER_NAME} == "green-api" ]; then
+    echo "[$NOW_TIME] 실행 중인 서버 포트: green-api (:8082)"
     RUNNING_SERVER_PORT=8082
 else
   echo "[$NOW_TIME] 실행 중인 서버 포트: 없음"
@@ -90,7 +90,7 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
   sudo nginx -s reload
   echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url.inc)"
   echo "[$NOW_TIME] Blue 컨테이너 중단"
-  docker-compose stop blue
+  docker-compose stop blue-api
 
 # Blue Up
 else
@@ -100,9 +100,9 @@ else
   CURRENT_SERVER_PORT=8080
 
   echo "[$NOW_TIME] Blue 도커 이미지 pull"
-  docker-compose pull blue
+  docker-compose pull blue-api
   echo "[$NOW_TIME] Blue 컨테이너 Up (빌드 & 실행)"
-  docker-compose up -d blue
+  docker-compose up -d blue-api
   echo "[$NOW_TIME] 10초 후 Health Check 시작"
   sleep 10
 
@@ -137,7 +137,7 @@ else
   sudo nginx -s reload
   echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url.inc)"
   echo "[$NOW_TIME] Green 컨테이너 중단"
-  docker-compose stop green
+  docker-compose stop green-api
 fi
 
 echo "----------------------------------------------------------------------"
