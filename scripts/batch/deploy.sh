@@ -55,8 +55,8 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
     echo "[$NOW_TIME] Green health check ..."
     sleep 3
 
-    RESPONSE=$(curl -s http://localhost:${CURRENT_SERVER_PORT}${WEB_HEALTH_CHECK_URL})
-    UP_COUNT=$(echo $RESPONSE | grep 'success' | wc -l)
+    RESPONSE=$(sudo lsof -i :${CURRENT_SERVER_PORT})
+    UP_COUNT=$(echo $RESPONSE | grep 'docker' | wc -l)
     echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
     if [ $UP_COUNT -ge 1 ]; then  # "success" 문자열이 1개 이상 존재한다면 헬스체크 통과
@@ -102,8 +102,8 @@ else
     echo "[$NOW_TIME] Blue health check ..."
     sleep 3
 
-    RESPONSE=$(curl -s http://localhost:${CURRENT_SERVER_PORT}${WEB_HEALTH_CHECK_URL})
-    UP_COUNT=$(echo $RESPONSE | grep 'success' | wc -l)
+    RESPONSE=$(sudo lsof -i :${CURRENT_SERVER_PORT})
+    UP_COUNT=$(echo $RESPONSE | grep 'docker' | wc -l)
     echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
     if [ $UP_COUNT -ge 1 ]; then  # "success" 문자열이 1개 이상 존재한다면 헬스체크 통과

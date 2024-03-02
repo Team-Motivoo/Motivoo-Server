@@ -121,4 +121,3 @@ jobs:
             cp ./batch-server/scripts/batch/deploy.sh ./deploy-batch.sh 
             ./deploy-batch.sh
             docker image prune -f
-            docker-compose up -d --remove-orphans

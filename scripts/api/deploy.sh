@@ -54,9 +54,9 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
   CURRENT_SERVER_PORT=8082
 
   echo "[$NOW_TIME] Green 도커 이미지 pull"
-  docker-compose pull green
+  docker-compose pull green-api
   echo "[$NOW_TIME] Green 컨테이너 Up (빌드 & 실행)"
-  docker-compose up -d green
+  docker-compose up -d green-api
   echo "[$NOW_TIME] 15초 후 Health Check 시작"
   sleep 15
 
