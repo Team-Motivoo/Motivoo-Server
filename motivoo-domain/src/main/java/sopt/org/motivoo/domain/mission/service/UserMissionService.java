@@ -9,12 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import sopt.org.motivoo.domain.external.firebase.FirebaseService;
 import sopt.org.motivoo.domain.health.entity.Health;
 import sopt.org.motivoo.domain.health.repository.HealthRetriever;
 import sopt.org.motivoo.domain.mission.dto.request.GoalStepCommand;
@@ -25,6 +23,7 @@ import sopt.org.motivoo.domain.mission.dto.response.MissionHistoryResult;
 import sopt.org.motivoo.domain.mission.dto.response.OpponentGoalStepsResult;
 import sopt.org.motivoo.domain.mission.dto.response.StepStatusResult;
 import sopt.org.motivoo.domain.mission.dto.response.TodayMissionResult;
+import sopt.org.motivoo.domain.mission.entity.CompletedStatus;
 import sopt.org.motivoo.domain.mission.entity.Mission;
 import sopt.org.motivoo.domain.mission.entity.MissionQuest;
 import sopt.org.motivoo.domain.mission.entity.UserMission;
@@ -51,8 +50,6 @@ public class UserMissionService {
 	private final HealthRetriever healthRetriever;
 
 	private final UserMissionManager userMissionManager;
-
-	private final FirebaseService firebaseService;
 
 	@Transactional
 	public void updateMissionSuccess(final String imgUrl, final Long userId) {
@@ -147,14 +144,14 @@ public class UserMissionService {
 		int opponentStep = request.opponentStepCount();
 
 		// TODO 파이어베이스 DB에 접근하도록 수정
-		try {
+		/*try {
 			Map<String, Integer> userNowStepCounts = firebaseService.selectUserStep(List.of(myUser.getId(), opponentUser.getId()));
 			log.info("userNowStepCount Map - size: {}, 1번: {}", userNowStepCounts.size(), userNowStepCounts.get(userId.toString()));
 			myStep = userNowStepCounts.get(myUser.getId().toString());
 			opponentStep =  userNowStepCounts.get(opponentUser.getId().toString());
 		} catch (CannotCreateTransactionException | NullPointerException e) {
 			log.error("트랜잭션 처리 실패! - 유저 미션 달성 상태 업데이트를 위한 FB 조회");
-		}
+		}*/
 
 		return userMissionManager.updateStepStatusResult(myUser, opponentUser, myStep, opponentStep);
 	}
@@ -163,7 +160,8 @@ public class UserMissionService {
 	public Map<User, Integer> getUsersGoalStep() {
 		Map<User, Integer> goalSteps = new HashMap<>();
 		userRetriever.findAll().stream()
-			.filter(u -> !u.getUserMissions().isEmpty() && validateTodayDateMission(u.getCurrentUserMission()))
+			.filter(u -> !u.getUserMissions().isEmpty() && validateTodayDateMission(u.getCurrentUserMission()) &&
+				u.getCurrentUserMission().getCompletedStatus().equals(CompletedStatus.IN_PROGRESS))
 			.forEach(u -> goalSteps.put(u, u.getCurrentUserMission().getMission().getStepCount()));
 
 		return goalSteps;
