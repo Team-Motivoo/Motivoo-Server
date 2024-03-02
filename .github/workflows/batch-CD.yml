@@ -81,7 +81,7 @@ jobs:
 
       - name: Docker Image 빌드 및 푸시
         run: |
-          docker build --platform linux/amd64 -t yejunpark1/motivoo-batch-server .
+          docker build --platform linux/amd64 -f Dockerfile-BATCH -t yejunpark1/motivoo-batch-server .
           docker push yejunpark1/motivoo-batch-server
 
       - name: deploy.sh EC2 인스턴스로 전송
