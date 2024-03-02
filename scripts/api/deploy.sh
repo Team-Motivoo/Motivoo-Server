@@ -1,7 +1,7 @@
 #!/bin/bash
 NOW_TIME="$(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)"
 
-ALL_PORTS=("8080","8081")
+ALL_PORTS=("8080","8082")
 AVAILABLE_PORT=()
 SERVER_NAME=motivoo-server
 
@@ -9,7 +9,7 @@ DOCKER_PS_OUTPUT=$(docker ps | grep $SERVER_NAME)
 RUNNING_CONTAINER_NAME=$(echo "$DOCKER_PS_OUTPUT" | awk '{print $NF}')
 
 IS_REDIS_ACTIVATE=$(docker ps | grep redis)
-IS_GREEN_ACTIVATE=$(docker ps | grep green)
+IS_GREEN_ACTIVATE=$(docker ps | grep green-api)
 
 WEB_HEALTH_CHECK_URL=/actuator/health
 
@@ -27,8 +27,8 @@ if [ ${RUNNING_CONTAINER_NAME} == "blue" ]; then
     echo "[$NOW_TIME] 실행 중인 서버 포트: blue (:8080)"
     RUNNING_SERVER_PORT=8080
 elif [ ${RUNNING_CONTAINER_NAME} == "green" ]; then
-    echo "[$NOW_TIME] 실행 중인 서버 포트: green (:8081)"
-    RUNNING_SERVER_PORT=8081
+    echo "[$NOW_TIME] 실행 중인 서버 포트: green (:8082)"
+    RUNNING_SERVER_PORT=8082
 else
   echo "[$NOW_TIME] 실행 중인 서버 포트: 없음"
 fi
@@ -51,7 +51,7 @@ fi
 if [ -z $IS_GREEN_ACTIVATE ]; then
   echo "[$NOW_TIME] ###### 스위칭 ######"
   echo "[$NOW_TIME] ###### BLUE -> GREEN ######"
-  CURRENT_SERVER_PORT=8081
+  CURRENT_SERVER_PORT=8082
 
   echo "[$NOW_TIME] Green 도커 이미지 pull"
   docker-compose pull green
