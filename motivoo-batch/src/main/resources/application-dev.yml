@@ -1,0 +1,120 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DATABASE_ENDPOINT_URL}:3306/${DATABASE_NAME}?serverTimezone=UTC&characterEncoding=UTF-8
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+
+  ### Profile ###
+  config:
+    activate:
+      on-profile: dev
+
+  ### JPA ###
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: false
+
+  ### Multipart 통신 ###
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 3MB
+      max-request-size: 5MB
+
+  ### 소셜로그인 ###
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${kakao.client.id}
+            redirect-uri: http://localhost:8080/kakao/callback
+            client-authentication-method: POST
+            client-secret: ${kakao.client.secret}
+            authorization-grant-type: authorization_code
+            scope:
+              - sub
+              - nickname
+            client_name: kakao
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v1/oidc/userinfo
+            user-name-attribute: id
+
+### 소셜로그인(애플) ###
+apple:
+  iss: ${APPLE_ISS}
+  client-id: ${APPLE_CLIENT_ID}
+
+### AWS SDK ###
+aws-property:
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+  aws-region: ${AWS_REGION}
+  s3-bucket-name: ${S3_BUCKET_NAME}
+
+### REDIS ###
+data:
+  redis:
+    host: redis # 로컬에서 테스트 할 때는 localhost로 사용
+    port: 6379
+
+### JWT ###
+jwt:
+  token:
+    secret-key: ${JWT_SECRET_KEY}
+  access-token:
+    expire-length: ${ACCESS_TOKEN_EXPIRE}
+  refresh-token:
+    expire-length: ${REFRESH_TOKEN_EXPIRE}
+
+### SLACK ###
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
+    success: ${SLACK_SUCCESS_WEBHOOK}
+
+### SWAGGER ###
+springdoc:
+  swagger-ui:
+    path: ${SWAGGER_PATH}
+    url: ${SWAGGER_FILE_URL}
+  #    tags-sorter: alpha  # 알파벳 순 정렬
+  #    groups-order: desc  # 각 API의 그룹 표시 순서 (path, query, body, response)
+  #    operations-sorter: method   # delete-get-patch-post-put 순서 정렬
+  #    display-request-duration: true      # swagger-ui의 요청 duration 표시
+  #    disable-swagger-default-url: true   # swagger-ui의 default url 비활성화
+
+  show-actuator: true  # Actuator의 endpoint까지 표시
+
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+
+  paths-to-match:
+    - /api/**
+    - /user/**
+    - /mission/**
+
+### FIREBASE ###
+firebase:
+  key:
+    path: ${FIREBASE_KEY_PATH}
+  database: ${FIREBASE_REALTIME_DATABASE}
+
+### SENTRY ###
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: ${SENTRY_TRANSACTION_RATE} # # 전송할 트랜잭션의 양 1 = 100%
+  enable-tracing: true
+  logging:
+    minimum-event-level: info # 최소 이벤트 레벨
+    minimum-breadcrumb-level: info # 최소 브래드크럼 레벨
