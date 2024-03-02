@@ -190,6 +190,7 @@ public class OauthService {
         tokenRedisRetriever.deleteRefreshToken(user.getRefreshToken());
         userManager.withdrawUser(user);
         healthRetriever.deleteByUser(user);   // 온보딩 건강 정보 삭제
+        user.setUserMissionChoiceToNull();
         user.getUserMissionChoice().forEach(umc -> userMissionChoicesRetriever.deleteByUser(user));
 
         Parentchild parentchild = user.getParentchild();
@@ -205,12 +206,14 @@ public class OauthService {
             } else if (users.size() == 2) {
                 log.info("삭제된 부모자식: {} X {}", users.get(0).getNickname(), users.get(1).getNickname());
             }
-            parentchildRetriever.deleteById(parentchild.getId());
-
             users.forEach(u -> {
+                u.setUserMissionToNull();
                 u.getUserMissions().forEach(um -> userMissionRetriever.deleteByUser(user));
+                u.setParentchildToNull();
                 userRetriever.deleteById(u.getId());
             });
+
+            parentchildRetriever.deleteById(parentchild.getId());
         }
     }
 

@@ -142,12 +142,12 @@ public class User extends BaseTimeEntity {
 		this.parentchild = null;
 	}
 	public void setUserMissionToNull(){
-		this.userMissions.stream().forEach(m -> m = null);
+		this.userMissions.forEach(m -> m = null);
 	}
 
-	// public void clearPreUserMissionChoice() {
-	// 	this.userMissionChoice.clear();
-	// }
+	public void setUserMissionChoiceToNull(){
+		this.userMissionChoice.forEach(mc -> mc = null);
+	}
 
 	public void addTodayUserMissionChoice(List<UserMissionChoices> userMissionChoice) {
 		log.info("UserMission 선택지(매일 자정 초기화 후, 메인 홈 첫 진입 시 업데이트: {}가지 / User-{}가지", userMissionChoice.size(), this.userMissionChoice.size());
