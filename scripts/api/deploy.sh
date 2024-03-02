@@ -75,9 +75,10 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
       echo "[$NOW_TIME] Health check의 응답을 알 수 없거나 status가 UP이 아닙니다."
     fi
 
-    if [ $retry_count -eq 10 ]; then
+    if [ $retry_count -eq 15 ]; then
       echo "[$NOW_TIME] Health check 실패.."
       echo "[$NOW_TIME] Nginx에 연결하지 않고 배포를 종료합니다."
+      docker-compose stop green-api
       exit 1
     fi
   done;
@@ -122,9 +123,10 @@ else
       echo "[$NOW_TIME] Health check의 응답을 알 수 없거나 status가 UP이 아닙니다."
     fi
 
-    if [ $retry_count -eq 10 ]; then
+    if [ $retry_count -eq 15 ]; then
       echo "[$NOW_TIME] Health check 실패.."
       echo "[$NOW_TIME] Nginx에 연결하지 않고 배포를 종료합니다."
+      docker-compose stop blue-api
       exit 1
     fi
   done;

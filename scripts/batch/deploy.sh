@@ -134,8 +134,8 @@ fi
 echo "----------------------------------------------------------------------"
 
 # Nginx를 통해서 서버에 접근 가능한지 확인
-RESPONSE=$(curl -s http://localhost:${CURRENT_SERVER_PORT}${WEB_HEALTH_CHECK_URL})
-UP_COUNT=$(echo $RESPONSE | grep 'success' | wc -l)
+RESPONSE=$(sudo lsof -i :${CURRENT_SERVER_PORT})
+UP_COUNT=$(echo $RESPONSE | grep 'docker' | wc -l)
 echo "[$NOW_TIME] Health check 응답: ${RESPONSE}"
 
 if [ $UP_COUNT -ge 1 ]
