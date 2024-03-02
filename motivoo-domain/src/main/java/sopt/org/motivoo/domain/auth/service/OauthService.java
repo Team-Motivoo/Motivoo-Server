@@ -190,11 +190,11 @@ public class OauthService {
         tokenRedisRetriever.deleteRefreshToken(user.getRefreshToken());
         userManager.withdrawUser(user);
         healthRetriever.deleteByUser(user);   // 온보딩 건강 정보 삭제
-        user.setUserMissionChoiceToNull();
         user.getUserMissionChoice().forEach(umc -> {
             umc.deleteUser();
             userMissionChoicesRetriever.deleteById(umc.getId());
         });
+        user.setUserMissionChoiceToNull();
 
         Parentchild parentchild = user.getParentchild();
         List<User> users = userRetriever.getUsersByParentchild(parentchild);
@@ -210,11 +210,11 @@ public class OauthService {
                 log.info("삭제된 부모자식: {} X {}", users.get(0).getNickname(), users.get(1).getNickname());
             }
             users.forEach(u -> {
-                u.setUserMissionToNull();
                 u.getUserMissions().forEach(um -> {
                     um.deleteUser();
                     userMissionRetriever.deleteById(um.getId());
                 });
+                u.setUserMissionToNull();
                 u.setParentchildToNull();
             });
 
