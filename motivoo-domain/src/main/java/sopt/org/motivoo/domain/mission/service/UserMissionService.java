@@ -192,7 +192,7 @@ public class UserMissionService {
 
 		// 1) 처음 가입한 유저의 경우 -> 미션 선택지 세팅 완료
 		if (!existsUserMission) {
-			log.info("첫 가입 유저 미션 필터링 진입");
+			log.info("1. 첫 가입 유저 미션 필터링 진입");
 			createEmptyMission(List.of(user, opponentUser));
 			return getMissionChoicesResult(user);
 		}
@@ -211,12 +211,7 @@ public class UserMissionService {
 
 		// 3) 일반적인 경우 - 마션 선택지 필터링
 		if (todayMission.isNowDate() && todayMission.isEmptyUserMission()) {
-			log.info("일반적인 경우(미션 선택지 필터링 이전)");
-			return getMissionChoicesResult(user);
-		}
-		// 3-1) TODO DB 초기화 하고 삭제해도 됨!
-		if (!validateTodayDateMission(todayMission)) {
-			createEmptyMission(List.of(user, opponentUser));
+			log.info("3. 일반적인 경우(미션 선택지 필터링 이전)");
 			return getMissionChoicesResult(user);
 		}
 
@@ -255,7 +250,7 @@ public class UserMissionService {
 		MissionQuest missionQuest = missionQuestRetriever.getRandomMissionQuest();
 
 		List<User> filteredUsers = users.stream()
-			.filter(user -> !user.getUserMissions().isEmpty() && !user.getCurrentUserMission().isNowDate())
+			.filter(user -> user.getUserMissions().isEmpty() || (!user.getUserMissions().isEmpty() && !user.getCurrentUserMission().isNowDate()))
 			.toList();
 		userMissionRetriever.bulkSaveInitUserMission(filteredUsers, LocalDate.now(), emptyMission, missionQuest);
 	}

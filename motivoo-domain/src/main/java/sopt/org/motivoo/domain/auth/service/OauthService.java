@@ -194,16 +194,18 @@ public class OauthService {
 
         Parentchild parentchild = user.getParentchild();
         List<User> users = userRetriever.getUsersByParentchild(parentchild);
-        parentchildRetriever.deleteById(parentchild.getId());
 
         boolean allUsersDeleted = users.stream()
             .allMatch(u -> u.getSocialPlatform().equals(WITHDRAW));
+        log.info("2명의 유저 모두 탈퇴? {}", allUsersDeleted);
         if (allUsersDeleted) {
+            log.info("User Size: {}", users.size());
             if (users.size() == 1) {
                 log.info("삭제된 유저: {}", users.get(0).getNickname());
             } else if (users.size() == 2) {
                 log.info("삭제된 부모자식: {} X {}", users.get(0).getNickname(), users.get(1).getNickname());
             }
+            parentchildRetriever.deleteById(parentchild.getId());
 
             users.forEach(u -> {
                 u.getUserMissions().forEach(um -> userMissionRetriever.deleteByUser(user));

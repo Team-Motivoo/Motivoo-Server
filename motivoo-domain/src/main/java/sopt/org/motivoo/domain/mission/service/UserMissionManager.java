@@ -293,7 +293,7 @@ public class UserMissionManager {
 	// 매칭된 유저의 탈퇴 여부 검사
 	public static void checkMatchedUserWithdraw(User opponentUser) {
 		if (opponentUser.isDeleted()) {
-			throw new UserException(ALREADY_WITHDRAW_USER);
+			throw new UserException(ALREADY_WITHDRAW_OPPONENT_USER);
 		}
 	}
 

@@ -39,10 +39,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.parentchild = ?1 and u.deleted=true")
     List<User> findByParentchild(Parentchild parentchild);
 
-    @Query("select u from User u where u.parentchild = ?1 and u.deleted=false")
-    List<User> findUserByParentchild(Parentchild parentchild);
-
-    @Query("select u from User u where u.parentchild = ?1 and u.deleted=false")
     List<User> findUsersByParentchild(Parentchild parentchild);
 
     @Query("select u from User u where u.id!=?1 and u.parentchild=?2")
