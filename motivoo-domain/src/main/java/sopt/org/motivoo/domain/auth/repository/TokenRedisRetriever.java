@@ -36,6 +36,6 @@ public class TokenRedisRetriever {
 
 
     public void deleteRefreshToken(String refreshToken) {
-      tokenRedisRepository.deleteRefreshToken(refreshToken);
+        tokenRedisRepository.deleteRefreshToken(refreshToken);
     }
 }

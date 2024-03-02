@@ -53,8 +53,8 @@ public class UserRetriever {
 			() -> new ParentchildException(NOT_EXIST_PARENTCHILD_USER));
 	}
 
-	public List<User> getUsersByParentchildId(Long parentchildId) {
-		return userRepository.findUsersByParentchildId(parentchildId);
+	public List<User> getUsersByParentchild(Parentchild parentchild) {
+		return userRepository.findUsersByParentchild(parentchild);
 	}
 
 	public List<User> getAllByParentchild(Parentchild parentchild) {

@@ -4,15 +4,27 @@ import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import sopt.org.motivoo.domain.auth.config.UserAuthentication;
 import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.dto.request.OauthTokenCommand;
 import sopt.org.motivoo.domain.auth.dto.response.LoginResult;
+import sopt.org.motivoo.domain.health.repository.HealthRetriever;
+import sopt.org.motivoo.domain.mission.repository.UserMissionChoicesRetriever;
+import sopt.org.motivoo.domain.mission.repository.UserMissionRetriever;
+import sopt.org.motivoo.domain.parentchild.entity.Parentchild;
+import sopt.org.motivoo.domain.parentchild.repository.ParentchildRetriever;
+import sopt.org.motivoo.domain.user.service.UserManager;
 import sopt.org.motivoo.external.client.auth.apple.service.dto.OAuthPlatformMemberResult;
 import sopt.org.motivoo.domain.auth.repository.TokenRedisRetriever;
 import sopt.org.motivoo.external.client.auth.apple.service.AppleLoginService;
@@ -39,6 +51,13 @@ public class OauthService {
     private final InMemoryClientRegistrationRepository inMemoryRepository;
     private final UserRetriever userRetriever;
     private final TokenRedisRetriever tokenRedisRetriever;
+
+    private final UserManager userManager;
+    private final HealthRetriever healthRetriever;
+    private final UserMissionRetriever userMissionRetriever;
+    private final UserMissionChoicesRetriever userMissionChoicesRetriever;
+    private final ParentchildRetriever parentchildRetriever;
+
     private final JwtTokenProvider jwtTokenProvider;
     private final AppleLoginService appleLoginService;
 
@@ -160,5 +179,63 @@ public class OauthService {
 
         tokenRedisRetriever.saveBlockedToken(accessToken);
         tokenRedisRetriever.deleteRefreshToken(refreshToken);
+    }
+
+
+    @Transactional
+    public void signout(Long userId) {
+
+        User user = userRetriever.getUserById(userId);
+        // List<User> sameSocialUsers = userRetriever.getUsersBySocialId(user.getSocialId());  // 동일한 소셜 계정으로 탈퇴-가입을 반복한 경우
+        tokenRedisRetriever.deleteRefreshToken(user.getRefreshToken());
+        userManager.withdrawUser(user);
+        healthRetriever.deleteByUser(user);   // 온보딩 건강 정보 삭제
+        user.getUserMissionChoice().forEach(umc -> userMissionChoicesRetriever.deleteByUser(user));
+
+        Parentchild parentchild = user.getParentchild();
+        List<User> users = userRetriever.getUsersByParentchild(parentchild);
+        parentchildRetriever.deleteById(parentchild.getId());
+
+        boolean allUsersDeleted = users.stream()
+            .allMatch(u -> u.getSocialPlatform().equals(WITHDRAW));
+        if (allUsersDeleted) {
+            if (users.size() == 1) {
+                log.info("삭제된 유저: {}", users.get(0).getNickname());
+            } else if (users.size() == 2) {
+                log.info("삭제된 부모자식: {} X {}", users.get(0).getNickname(), users.get(1).getNickname());
+            }
+
+            users.forEach(u -> {
+                u.getUserMissions().forEach(um -> userMissionRetriever.deleteByUser(user));
+                userRetriever.deleteById(u.getId());
+            });
+        }
+    }
+
+
+    // TODO 혜연 언니한테 질문
+    private void sendRevokeRequest(String data, SocialPlatform socialPlatform, String accessToken) {
+        // String appleRevokeUrl = "https://appleid.apple.com/auth/revoke"; //TODO 추후 애플 로그인 구현 후
+        String kakaoRevokeUrl = "https://kapi.kakao.com/v1/user/unlink";
+
+        RestTemplate restTemplate = new RestTemplate();
+        String revokeUrl = "";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        HttpEntity<String> entity = new HttpEntity<>(data, headers);
+
+        switch (socialPlatform) {
+            // case APPLE -> revokeUrl = appleRevokeUrl;
+            case KAKAO -> {
+                revokeUrl = kakaoRevokeUrl;
+                headers.setBearerAuth(accessToken);
+            }
+        }
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(revokeUrl, HttpMethod.POST, entity, String.class);
+
+        log.info("response="+responseEntity);
     }
 }
