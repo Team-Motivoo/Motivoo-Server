@@ -3,9 +3,9 @@ package sopt.org.motivoo.domain.mission.service;
 import static sopt.org.motivoo.domain.mission.entity.CompletedStatus.*;
 import static sopt.org.motivoo.domain.mission.exception.MissionExceptionType.*;
 import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
-import static sopt.org.motivoo.external.s3.S3BucketDirectory.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -141,6 +141,7 @@ public class UserMissionManager {
 			UserMissionChoices missionChoice = UserMissionChoices.builder()
 				.mission(missionChoicesFiltered.get(i))
 				.user(user).build();
+			missionChoice.setCreatedAtNow(LocalDateTime.now());
 			missionChoices.add(missionChoice);
 		}
 

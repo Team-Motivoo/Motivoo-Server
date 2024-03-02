@@ -1,5 +1,6 @@
 package sopt.org.motivoo.domain.mission.repository;
 
+import static sopt.org.motivoo.domain.mission.entity.CompletedStatus.*;
 import static sopt.org.motivoo.domain.mission.exception.MissionExceptionType.*;
 
 import java.time.LocalDate;
@@ -47,7 +48,7 @@ public class UserMissionRetriever {
 
 	//== UPDATE ==//
 	public void updateUserMission(User user, Mission mission, MissionQuest quest) {
-		userMissionRepository.updateValidTodayMission(mission, quest, user, LocalDate.now());
+		userMissionRepository.updateValidTodayMission(mission, quest, IN_PROGRESS, user, LocalDate.now());
 	}
 
 	//== CREATE ==//
