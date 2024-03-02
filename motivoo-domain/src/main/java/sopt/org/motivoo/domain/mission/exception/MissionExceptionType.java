@@ -2,6 +2,8 @@ package sopt.org.motivoo.domain.mission.exception;
 
 import org.springframework.http.HttpStatus;
 
+import com.google.api.Http;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import sopt.org.motivoo.common.advice.BusinessExceptionType;
@@ -32,8 +34,8 @@ public enum MissionExceptionType implements BusinessExceptionType {
 	 * 500 Internal Server Error
 	 */
 	FAIL_TO_GET_TODAY_MISSION(HttpStatus.INTERNAL_SERVER_ERROR, "오늘의 미션 조회에 실패했습니다."),
-	FAIL_TO_UPDATE_GOAL_STEP_COUNT(HttpStatus.INTERNAL_SERVER_ERROR, "목표 걸음 수 변경에 실패했습니다.")
-
+	FAIL_TO_UPDATE_GOAL_STEP_COUNT(HttpStatus.INTERNAL_SERVER_ERROR, "목표 걸음 수 변경에 실패했습니다."),
+	FAIL_TO_GET_MISSION_STATUS(HttpStatus.INTERNAL_SERVER_ERROR, "오늘의 미션 달성현황 조회에 실패했습니다.")
 
 
 	;

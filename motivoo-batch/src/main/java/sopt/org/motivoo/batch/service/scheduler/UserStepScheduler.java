@@ -3,6 +3,7 @@ package sopt.org.motivoo.batch.service.scheduler;
 import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
 import static sopt.org.motivoo.domain.mission.entity.CompletedStatus.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,9 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import sopt.org.motivoo.batch.service.firebase.FirebaseService;
+import sopt.org.motivoo.batch.service.firebase.UserStepManager;
+import sopt.org.motivoo.domain.user.repository.UserRetriever;
+import sopt.org.motivoo.external.firebase.FirebaseService;
 import sopt.org.motivoo.common.advice.BusinessException;
 import sopt.org.motivoo.domain.mission.entity.UserMission;
 import sopt.org.motivoo.domain.mission.service.UserMissionService;
@@ -32,6 +35,7 @@ public class UserStepScheduler {
 
 	private final FirebaseService firebaseService;
 	private final UserMissionService userMissionService;
+	private final UserStepManager userStepManager;
 
 	private final PlatformTransactionManager transactionManager;  // 수동 트랜잭션 처리를 위한 주입
 
@@ -44,7 +48,7 @@ public class UserStepScheduler {
 	public void flagUserStepInitialize() {
 		log.info("유저 걸음 수 초기화 스케줄러 실행");
 		try {
-			firebaseService.insertUserStep();
+			userStepManager.insertUserStep();
 			log.info("스케줄러에서 유저 insert 성공");
 			// firebaseService.selectUser();
 		} catch (Exception e) {
@@ -53,18 +57,16 @@ public class UserStepScheduler {
 		}
 	}
 
-	// @Scheduled(cron = "* */2 * * * *", zone = "Asia/Seoul")
 	@Scheduled(fixedRate = 5000, zone = "Asia/Seoul")
 	public void readUserStep() {
 		log.info("유저 걸음 수 읽기 연산&상태 업데이트 스케줄러 실행");
 		try {
-			// firebaseService.selectAllUserStep();
 			Map<User, Integer> userGoalSteps = userMissionService.getUsersGoalStep();
 			List<Long> ids = userGoalSteps.keySet().stream()
 				.map(User::getId)
 				.toList();
-			// DataSnapshot dataSnapshot = (DataSnapshot)firebaseService.selectUserStep(ids);
-			Map<String, Integer> result = firebaseService.selectUserStep(ids);
+
+			Map<String, Integer> result = userStepManager.selectUserStep(ids);
 
 			for (User user : userGoalSteps.keySet()) {
 				Long id = user.getId();
