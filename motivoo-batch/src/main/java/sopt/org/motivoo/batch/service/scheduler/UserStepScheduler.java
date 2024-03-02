@@ -1,23 +1,29 @@
-package sopt.org.motivoo.domain.external.firebase;
+package sopt.org.motivoo.batch.service.scheduler;
 
 import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
+import static sopt.org.motivoo.domain.mission.entity.CompletedStatus.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.google.firebase.database.DataSnapshot;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import sopt.org.motivoo.batch.service.firebase.FirebaseService;
 import sopt.org.motivoo.common.advice.BusinessException;
-import sopt.org.motivoo.domain.mission.entity.CompletedStatus;
+import sopt.org.motivoo.domain.mission.entity.UserMission;
 import sopt.org.motivoo.domain.mission.service.UserMissionService;
 import sopt.org.motivoo.domain.user.entity.User;
-import sopt.org.motivoo.domain.user.repository.UserRetriever;
 
 @Slf4j
 @Component
@@ -26,6 +32,12 @@ public class UserStepScheduler {
 
 	private final FirebaseService firebaseService;
 	private final UserMissionService userMissionService;
+
+	private final PlatformTransactionManager transactionManager;  // 수동 트랜잭션 처리를 위한 주입
+
+	@PersistenceContext
+	private EntityManager em;
+
 
 	// @Scheduled(cron = "* */2 * * * *", zone = "Asia/Seoul")
 	@Scheduled(cron = "@daily", zone = "Asia/Seoul")
@@ -56,9 +68,23 @@ public class UserStepScheduler {
 
 			for (User user : userGoalSteps.keySet()) {
 				Long id = user.getId();
-				if (result.get(String.valueOf(id)) >= userGoalSteps.get(id)) {
-					log.info("목표 걸음 수 {}를 넘은 현재 걸음 수 {}", userGoalSteps.get(id), result.get(String.valueOf(id)));
-					user.getCurrentUserMission().updateCompletedStatus(CompletedStatus.STEP_COMPLETED);
+				if (result.containsKey(String.valueOf(id)) &&
+				result.get(String.valueOf(id)) >= userGoalSteps.get(user)) {
+					// 수동 트랜잭션 처리
+					TransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+					TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
+
+					log.info("목표 걸음 수 {}를 넘은 현재 걸음 수 {}", userGoalSteps.get(user), result.get(String.valueOf(id)));
+					try {
+						user.getCurrentUserMission().updateCompletedStatus(STEP_COMPLETED);
+						UserMission u = em.merge(user.getCurrentUserMission());
+						log.info("User 미션 상태 반영 완료: {}", u.getCompletedStatus());
+						transactionManager.commit(transactionStatus);
+					} catch (PessimisticLockingFailureException | PessimisticLockException e) {
+						transactionManager.rollback(transactionStatus);
+					} finally {
+						em.close();
+					}
 				}
 			}
 

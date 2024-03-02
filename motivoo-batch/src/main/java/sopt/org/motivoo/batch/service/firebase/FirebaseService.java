@@ -1,7 +1,7 @@
-package sopt.org.motivoo.domain.external.firebase;
+package sopt.org.motivoo.batch.service.firebase;
 
+import static sopt.org.motivoo.batch.config.FirebaseConfig.*;
 import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
-import static sopt.org.motivoo.domain.external.firebase.config.FirebaseConfig.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import lombok.RequiredArgsConstructor;
@@ -29,12 +30,6 @@ public class FirebaseService {
 	public static final String COLLECTION_NAME = "Users";
 	private final UserRepository userRepository;
 
-	// private DatabaseReference ref;
-
-	/*@PostConstruct
-	public void init() {
-		ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
-	}*/
 
 	public void insertUserStep() {
 		Map<String, Integer> userSteps = new HashMap<>();
@@ -61,6 +56,7 @@ public class FirebaseService {
 
 	public Map<String, Integer> selectUserStep(List<Long> ids) {
 		try {
+			ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
 			return readDataByIds(ids.stream().map(Object::toString)
 				.collect(Collectors.toList()), ref);
 		} catch (InterruptedException e) {

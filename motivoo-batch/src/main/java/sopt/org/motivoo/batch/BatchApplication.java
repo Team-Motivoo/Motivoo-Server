@@ -1,4 +1,4 @@
-package sopt.org.motivoo;
+package sopt.org.motivoo.batch;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
