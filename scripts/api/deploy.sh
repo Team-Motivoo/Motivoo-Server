@@ -3,7 +3,7 @@ NOW_TIME="$(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S
 
 ALL_PORTS=("8080","8082")
 AVAILABLE_PORT=()
-SERVER_NAME=motivoo-server
+SERVER_NAME=motivoo-api-server
 
 DOCKER_PS_OUTPUT=$(docker ps | grep $SERVER_NAME)
 RUNNING_CONTAINER_NAME=$(echo "$DOCKER_PS_OUTPUT" | awk '{print $NF}')

@@ -3,7 +3,7 @@ NOW_TIME="$(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S
 
 ALL_PORTS=("8081","8083")
 AVAILABLE_PORT=()
-SERVER_NAME=motivoo-server
+SERVER_NAME=motivoo-batch-server
 
 DOCKER_PS_OUTPUT=$(docker ps | grep $SERVER_NAME)
 RUNNING_CONTAINER_NAME=$(echo "$DOCKER_PS_OUTPUT" | awk '{print $NF}')
@@ -12,15 +12,6 @@ IS_REDIS_ACTIVATE=$(docker ps | grep redis)
 IS_GREEN_ACTIVATE=$(docker ps | grep green-batch)
 
 WEB_HEALTH_CHECK_URL=/api/health
-
-# Redis Docker Image Pull
-if [ -z "$IS_REDIS_ACTIVATE" ];then
-  echo "###### REDIS ######"
-  echo "[$NOW_TIME] Redis 도커 이미지 pull"
-  docker-compose pull redis
-  echo "[$NOW_TIME] Redis 컨테이너 Up (빌드 & 실행)"
-  docker-compose up -d redis
-fi
 
 # 실행 중인 서버 포트 확인
 if [ ${RUNNING_CONTAINER_NAME} == "blue-batch" ]; then

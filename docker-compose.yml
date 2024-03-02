@@ -5,8 +5,8 @@ services:
     image: redis:alpine
     ports:
       - "6379:6379"
-    networks:
-      - motivoo-net
+#    networks:
+#      - motivoo-net
 
   blue-api:
     container_name: blue-api
@@ -19,8 +19,8 @@ services:
       - TZ=Asia/Seoul
     depends_on:
       - redis
-    networks:
-      - motivoo-net
+#    networks:
+#      - motivoo-net
 
   blue-batch:
     container_name: blue-batch
@@ -31,8 +31,8 @@ services:
       - "8081:8081"
     environment:
       - TZ=Asia/Seoul
-    networks:
-      - motivoo-net
+#    networks:
+#      - motivoo-net
 
 
   green-api:
@@ -46,8 +46,8 @@ services:
       - TZ=Asia/Seoul
     depends_on:
       - redis
-    networks:
-      - motivoo-net
+#    networks:
+#      - motivoo-net
 
   green-batch:
     container_name: green-batch
@@ -58,9 +58,9 @@ services:
       - "8083:8081"
     environment:
       - TZ=Asia/Seoul
-    networks:
-      - motivoo-net
+#    networks:
+#      - motivoo-net
 
-networks:
-  motivoo-net:
-    driver: bridge
+#networks:
+#  motivoo-net:
+#    driver: bridge
