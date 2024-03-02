@@ -90,6 +90,10 @@ public class UserMission extends BaseTimeEntity {
 		}
 	}
 
+	public void deleteUser() {
+		this.user = null;
+	}
+
 	public void updateCreatedAt(LocalDateTime date) {
 		this.createdAt = date;
 	}

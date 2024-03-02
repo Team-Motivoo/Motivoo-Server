@@ -34,6 +34,10 @@ public class UserMissionChoicesRetriever {
 		userMissionChoicesRepository.deleteAllByUser(user);
 	}
 
+	public void deleteById(Long missionChoicesId) {
+		userMissionChoicesRepository.deleteById(missionChoicesId);
+	}
+
 	public List<UserMissionChoices> getUserMissionChoice(User user) {
 		List<UserMissionChoices> choices = userMissionChoicesRepository.findAllByUserAndCreatedAt(user, LocalDate.now());
 		if (!choices.isEmpty() && choices.size() != 2) {

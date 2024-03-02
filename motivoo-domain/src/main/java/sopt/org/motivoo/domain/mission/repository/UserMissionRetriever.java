@@ -46,6 +46,10 @@ public class UserMissionRetriever {
 		userMissionRepository.deleteAllByUser(user);
 	}
 
+	public void deleteById(Long userMissionId) {
+		userMissionRepository.deleteById(userMissionId);
+	}
+
 	//== UPDATE ==//
 	public void updateUserMission(User user, Mission mission, MissionQuest quest) {
 		userMissionRepository.updateValidTodayMission(mission, quest, IN_PROGRESS, user, LocalDate.now());

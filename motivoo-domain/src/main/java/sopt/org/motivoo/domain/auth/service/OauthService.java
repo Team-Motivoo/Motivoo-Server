@@ -1,8 +1,12 @@
 package sopt.org.motivoo.domain.auth.service;
 
-import feign.FeignException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.*;
+import static sopt.org.motivoo.domain.user.entity.SocialPlatform.*;
+import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
+
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,33 +19,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import feign.FeignException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import sopt.org.motivoo.domain.auth.config.UserAuthentication;
 import sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider;
 import sopt.org.motivoo.domain.auth.dto.request.OauthTokenCommand;
 import sopt.org.motivoo.domain.auth.dto.response.LoginResult;
+import sopt.org.motivoo.domain.auth.repository.TokenRedisRetriever;
 import sopt.org.motivoo.domain.health.repository.HealthRetriever;
 import sopt.org.motivoo.domain.mission.repository.UserMissionChoicesRetriever;
 import sopt.org.motivoo.domain.mission.repository.UserMissionRetriever;
 import sopt.org.motivoo.domain.parentchild.entity.Parentchild;
 import sopt.org.motivoo.domain.parentchild.repository.ParentchildRetriever;
-import sopt.org.motivoo.domain.user.service.UserManager;
-import sopt.org.motivoo.external.client.auth.apple.service.dto.OAuthPlatformMemberResult;
-import sopt.org.motivoo.domain.auth.repository.TokenRedisRetriever;
-import sopt.org.motivoo.external.client.auth.apple.service.AppleLoginService;
 import sopt.org.motivoo.domain.user.dto.request.KakaoUserProfile;
 import sopt.org.motivoo.domain.user.entity.SocialPlatform;
 import sopt.org.motivoo.domain.user.entity.User;
 import sopt.org.motivoo.domain.user.entity.UserType;
 import sopt.org.motivoo.domain.user.exception.UserException;
-import sopt.org.motivoo.domain.user.exception.UserExceptionType;
 import sopt.org.motivoo.domain.user.repository.UserRetriever;
-
-import java.util.List;
-import java.util.Map;
-
-import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.getAuthenticatedUser;
-import static sopt.org.motivoo.domain.user.entity.SocialPlatform.*;
-import static sopt.org.motivoo.domain.user.exception.UserExceptionType.*;
+import sopt.org.motivoo.domain.user.service.UserManager;
+import sopt.org.motivoo.external.client.auth.apple.service.AppleLoginService;
+import sopt.org.motivoo.external.client.auth.apple.service.dto.OAuthPlatformMemberResult;
 
 @Slf4j
 @Service
@@ -191,7 +191,10 @@ public class OauthService {
         userManager.withdrawUser(user);
         healthRetriever.deleteByUser(user);   // 온보딩 건강 정보 삭제
         user.setUserMissionChoiceToNull();
-        user.getUserMissionChoice().forEach(umc -> userMissionChoicesRetriever.deleteByUser(user));
+        user.getUserMissionChoice().forEach(umc -> {
+            umc.deleteUser();
+            userMissionChoicesRetriever.deleteById(umc.getId());
+        });
 
         Parentchild parentchild = user.getParentchild();
         List<User> users = userRetriever.getUsersByParentchild(parentchild);
@@ -208,12 +211,15 @@ public class OauthService {
             }
             users.forEach(u -> {
                 u.setUserMissionToNull();
-                u.getUserMissions().forEach(um -> userMissionRetriever.deleteByUser(user));
+                u.getUserMissions().forEach(um -> {
+                    um.deleteUser();
+                    userMissionRetriever.deleteById(um.getId());
+                });
                 u.setParentchildToNull();
-                userRetriever.deleteById(u.getId());
             });
 
             parentchildRetriever.deleteById(parentchild.getId());
+            users.forEach(u -> userRetriever.deleteById(u.getId()));
         }
     }
 

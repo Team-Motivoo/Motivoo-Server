@@ -46,4 +46,16 @@ public class UserMissionChoices extends BaseTimeEntity {
 	public void setCreatedAtNow(LocalDateTime dateTime) {
 		this.createdAt = dateTime;
 	}
+
+	public void setUser(User user) {
+		this.user = user;
+
+		if (!user.getUserMissionChoice().contains(this)) {
+			user.getUserMissionChoice().add(this);
+		}
+	}
+
+	public void deleteUser() {
+		this.user = null;
+	}
 }
