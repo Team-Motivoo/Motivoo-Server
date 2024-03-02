@@ -111,7 +111,6 @@ public class UserMissionService {
 		User opponentUser = userRetriever.getMatchedUserWith(user);
 
 		checkMatchedUserWithdraw(opponentUser);
-
 		validateTodayMissionRequest(request.missionId(), user);
 
 		Mission mission = missionRetriever.getMissionById(request.missionId());
@@ -125,12 +124,8 @@ public class UserMissionService {
 		}
 
 		MissionQuest missionQuest = missionQuestRetriever.getRandomMissionQuest();
-		// UserMission userMission = userMissionManager.createTodayUserMission(mission, user, missionQuest);
 		userMissionRetriever.updateUserMission(user, mission, missionQuest);
-		// userMissionRetriever.saveUserMission(userMission);
 		UserMission todayMission = user.getCurrentUserMission();
-
-		// user.clearPreUserMissionChoice();  // 오늘의 미션을 선정했다면, 선택지 리스트는 비워주기
 		return todayMission.getId();
 	}
 
@@ -192,11 +187,12 @@ public class UserMissionService {
 		 */
 		boolean existsUserMission = userMissionRetriever.existsByUser(user);
 		boolean isFiltered = userMissionChoicesRetriever.existsByUser(user);
-		log.info("User {}의 UserMission이 비어있니? {} ", user.getNickname(), existsUserMission);
+		log.info("User {}의 UserMission이 존재하니? {} ", user.getNickname(), existsUserMission);
+		log.info("오늘의 미션 선택지 필터링을 거쳤니? {} ", isFiltered);
 
 		// 1) 처음 가입한 유저의 경우 -> 미션 선택지 세팅 완료
 		if (!existsUserMission) {
-			log.info("첫 가입 유저 미션 필터링 진입");
+			log.info("1. 첫 가입 유저 미션 필터링 진입");
 			createEmptyMission(List.of(user, opponentUser));
 			return getMissionChoicesResult(user);
 		}
@@ -205,6 +201,7 @@ public class UserMissionService {
 
 		// 2) 필터링 로직을 한 번 이상 거친 경우 -> 저장된 미션 선택지 가져오기
 		if (isFiltered && todayMission.isEmptyUserMission()) {
+			log.info("2. 필터링 로직을 한 번 이상 거친 경우");
 			List<UserMissionChoices> missionChoice = userMissionChoicesRetriever.getUserMissionChoice(user);
 			return TodayMissionResult.of(missionChoice);
 		}
@@ -214,12 +211,7 @@ public class UserMissionService {
 
 		// 3) 일반적인 경우 - 마션 선택지 필터링
 		if (todayMission.isNowDate() && todayMission.isEmptyUserMission()) {
-			log.info("필터링 GO");
-			return getMissionChoicesResult(user);
-		}
-		// 3-1) TODO DB 초기화 하고 삭제해도 됨!
-		if (!validateTodayDateMission(todayMission)) {
-			createEmptyMission(List.of(user, opponentUser));
+			log.info("3. 일반적인 경우(미션 선택지 필터링 이전)");
 			return getMissionChoicesResult(user);
 		}
 
@@ -236,6 +228,7 @@ public class UserMissionService {
 
 		List<UserMissionChoices> todayMissionChoices = filterTodayUserMission(user);
 		log.info("첫 가입 유저 오늘의 미션 선택지 세팅 완료! : {}", todayMissionChoices.size());
+		user.addTodayUserMissionChoice(todayMissionChoices);
 		return TodayMissionResult.of(todayMissionChoices);
 	}
 
@@ -257,7 +250,7 @@ public class UserMissionService {
 		MissionQuest missionQuest = missionQuestRetriever.getRandomMissionQuest();
 
 		List<User> filteredUsers = users.stream()
-			.filter(user -> !user.getUserMissions().isEmpty() && !user.getCurrentUserMission().isNowDate())
+			.filter(user -> user.getUserMissions().isEmpty() || (!user.getUserMissions().isEmpty() && !user.getCurrentUserMission().isNowDate()))
 			.toList();
 		userMissionRetriever.bulkSaveInitUserMission(filteredUsers, LocalDate.now(), emptyMission, missionQuest);
 	}

@@ -31,7 +31,7 @@ public class UserMissionChoicesRetriever {
 	}
 
 	public void deleteByUser(User user) {
-		userMissionChoicesRepository.deleteByUser(user);
+		userMissionChoicesRepository.deleteAllByUser(user);
 	}
 
 	public List<UserMissionChoices> getUserMissionChoice(User user) {

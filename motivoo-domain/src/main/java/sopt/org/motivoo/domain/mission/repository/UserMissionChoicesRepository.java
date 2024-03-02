@@ -11,7 +11,7 @@ import sopt.org.motivoo.domain.user.entity.User;
 
 public interface UserMissionChoicesRepository extends JpaRepository<UserMissionChoices, Long> {
 
-    void deleteByUser(User user);
+    void deleteAllByUser(User user);
 
     @Query("SELECT umc FROM UserMissionChoices umc WHERE umc.user = :user AND DATE(umc.createdAt) = DATE(:date)")
     List<UserMissionChoices> findAllByUserAndCreatedAt(User user, LocalDate date);

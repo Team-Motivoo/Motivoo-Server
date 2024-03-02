@@ -1,5 +1,7 @@
 package sopt.org.motivoo.domain.mission.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -39,5 +41,9 @@ public class UserMissionChoices extends BaseTimeEntity {
 	public UserMissionChoices(Mission mission, User user) {
 		this.mission = mission;
 		this.user = user;
+	}
+
+	public void setCreatedAtNow(LocalDateTime dateTime) {
+		this.createdAt = dateTime;
 	}
 }

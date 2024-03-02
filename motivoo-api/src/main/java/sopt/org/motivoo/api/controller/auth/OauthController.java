@@ -1,6 +1,7 @@
 package sopt.org.motivoo.api.controller.auth;
 
 import static sopt.org.motivoo.common.response.SuccessType.*;
+import static sopt.org.motivoo.domain.auth.config.jwt.JwtTokenProvider.*;
 
 import java.security.Principal;
 
@@ -53,9 +54,7 @@ public class OauthController {
 
     @DeleteMapping("/withdraw")
     public ResponseEntity<ApiResponse<Object>> signout(Principal principal) {
-        Long userId = Long.parseLong(principal.getName());
-        log.info("유저 아이디="+userId);
-        userService.deleteSocialAccount(userId);
+        oauthService.signout(getUserFromPrincipal(principal));
 
         return ApiResponse.success(SIGNOUT_SUCCESS);
     }
