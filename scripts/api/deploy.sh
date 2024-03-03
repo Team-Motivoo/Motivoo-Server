@@ -17,9 +17,9 @@ WEB_HEALTH_CHECK_URL=/actuator/health
 if [ -z "$IS_REDIS_ACTIVATE" ];then
   echo "###### REDIS ######"
   echo "[$NOW_TIME] Redis 도커 이미지 pull"
-  docker-compose pull redis
+  docker-compose -f docker-compose-api.yml pull redis
   echo "[$NOW_TIME] Redis 컨테이너 Up (빌드 & 실행)"
-  docker-compose up -d redis
+  docker-compose -f docker-compose-api.yml up -d redis
 fi
 
 # 실행 중인 서버 포트 확인
@@ -54,9 +54,9 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
   CURRENT_SERVER_PORT=8082
 
   echo "[$NOW_TIME] Green 도커 이미지 pull"
-  docker-compose pull green-api
+  docker-compose -f docker-compose-api.yml pull green-api
   echo "[$NOW_TIME] Green 컨테이너 Up (빌드 & 실행)"
-  docker-compose up -d green-api
+  docker-compose -f docker-compose-api.yml up -d green-api
   echo "[$NOW_TIME] 15초 후 Health Check 시작"
   sleep 15
 
@@ -78,7 +78,7 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
     if [ $retry_count -eq 15 ]; then
       echo "[$NOW_TIME] Health check 실패.."
       echo "[$NOW_TIME] Nginx에 연결하지 않고 배포를 종료합니다."
-      docker-compose stop green-api
+      docker-compose -f docker-compose-api.yml stop green-api
       exit 1
     fi
   done;
@@ -91,7 +91,7 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
   sudo nginx -s reload
   echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url.inc)"
   echo "[$NOW_TIME] Blue 컨테이너 중단"
-  docker-compose stop blue-api
+  docker-compose -f docker-compose-api.yml stop blue-api
 
 # Blue Up
 else
@@ -101,9 +101,9 @@ else
   CURRENT_SERVER_PORT=8080
 
   echo "[$NOW_TIME] Blue 도커 이미지 pull"
-  docker-compose pull blue-api
+  docker-compose -f docker-compose-api.yml pull blue-api
   echo "[$NOW_TIME] Blue 컨테이너 Up (빌드 & 실행)"
-  docker-compose up -d blue-api
+  docker-compose -f docker-compose-api.yml up -d blue-api
   echo "[$NOW_TIME] 15초 후 Health Check 시작"
   sleep 15
 
@@ -126,7 +126,7 @@ else
     if [ $retry_count -eq 15 ]; then
       echo "[$NOW_TIME] Health check 실패.."
       echo "[$NOW_TIME] Nginx에 연결하지 않고 배포를 종료합니다."
-      docker-compose stop blue-api
+      docker-compose -f docker-compose-api.yml stop blue-api
       exit 1
     fi
   done;
@@ -139,7 +139,7 @@ else
   sudo nginx -s reload
   echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url.inc)"
   echo "[$NOW_TIME] Green 컨테이너 중단"
-  docker-compose stop green-api
+  docker-compose -f docker-compose-api.yml stop green-api
 fi
 
 echo "----------------------------------------------------------------------"

@@ -98,7 +98,7 @@ jobs:
           host: ${{ secrets.RELEASE_SERVER_IP }}
           username: ${{ secrets.RELEASE_SERVER_USER }}
           key: ${{ secrets.RELEASE_SERVER_KEY }}
-          source: "./docker-compose.yml"
+          source: "./docker-compose-api.yml"
           target: "/home/ubuntu/"
 
   deploy-cd:  # job#2
