@@ -45,9 +45,9 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
   CURRENT_SERVER_PORT=8083
 
   echo "[$NOW_TIME] Green 도커 이미지 pull"
-  docker-compose pull green-batch
+  docker-compose -f docker-compose-batch.yml pull green-batch
   echo "[$NOW_TIME] Green 컨테이너 Up (빌드 & 실행)"
-  docker-compose up -d green-batch
+  docker-compose -f docker-compose-batch.yml up -d green-batch
   echo "[$NOW_TIME] 10초 후 Health Check 시작"
   sleep 10
 
@@ -81,7 +81,7 @@ if [ -z $IS_GREEN_ACTIVATE ]; then
   sudo nginx -s reload
   echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url-batch.inc)"
   echo "[$NOW_TIME] Blue 컨테이너 중단"
-  docker-compose stop blue-batch
+  docker-compose -f docker-compose-batch.yml stop blue-batch
 
 # Blue Up
 else
@@ -91,9 +91,9 @@ else
   CURRENT_SERVER_PORT=8081
 
   echo "[$NOW_TIME] Blue 도커 이미지 pull"
-  docker-compose pull blue-batch
+  docker-compose -f docker-compose-batch.yml pull blue-batch
   echo "[$NOW_TIME] Blue 컨테이너 Up (빌드 & 실행)"
-  docker-compose up -d blue-batch
+  docker-compose -f docker-compose-batch.yml up -d blue-batch
   echo "[$NOW_TIME] 10초 후 Health Check 시작"
   sleep 10
 
@@ -128,7 +128,7 @@ else
   sudo nginx -s reload
   echo "[$NOW_TIME] 스위칭 후 실행 중인 Port: $(sudo cat /etc/nginx/conf.d/service-url-batch.inc)"
   echo "[$NOW_TIME] Green 컨테이너 중단"
-  docker-compose stop green-batch
+  docker-compose -f docker-compose-batch.yml stop green-batch
 fi
 
 echo "----------------------------------------------------------------------"
@@ -146,4 +146,3 @@ else
     echo "[$NOW_TIME] 서버 응답 결과: ${RESPONSE}"
     exit 1
 fi
-

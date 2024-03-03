@@ -22,19 +22,6 @@ services:
 #    networks:
 #      - motivoo-net
 
-  blue-batch:
-    container_name: blue-batch
-    image: yejunpark1/motivoo-batch-server
-    expose:
-      - 8081
-    ports:
-      - "8081:8081"
-    environment:
-      - TZ=Asia/Seoul
-#    networks:
-#      - motivoo-net
-
-
   green-api:
     container_name: green-api
     image: yejunpark1/motivoo-api-server
@@ -46,18 +33,6 @@ services:
       - TZ=Asia/Seoul
     depends_on:
       - redis
-#    networks:
-#      - motivoo-net
-
-  green-batch:
-    container_name: green-batch
-    image: yejunpark1/motivoo-batch-server
-    expose:
-      - 8081
-    ports:
-      - "8083:8081"
-    environment:
-      - TZ=Asia/Seoul
 #    networks:
 #      - motivoo-net
 

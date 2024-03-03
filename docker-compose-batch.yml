@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+
+  blue-batch:
+    container_name: blue-batch
+    image: yejunpark1/motivoo-batch-server
+    expose:
+      - 8081
+    ports:
+      - "8081:8081"
+    environment:
+      - TZ=Asia/Seoul
+#    networks:
+#      - motivoo-net
+
+  green-batch:
+    container_name: green-batch
+    image: yejunpark1/motivoo-batch-server
+    expose:
+      - 8081
+    ports:
+      - "8083:8081"
+    environment:
+      - TZ=Asia/Seoul
+#    networks:
+#      - motivoo-net
+
+#networks:
+#  motivoo-net:
+#    driver: bridge
