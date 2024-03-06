@@ -120,6 +120,10 @@ public class UserMission extends BaseTimeEntity {
 		this.updateCompletedStatus(IN_PROGRESS);
 	}
 
+	public void updateMissionQuest(MissionQuest missionQuest) {
+		this.missionQuest = missionQuest;
+	}
+
 	public boolean isEmptyUserMission() {
 		return this.getMission().getTarget().equals(UserType.NONE);
 	}

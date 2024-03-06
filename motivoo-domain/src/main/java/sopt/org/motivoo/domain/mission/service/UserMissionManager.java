@@ -172,6 +172,12 @@ public class UserMissionManager {
 		return missionChoices;
 	}
 
+	public static void setTodayMission(UserMission todayMission, Mission mission, MissionQuest missionQuest) {
+		todayMission.updateMissionFromEmpty(mission);
+		todayMission.updateCompletedStatus(CompletedStatus.IN_PROGRESS);
+		todayMission.updateMissionQuest(missionQuest);
+	}
+
 	@NotNull
 	public UserMission createEmptyUserMission(User user, LocalDate date, Mission mission, MissionQuest quest) {
 		UserMission um = UserMission.builderForEmpty()

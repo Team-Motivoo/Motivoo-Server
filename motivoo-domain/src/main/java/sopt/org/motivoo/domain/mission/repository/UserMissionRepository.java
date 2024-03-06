@@ -39,7 +39,7 @@ public interface UserMissionRepository extends JpaRepository<UserMission, Long> 
 
 	//== UPDATE ==//
 	@Modifying
-	@Query("UPDATE UserMission um SET um.mission = :mission, um.missionQuest = :quest, um.completedStatus = :status WHERE um.user = :user AND DATE(um.createdAt) = DATE(:date)")
-	void updateValidTodayMission(Mission mission, MissionQuest quest, CompletedStatus status, User user, LocalDate date);
+	@Query("UPDATE UserMission um SET um.mission = :mission, um.missionQuest = :quest WHERE um.user = :user AND DATE(um.createdAt) = DATE(:date)")
+	void updateValidTodayMission(Mission mission, MissionQuest quest, User user, LocalDate date);
 }
 

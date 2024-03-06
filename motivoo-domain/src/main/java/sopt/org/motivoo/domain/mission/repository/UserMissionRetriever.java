@@ -52,7 +52,7 @@ public class UserMissionRetriever {
 
 	//== UPDATE ==//
 	public void updateUserMission(User user, Mission mission, MissionQuest quest) {
-		userMissionRepository.updateValidTodayMission(mission, quest, IN_PROGRESS, user, LocalDate.now());
+		userMissionRepository.updateValidTodayMission(mission, quest, user, LocalDate.now());
 	}
 
 	//== CREATE ==//

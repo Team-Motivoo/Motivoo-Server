@@ -16,6 +16,7 @@ motivoo-firebase-adminsdk.json
 **.http
 
 **.sql
+logback-**.xml
 
 local.properties
 
