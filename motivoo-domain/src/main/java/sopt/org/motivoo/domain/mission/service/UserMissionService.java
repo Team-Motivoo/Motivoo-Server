@@ -121,8 +121,9 @@ public class UserMissionService {
 		}
 
 		MissionQuest missionQuest = missionQuestRetriever.getRandomMissionQuest();
-		userMissionRetriever.updateUserMission(user, mission, missionQuest);
+		// userMissionRetriever.updateUserMission(user, mission, missionQuest);
 		UserMission todayMission = user.getCurrentUserMission();
+		setTodayMission(todayMission, mission, missionQuest);
 		return todayMission.getId();
 	}
 
