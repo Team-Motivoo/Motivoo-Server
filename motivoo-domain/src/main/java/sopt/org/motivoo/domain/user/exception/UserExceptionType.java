@@ -17,7 +17,6 @@ public enum UserExceptionType implements BusinessExceptionType {
 	NULL_VALUE_USERTYPE_ENUM(HttpStatus.BAD_REQUEST, "데이터베이스의 유저 타입이 유효하지 않은 값입니다."),
 	NULL_VALUE_AGE(HttpStatus.BAD_REQUEST, "유저의 나이는 null이어서는 안 됩니다."),
 	ALREADY_WITHDRAW_USER(HttpStatus.BAD_REQUEST, "이미 탈퇴한 유저입니다."),
-	ALREADY_WITHDRAW_OPPONENT_USER(HttpStatus.BAD_REQUEST, "상대 유저가 탈퇴하여 요청을 처리할 수 없습니다."),
 
 	/**
 	 * 401 Unauthorized
@@ -36,7 +35,7 @@ public enum UserExceptionType implements BusinessExceptionType {
 	/**
 	 * 412 Precondition Failed
 	 */
-	// ALREADY_WITHDRAW_OPPONENT_USER(HttpStatus.PRECONDITION_FAILED, "상대 유저가 탈퇴하여 요청을 처리할 수 없습니다."),
+	ALREADY_WITHDRAW_OPPONENT_USER(HttpStatus.PRECONDITION_FAILED, "상대 유저가 탈퇴하여 요청을 처리할 수 없습니다."),
 
 	;
 
