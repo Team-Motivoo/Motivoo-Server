@@ -11,13 +11,13 @@ import sopt.org.motivoo.common.advice.BusinessException;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum S3BucketDirectory {
 
-	MISSION_PREFIX("mission/"),
-	TEST_PREFIX("test/");
+	MISSION_PREFIX("mission"),
+	TEST_PREFIX("test");
 
 	private final String name;
 
 	public String value() {
-		return this.name;
+		return this.name + "/";
 	}
 
 	public static S3BucketDirectory of(String value) {
