@@ -55,10 +55,7 @@ public class UserMissionManager {
 		todayMission.updateCompletedStatus(CompletedStatus.SUCCESS);
 	}
 
-	public StepStatusResult updateStepStatusResult(User myUser, User opponentUser, StepStatusCommand request) {
-
-		int myStep = request.myStepCount();
-		int opponentStep = request.opponentStepCount();
+	public StepStatusResult updateStepStatusResult(User myUser, User opponentUser) {
 
 		int myGoalStep = 0;
 		int opponentGoalStep = 0;
@@ -77,13 +74,13 @@ public class UserMissionManager {
 			opponentGoalStep = (opponentCurrentUserMission != null && validateTodayDateMission(opponentCurrentUserMission)) ?
 				opponentCurrentUserMission.getMission().getStepCount() : 0;
 			assert opponentCurrentUserMission != null;
-			isStepCountCompleted(opponentStep, opponentCurrentUserMission);
+			// isStepCountCompleted(opponentStep, opponentCurrentUserMission);
 		}
 
 		if (!myUserMissionsEmpty) {
 			UserMission todayMission = myUser.getCurrentUserMission();
 			myGoalStep = todayMission.getMission().getStepCount();
-			boolean stepCountCompleted = isStepCountCompleted(myStep, todayMission);
+			// boolean stepCountCompleted = isStepCountCompleted(myStep, todayMission);
 
 			return StepStatusResult.of(myUser, opponentUser, myGoalStep, opponentGoalStep, todayMission.getCompletedStatus().equals(STEP_COMPLETED),
 				todayMission.getImgUrl() != null);

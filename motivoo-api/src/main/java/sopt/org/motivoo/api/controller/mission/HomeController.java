@@ -25,8 +25,8 @@ public class HomeController {
 	private final UserMissionService userMissionService;
 
 	@PatchMapping
-	public ResponseEntity<ApiResponse<StepStatusResponse>> getMissionCompleted(@RequestBody(required = false) final StepStatusRequest request, final Principal principal) {
+	public ResponseEntity<ApiResponse<StepStatusResponse>> getMissionCompleted(final Principal principal) {
 		return ApiResponse.success(MISSION_STEP_COUNT_STATUS_SUCCESS,
-			StepStatusResponse.of(userMissionService.getMissionCompleted(request.toServiceDto(), getUserFromPrincipal(principal))));
+			StepStatusResponse.of(userMissionService.getMissionCompleted(getUserFromPrincipal(principal))));
 	}
 }
