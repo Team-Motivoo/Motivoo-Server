@@ -103,7 +103,6 @@ public class ParentchildControllerTest extends BaseControllerTest {
                                                 fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
                                                 fieldWithPath("data").description("응답 데이터"),
                                                 fieldWithPath("data.user_id").type(NUMBER).description("유저 아이디"),
-                                                fieldWithPath("data.invite_code").type(STRING).description("초대 코드"),
                                                 fieldWithPath("data.exercise_level").type(STRING).description("유저 분류(초보|중수|고수")
                                                 ).build()
                                         )

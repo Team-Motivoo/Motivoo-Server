@@ -137,11 +137,11 @@ public class UserMissionService {
 	}
 
 	@Transactional
-	public StepStatusResult getMissionCompleted(final StepStatusCommand request, final Long userId) {
+	public StepStatusResult getMissionCompleted(final Long userId) {
 		User myUser = userRetriever.getUserById(userId);
 		User opponentUser = userRetriever.getMatchedUserWith(myUser);
 
-		return userMissionManager.updateStepStatusResult(myUser, opponentUser, request);
+		return userMissionManager.updateStepStatusResult(myUser, opponentUser);
 	}
 
 	// 유저-목표 걸음수(오늘의 미션을 선정한 경우에 한하여)
