@@ -9,8 +9,6 @@ import sopt.org.motivoo.domain.health.dto.response.OnboardingResult;
 public record OnboardingResponse (
         @JsonProperty("user_id")
         Long userId,
-        @JsonProperty("invite_code")
-        String inviteCode,
         @JsonProperty("exercise_level")
         String exerciseLevel
 ){
@@ -18,7 +16,6 @@ public record OnboardingResponse (
         public static OnboardingResponse of(final OnboardingResult result) {
                 return OnboardingResponse.builder()
                         .userId(result.userId())
-                        .inviteCode(result.inviteCode())
                         .exerciseLevel(result.exerciseLevel()).build();
         }
 }
