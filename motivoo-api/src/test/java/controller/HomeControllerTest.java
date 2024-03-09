@@ -64,7 +64,7 @@ public class HomeControllerTest extends BaseControllerTest{
 		when(homeController.getMissionCompleted(principal)).thenReturn(result);
 
 		// then
-		mockMvc.perform(patch(DEFAULT_URL)
+		mockMvc.perform(get(DEFAULT_URL)
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
 			// .content(objectMapper.writeValueAsString(request))
