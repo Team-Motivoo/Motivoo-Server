@@ -49,7 +49,7 @@ public class HealthFixture {
         val user = UserFixture.createUser();
         user.updateParentchild(ParentchildFixture.createParentchild());
         val health = HealthFixture.createHealthInfo(user);
-        return new OnboardingResponse(1L, user.getParentchild().getInviteCode(), health.getExerciseLevel().getValue());
+        return new OnboardingResponse(1L, health.getExerciseLevel().getValue());
     }
 
 
