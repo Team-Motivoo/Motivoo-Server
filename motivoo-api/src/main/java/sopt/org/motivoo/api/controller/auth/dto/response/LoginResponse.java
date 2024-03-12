@@ -15,7 +15,12 @@ public record LoginResponse (
         @JsonProperty("access_token")
         String accessToken,
         @JsonProperty("refresh_token")
-        String refreshToken
+        String refreshToken,
+
+        @JsonProperty("is_finished_onboarding")
+        boolean isFinishedOnboarding,
+        @JsonProperty("is_matched")
+        boolean isMatched
 ){
 
     private static final String BEARER_TYPE = "Bearer";
@@ -26,7 +31,9 @@ public record LoginResponse (
                 .nickname(result.nickname())
                 .tokenType(result.tokenType())
                 .accessToken(result.accessToken())
-                .refreshToken(result.refreshToken()).build();
+                .refreshToken(result.refreshToken())
+                .isFinishedOnboarding(result.isFinishedOnboarding())
+                .isMatched(result.isMatched()).build();
     }
 
 }

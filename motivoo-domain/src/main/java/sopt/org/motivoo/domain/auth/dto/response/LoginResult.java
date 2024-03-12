@@ -10,18 +10,24 @@ public record LoginResult(
     String tokenType,
 
     String accessToken,
-    String refreshToken
+    String refreshToken,
+
+    Boolean isFinishedOnboarding,
+    Boolean isMatched
 ){
 
     private static final String BEARER_TYPE = "Bearer";
 
-    public static LoginResult of(User user, String accessToken, String refreshToken) {
+    public static LoginResult of(User user, String accessToken, String refreshToken, boolean isFinishedOnboarding, boolean isMatched) {
         return LoginResult.builder()
             .id(user.getSocialId())
             .nickname(user.getNickname())
             .tokenType(BEARER_TYPE)
             .accessToken(accessToken)
-            .refreshToken(refreshToken).build();
+            .refreshToken(refreshToken)
+            .isFinishedOnboarding(isFinishedOnboarding)
+            .isMatched(isMatched)
+            .build();
     }
 
 }

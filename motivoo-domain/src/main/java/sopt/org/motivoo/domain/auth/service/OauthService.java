@@ -68,6 +68,7 @@ public class OauthService {
         SocialPlatform socialPlatform = SocialPlatform.of(providerName);
         String refreshToken = jwtTokenProvider.createRefreshToken();
 
+
         if (socialPlatform.equals(KAKAO)) {
             ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
 
@@ -76,7 +77,11 @@ public class OauthService {
 
             String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(), null, null));
             tokenRedisRetriever.saveRefreshToken(refreshToken, String.valueOf(user.getId()));
-            return LoginResult.of(user, accessToken, refreshToken);
+
+            boolean isFinishedOnboarding = healthRetriever.existsHealthByUser(user);
+            boolean isMatched = user.getParentchild() != null && user.getParentchild().isMatched();
+
+            return LoginResult.of(user, accessToken, refreshToken, isFinishedOnboarding, isMatched);
         }
 
         if (socialPlatform.equals(APPLE)) {
@@ -89,9 +94,14 @@ public class OauthService {
             }
 
             //로그인
-            updateRefreshToken(userEntity.get(0), refreshToken);
-            String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(userEntity.get(0).getId(),null,null));
-            return LoginResult.of(userEntity.get(0), accessToken, refreshToken);
+            User user = userEntity.get(0);
+            updateRefreshToken(user, refreshToken);
+            String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(),null,null));
+
+            boolean isFinishedOnboarding = healthRetriever.existsHealthByUser(user);
+            boolean isMatched = user.getParentchild() != null && user.getParentchild().isMatched();
+
+            return LoginResult.of(userEntity.get(0), accessToken, refreshToken, isFinishedOnboarding, isMatched);
         }
         throw new UserException(INVALID_SOCIAL_PLATFORM);
     }
