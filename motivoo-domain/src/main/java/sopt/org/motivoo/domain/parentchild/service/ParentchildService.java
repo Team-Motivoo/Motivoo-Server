@@ -49,7 +49,7 @@ public class ParentchildService {
 
         User user = userRetriever.getUserById(userId);
         Health health = parentchildManager.onboardInput(user, request);
-        healthRetriever.validateHealthByUser(user);   // TODO API 중복 호출 예외처리
+        healthRetriever.validateHealthByUser(user);   // API 중복 호출 예외처리
         healthRetriever.save(health);
 
         // Slack 신규 유저 알림 전송
