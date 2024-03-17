@@ -14,7 +14,8 @@ public record TodayUserMissionResponse(
 	@JsonProperty("mission_description") String missionDescription,
 	@JsonProperty("mission_step_count") Integer missionStepCount,
 	@JsonProperty("mission_quest") String missionQuest,
-	@JsonProperty("mission_icon_url") String missionIconUrl
+	@JsonProperty("mission_icon_url") String missionIconUrl,
+	@JsonProperty("date") String date
 ) {
 
 	public static TodayUserMissionResponse of(TodayUserMissionDto userMission) {
@@ -25,7 +26,8 @@ public record TodayUserMissionResponse(
 				.missionDescription(userMission.missionDescription())
 				.missionStepCount(userMission.missionStepCount())
 				.missionQuest(userMission.missionQuest())
-				.missionIconUrl(userMission.missionIconUrl()).build();
+				.missionIconUrl(userMission.missionIconUrl())
+				.date(userMission.date()).build();
 		}
 		return null;
 	}

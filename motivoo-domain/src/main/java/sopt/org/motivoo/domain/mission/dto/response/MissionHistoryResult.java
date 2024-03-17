@@ -16,6 +16,7 @@ import sopt.org.motivoo.domain.user.entity.User;
 @Builder
 public record MissionHistoryResult(
 	String userType,
+	Boolean isTodayMissionChoiceCompleted,
 	TodayUserMissionDto todayMission,
 	List<ParentchildMissionDto> missionHistory
 ) {
