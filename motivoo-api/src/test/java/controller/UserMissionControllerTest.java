@@ -123,6 +123,7 @@ public class UserMissionControllerTest extends BaseControllerTest{
 							fieldWithPath("data.user_type").type(STRING).description("유저의 타입(PARENT|CHILD)"),
 							fieldWithPath("data.today_mission").type(OBJECT).description("오늘의 미션"),
 							fieldWithPath("data.today_mission.mission_content").type(STRING).description("오늘의 미션 내용"),
+							fieldWithPath("data.today_mission.date").type(STRING).description("오늘 날짜"),
 							fieldWithPath("data.mission_history").type(ARRAY).description("미션 히스토리"),
 							fieldWithPath("data.mission_history[].date").type(STRING).description("미션 일자"),
 							fieldWithPath("data.mission_history[].my_mission_content").type(STRING).description("나의 미션 내용"),
