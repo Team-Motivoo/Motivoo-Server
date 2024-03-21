@@ -55,7 +55,6 @@ public class ParentchildService {
         // Slack 신규 유저 알림 전송
         sendSlackUserEntry();
 
-        // TODO 온보딩을 마친 유저의 걸음 수 데이터 DB에 추가 (Firebase 연동)
         try {
             log.error("온보딩 입력 완료 후 FB에 데이터 추가 - 성공!");
             firebaseService.updateFBData(userId);

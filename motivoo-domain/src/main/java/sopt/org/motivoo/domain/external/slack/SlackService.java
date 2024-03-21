@@ -123,8 +123,7 @@ public class SlackService {
 	private String generateSignInMessage() {
 		sb.setLength(0);
 		sb.append("*[🧾유저 가입 정보]*" + NEW_LINE);
-		sb.append(userRepository.count() + "번째 유저가 모티부와 가족이 되었어요👨‍👩‍👧‍👦");
-
+		sb.append(userRepository.findCurrentUserId().intValue() + "번째 유저가 모티부와 가족이 되었어요👨‍👩‍👧‍👦");
 		return sb.toString();
 	}
 

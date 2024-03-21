@@ -58,6 +58,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.deleted=false")
     List<User> findAll();
 
+    @Query(value = "SELECT user_id FROM `user` ORDER BY user_id DESC LIMIT 1", nativeQuery = true)
+    Long findCurrentUserId();
+
+
 
     //== DELETE ==//
     @Query("select u from User u where u.deletedAt < now()")
