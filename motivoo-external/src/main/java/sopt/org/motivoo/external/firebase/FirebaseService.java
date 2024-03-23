@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.firebase.database.DataSnapshot;
@@ -26,7 +27,8 @@ import sopt.org.motivoo.common.advice.BusinessException;
 @RequiredArgsConstructor
 public class FirebaseService {
 
-	public static final String COLLECTION_NAME = "Users";
+	@Value("${firebase.collection}")
+	private String COLLECTION_NAME = "Users";
 
 
 	public void insertFBData(Map<String, Integer> values) {

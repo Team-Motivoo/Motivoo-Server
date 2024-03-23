@@ -29,8 +29,10 @@ public class FirebaseConfig {
 	@Value("${firebase.database}")
 	private String FIREBASE_DB;
 
+	@Value("${firebase.collection}")
+	private String COLLECTION_NAME;
+
 	public static DatabaseReference ref;
-	public static final String COLLECTION_NAME = "Users";
 
 	@PostConstruct
 	public void init() {
@@ -49,7 +51,7 @@ public class FirebaseConfig {
 			FirebaseApp.initializeApp(options);
 			log.info("파이어베이스 연결에 성공했습니다.");
 			ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
-
+			log.info("ref = {}", ref.getDatabase()+" "+COLLECTION_NAME);
 		} catch (IOException e) {
 			log.error("파이어베이스 서버와의 연결에 실패했습니다.");
 			throw new BusinessException(FIREBASE_CONNECTION_ERROR);
