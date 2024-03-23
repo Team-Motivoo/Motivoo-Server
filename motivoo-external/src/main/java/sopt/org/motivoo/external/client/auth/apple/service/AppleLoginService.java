@@ -21,7 +21,7 @@ import sopt.org.motivoo.external.client.auth.apple.service.dto.OAuthPlatformMemb
 @Service
 public class AppleLoginService {
 
-    private final AppleClient appleClient;
+    private AppleClient appleClient;
     private final AppleJwtParser appleJwtParser;
     private final PublicKeyGenerator publicKeyGenerator;
     private final AppleClaimsValidator appleClaimsValidator;
