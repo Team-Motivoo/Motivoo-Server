@@ -16,34 +16,38 @@ import sopt.org.motivoo.domain.user.entity.User;
 @Builder
 public record MissionHistoryResult(
 	String userType,
+	String opponentUserType,
 	Boolean isTodayMissionChoiceCompleted,
 	TodayUserMissionDto todayMission,
 	List<ParentchildMissionDto> missionHistory
 ) {
 
 
-	public static MissionHistoryResult of(User user, UserMission todayMission, Map<LocalDate, List<UserMission>> missionGroupsByDate) {
+	public static MissionHistoryResult of(User user, User opponentUser, UserMission todayMission, Map<LocalDate, List<UserMission>> missionGroupsByDate) {
 
 		List<ParentchildMissionDto> parentchildMissions = getParentchildMissionDtos(user, missionGroupsByDate);
 
 		return MissionHistoryResult.builder()
 			.userType(user.getType().getValue())
+			.opponentUserType(opponentUser.getType().getValue())
 			.todayMission(TodayUserMissionDto.ofHistory(todayMission))
 			.missionHistory(parentchildMissions).build();
 	}
 
-	public static MissionHistoryResult of(User user, Map<LocalDate, List<UserMission>> missionGroupsByDate) {
+	public static MissionHistoryResult of(User user, User opponentUser, Map<LocalDate, List<UserMission>> missionGroupsByDate) {
 
 		List<ParentchildMissionDto> parentchildMissions = getParentchildMissionDtos(user, missionGroupsByDate);
 
 		return MissionHistoryResult.builder()
 			.userType(user.getType().getValue())
+			.opponentUserType(opponentUser.getType().getValue())
 			.missionHistory(parentchildMissions).build();
 	}
 
-	public static MissionHistoryResult of(User user) {
+	public static MissionHistoryResult of(User myUser, User opponentUser) {
 		return MissionHistoryResult.builder()
-			.userType(user.getType().getValue()).build();
+			.userType(myUser.getType().getValue())
+			.opponentUserType(opponentUser.getType().getValue()).build();
 	}
 
 	@NotNull
@@ -63,10 +67,11 @@ public record MissionHistoryResult(
 
 
 	// Test용
-	public static MissionHistoryResult of(User user, UserMission todayMission, List<UserMission> myMissions, List<UserMission> opponentMissions) {
+	public static MissionHistoryResult of(User user, User opponentUser, UserMission todayMission, List<UserMission> myMissions, List<UserMission> opponentMissions) {
 
 		return MissionHistoryResult.builder()
 			.userType(user.getType().getValue())
+			.opponentUserType(opponentUser.getType().getValue())
 			.todayMission(TodayUserMissionDto.ofHistory(todayMission))
 			.missionHistory(IntStream.range(0, myMissions.size())
 				.mapToObj(i -> ParentchildMissionDto.of(myMissions.get(i), opponentMissions.get(i)))

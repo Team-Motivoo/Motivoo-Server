@@ -74,7 +74,7 @@ public class UserMissionFixture {
 		User childUser = createUser();
 		User parentUser = createUserV2();
 
-		return MissionHistoryResponse.of(MissionHistoryResult.of(childUser, createUserMission(), createUserMissions(), createUserMissions()));
+		return MissionHistoryResponse.of(MissionHistoryResult.of(childUser, parentUser, createUserMission(), createUserMissions(), createUserMissions()));
 	}
 
 	public static TodayMissionResponse createTodayMissionResponse() {

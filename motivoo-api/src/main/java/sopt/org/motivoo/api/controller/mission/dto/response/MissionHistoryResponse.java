@@ -11,6 +11,7 @@ import sopt.org.motivoo.domain.mission.dto.response.MissionHistoryResult;
 @Builder
 public record MissionHistoryResponse(
 	@JsonProperty("user_type") String userType,
+	@JsonProperty("opponent_user_type") String opponentUserType,
 	@JsonProperty("today_mission") TodayUserMissionResponse todayMission,
 	@JsonProperty("mission_history") List<ParentchildMissionResponse> missionHistory
 ) {
@@ -20,6 +21,7 @@ public record MissionHistoryResponse(
 
 		return MissionHistoryResponse.builder()
 			.userType(result.userType())
+			.opponentUserType(result.opponentUserType())
 			.todayMission(TodayUserMissionResponse.of(result.todayMission()))
 			.missionHistory(result.missionHistory() != null ? result.missionHistory().stream().map(ParentchildMissionResponse::of)
 				.collect(Collectors.toList()) : null).build();

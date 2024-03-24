@@ -73,7 +73,7 @@ public class UserMissionService {
 
 		// 유저의 미션 목록이 없는 경우
 		if (myUser.getUserMissions().isEmpty()) {
-			return MissionHistoryResult.of(myUser);
+			return MissionHistoryResult.of(myUser, opponentUser);
 		}
 
 		Map<LocalDate, List<UserMission>> missionsByDate = groupUserMissionsByDate(userId, opponentUser.getId());
@@ -83,10 +83,10 @@ public class UserMissionService {
 
 		// 오늘의 미션을 아직 선택하지 않은 경우
 		if (!validateTodayDateMission(todayMission)) {
-			return MissionHistoryResult.of(myUser, missionsByDate);
+			return MissionHistoryResult.of(myUser, opponentUser, missionsByDate);
 		}
 
-		return MissionHistoryResult.of(myUser, todayMission, missionsByDate);
+		return MissionHistoryResult.of(myUser, opponentUser, todayMission, missionsByDate);
 	}
 
 	private Map<LocalDate, List<UserMission>> groupUserMissionsByDate(Long myUserId, Long opponentUserId) {
