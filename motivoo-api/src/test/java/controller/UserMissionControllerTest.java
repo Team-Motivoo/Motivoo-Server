@@ -121,6 +121,7 @@ public class UserMissionControllerTest extends BaseControllerTest{
 							fieldWithPath("success").type(BOOLEAN).description("응답 성공 여부"),
 							fieldWithPath("data").description("응답 데이터"),
 							fieldWithPath("data.user_type").type(STRING).description("유저의 타입(PARENT|CHILD)"),
+							fieldWithPath("data.opponent_user_type").type(STRING).description("상대 유저의 타입(PARENT|CHILD)"),
 							fieldWithPath("data.today_mission").type(OBJECT).description("오늘의 미션"),
 							fieldWithPath("data.today_mission.mission_content").type(STRING).description("오늘의 미션 내용"),
 							fieldWithPath("data.today_mission.date").type(STRING).description("오늘 날짜"),
