@@ -64,7 +64,7 @@ public class User extends BaseTimeEntity {
 
 	private String nickname;
 
-	private String socialAccessToken;
+	// private String socialAccessToken;
 
 	private String refreshToken;
 
@@ -83,12 +83,11 @@ public class User extends BaseTimeEntity {
 	private final List<UserMissionChoices> userMissionChoice = new ArrayList<>();
 
 	@Builder
-	private User(String nickname, String socialId, SocialPlatform socialPlatform, String socialAccessToken,
+	private User(String nickname, String socialId, SocialPlatform socialPlatform,
 				 String refreshToken, UserType type, boolean deleted) {
 		this.nickname = nickname;
 		this.socialId = socialId;
 		this.socialPlatform = socialPlatform;
-		this.socialAccessToken = socialAccessToken;
 		this.refreshToken = refreshToken;
 		this.type = type;
 		this.deleted = deleted;
@@ -131,7 +130,6 @@ public class User extends BaseTimeEntity {
 
 	public void deleteSocialInfo() {
 		this.socialPlatform = SocialPlatform.WITHDRAW;
-		this.socialAccessToken = null;
 	}
 
 	public void updateParentchild(Parentchild parentchild) {
