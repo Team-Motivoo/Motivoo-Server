@@ -30,9 +30,6 @@ import sopt.org.motivoo.api.controller.auth.dto.request.RefreshRequest;
 import sopt.org.motivoo.api.controller.auth.dto.response.LoginResponse;
 import sopt.org.motivoo.api.controller.auth.dto.response.OauthTokenResponse;
 import sopt.org.motivoo.common.response.ApiResponse;
-import sopt.org.motivoo.domain.auth.dto.request.OauthTokenCommand;
-import sopt.org.motivoo.domain.auth.dto.response.LoginResult;
-import sopt.org.motivoo.domain.auth.dto.response.OauthTokenResult;
 import sopt.org.motivoo.domain.user.repository.UserRepository;
 
 @Slf4j

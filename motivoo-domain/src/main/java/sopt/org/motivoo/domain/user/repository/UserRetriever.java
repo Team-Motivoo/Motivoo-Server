@@ -38,9 +38,6 @@ public class UserRetriever {
 		return userRepository.findRefreshTokenById(userId);
 	}
 
-	public String getAccessTokenById(Long userId) {
-		return userRepository.findSocialAccessTokenById(userId);
-	}
 
 	public void saveUser(User newUser) {
 		userRepository.save(newUser);

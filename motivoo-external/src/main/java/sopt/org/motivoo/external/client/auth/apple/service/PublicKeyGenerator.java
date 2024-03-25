@@ -3,6 +3,7 @@ package sopt.org.motivoo.external.client.auth.apple.service;
 import static sopt.org.motivoo.common.advice.CommonExceptionType.*;
 
 import org.springframework.stereotype.Component;
+
 import sopt.org.motivoo.common.advice.BusinessException;
 import sopt.org.motivoo.external.client.auth.apple.ApplePublicKey;
 import sopt.org.motivoo.external.client.auth.apple.ApplePublicKeys;
@@ -32,8 +33,8 @@ public class PublicKeyGenerator {
     }
 
     private PublicKey generatePublicKeyWithApplePublicKey(ApplePublicKey publicKey) {
-        byte[] nBytes = Base64.getDecoder().decode(publicKey.getN());
-        byte[] eBytes = Base64.getDecoder().decode(publicKey.getE());
+        byte[] nBytes = Base64.getUrlDecoder().decode(publicKey.getN());
+        byte[] eBytes = Base64.getUrlDecoder().decode(publicKey.getE());
 
         BigInteger n = new BigInteger(POSITIVE_SIGN_NUMBER, nBytes);
         BigInteger e = new BigInteger(POSITIVE_SIGN_NUMBER, eBytes);

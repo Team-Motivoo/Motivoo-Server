@@ -28,9 +28,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u.refreshToken from User u where u.id=?1")
     String findRefreshTokenById(Long id);
 
-    @Query("select u.socialAccessToken from User u where u.id=?1")
-    String findSocialAccessTokenById(Long id);
-
     @Query("select count(u.id) from User u where u.parentchild=?1")
     int countByParentchild(Parentchild parentchild);
 

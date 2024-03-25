@@ -90,18 +90,17 @@ public class OauthService {
             List<User> userEntity = userRetriever.getUsersBySocialId(applePlatformMember.platformId());
             //처음 로그인 하거나 탈퇴한 경우 -> 회원가입
             if (userEntity == null || isWithdrawn(userEntity)) {
-                saveUser(null, applePlatformMember.platformId(), socialPlatform, tokenRequest, refreshToken);
+                User user = saveUser(null, applePlatformMember.platformId(), socialPlatform, tokenRequest, refreshToken);
+
+                //로그인
+                updateRefreshToken(user, refreshToken);
+                String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(),null,null));
+
+                boolean isFinishedOnboarding = healthRetriever.existsHealthByUser(user);
+                boolean isMatched = user.getParentchild() != null && user.getParentchild().isMatched();
+
+                return LoginResult.of(user, accessToken, refreshToken, isFinishedOnboarding, isMatched);
             }
-
-            //로그인
-            User user = userEntity.get(0);
-            updateRefreshToken(user, refreshToken);
-            String accessToken = jwtTokenProvider.createAccessToken(new UserAuthentication(user.getId(),null,null));
-
-            boolean isFinishedOnboarding = healthRetriever.existsHealthByUser(user);
-            boolean isMatched = user.getParentchild() != null && user.getParentchild().isMatched();
-
-            return LoginResult.of(userEntity.get(0), accessToken, refreshToken, isFinishedOnboarding, isMatched);
         }
         throw new UserException(INVALID_SOCIAL_PLATFORM);
     }
@@ -163,7 +162,7 @@ public class OauthService {
                 .nickname(nickName)
                 .socialId(providerId)
                 .socialPlatform(socialPlatform)
-                .socialAccessToken(tokenRequest.accessToken())
+                // .socialAccessToken(tokenRequest.accessToken())
                 .refreshToken(refreshToken)
                 .type(UserType.NONE)
                 .deleted(Boolean.FALSE)

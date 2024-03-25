@@ -63,7 +63,7 @@ public class UserFixture {
 				.nickname(USER_NICKNAME3)
 				.socialId(SOCIAL_ID)
 				.socialPlatform(USER_SOCIAL_PLATFORM3)
-				.socialAccessToken(SOCIAL_ACCESS_TOKEN)
+				// .socialAccessToken(SOCIAL_ACCESS_TOKEN)
 				.refreshToken(REFRESH_TOKEN)
 				.type(USER_TYPE3)
 				.deleted(DELETED)
@@ -87,7 +87,6 @@ public class UserFixture {
 		return LoginResponse.builder()
 			.id(user.getSocialId())
 			.nickname(user.getNickname())
-			.accessToken(user.getSocialAccessToken())
 			.refreshToken(user.getRefreshToken())
 			.tokenType("Bearer").build();
 	}
