@@ -29,7 +29,6 @@ public class AppleLoginService {
     public OAuthPlatformMemberResult getApplePlatformMember(String identityToken) {
         Map<String, String> headers = appleJwtParser.parseHeaders(identityToken);
         ApplePublicKeys applePublicKeys = appleClient.getApplePublicKeys();
-
         PublicKey publicKey = publicKeyGenerator.generatePublicKey(headers, applePublicKeys);
 
         Claims claims = appleJwtParser.parsePublicKeyAndGetClaims(identityToken, publicKey);
@@ -42,5 +41,4 @@ public class AppleLoginService {
             throw new BusinessException(INVALID_APPLE_CLAIMS);
         }
     }
-
 }
